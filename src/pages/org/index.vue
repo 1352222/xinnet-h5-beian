@@ -1,6 +1,6 @@
 <template>
   <div id="org">
-    <div v-if="!cropper">
+    <div v-if="cropper">
       <!-- <vue-cropper
         ref='cropper'
         :src="imgSrc"
@@ -9,20 +9,6 @@
         :cropmove="cropImage"
         style="width:100%;height:300px;"
       /> -->
-      {{srcs}}
-      {{src}}
-        <!-- :src="src" -->
-      <vue-cropper
-        ref="cropper"
-        :img="src"
-        :width="cropperWidth"
-        :height="cropperHeight"
-        :ready="cropImage"
-        :zoom="cropImage"
-        :cropmove="cropImage"
-        :style="'width:' + cropperWidth + 'px;height:' + cropperHeight + 'px;display:block;'"
-      />
-      {{option.img}}
       <VueCropper
         ref="croppers"
         :img="option.img ? option.img : '~@/assets/front.jpg'"
@@ -33,21 +19,7 @@
         :cropmove="cropImage"
         :style="'width:' + cropperWidth + 'px;height:' + cropperHeight + 'px;display:block;'"
       />
-      <img :src="src" style="width:300px;height:220px;" />
       <img :src="srcs" style="width:300px;height:220px;" />
-      <!-- <image-cropper
-        style="width:" + 100 + "%;height:" + 300 + "px;"
-        class="image-cropper-wrapper"
-        id="image-cropper"
-        limit_move="{{true}}"
-        disable_rotate="{{true}}"
-        width="{{cropperWidth}}"
-        height="{{cropperHeight}}"
-        imgSrc="{{src}}"
-        bindload="cropperload"
-        bindimageload="loadimage"
-        bindtapcut="clickcut"
-      /> -->
       <span class="image-cropper-hint">点击中间裁剪框可查看裁剪后的图片tttt</span>
       <div class="image-cropper-bottoms">
         <button

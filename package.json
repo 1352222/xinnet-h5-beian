@@ -61,6 +61,7 @@
     "style-loader": "^2.0.0",
     "uglifyjs-webpack-plugin": "^1.1.1",
     "url-loader": "^0.5.8",
+    "v-viewer": "^1.5.1",
     "vue-cropper": "^0.5.5",
     "vue-loader": "^13.3.0",
     "vue-style-loader": "^3.0.1",
