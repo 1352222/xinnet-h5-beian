@@ -4,13 +4,23 @@
       <div class="banner"></div>
       <div class="title">人脸识别验证须知</div>
       <div class="content">
-        <div class="text">1.点击进行核验按钮后，需再点击开始拍摄按钮开始录制视频，6秒后结束按钮才可点击。</div>
-        <div class="text">2.点击开始拍摄按钮后需要等待1秒后用普通话大声朗读屏幕上的数字，数字间建议略作停顿。</div>
-        <div class="text">3.必须保证环境安静，将人脸置于视频框中，请勿遮挡面部，且视频中不允许出现多张人脸。</div>
-        <div class="text">4.拍摄时请保持衣冠端正，且背景必须为白色，不允许出现杂物。</div>
+        <div class="text">
+          1.点击进行核验按钮后，需再点击开始拍摄按钮开始录制视频，6秒后结束按钮才可点击。
+        </div>
+        <div class="text">
+          2.点击开始拍摄按钮后需要等待1秒后用普通话大声朗读屏幕上的数字，数字间建议略作停顿。
+        </div>
+        <div class="text">
+          3.必须保证环境安静，将人脸置于视频框中，请勿遮挡面部，且视频中不允许出现多张人脸。
+        </div>
+        <div class="text">
+          4.拍摄时请保持衣冠端正，且背景必须为白色，不允许出现杂物。
+        </div>
       </div>
       <div class="foot">
-        <mt-button class="btn" @click="submit" type="primary">进行核验</mt-button>
+        <mt-button class="btn" @click="submit" type="primary"
+          >进行核验</mt-button
+        >
         <!-- <button class="btn-submit" bindtap="submit">进行核验</button> -->
       </div>
     </div>
@@ -18,19 +28,18 @@
 </template>
 
 <script>
-import 'mint-ui/lib/style.css'
+import "mint-ui/lib/style.css";
 export default {
-    name: "Video-step1",
-    data() {
-        return {
-        }
+  name: "Video-step1",
+  data() {
+    return {};
+  },
+  methods: {
+    submit() {
+      this.$router.push("/video_verify/step2");
     },
-    methods: {
-      submit() {
-        this.$router.push('/video_verify/step2')
-      }
-    },
-}
+  },
+};
 </script>
 <style scoped>
 #video-step1 {
@@ -84,13 +93,13 @@ export default {
   height: 192px;
   background-size: 100% 100%;
   background-repeat: no-repeat;
-  background-image: url('~@/assets/video-verify-bg.png')
+  background-image: url("~@/assets/video-verify-bg.png");
 }
 .btn {
-  width: 100%!important;
-  height: 40px!important;
-  font-size: 18px!important;
-  border-radius: 4px!important;
-  background: linear-gradient(to right, #388de7 , #2c6fd2)!important;
+  width: 100% !important;
+  height: 40px !important;
+  font-size: 18px !important;
+  border-radius: 4px !important;
+  background: linear-gradient(to right, #388de7, #2c6fd2) !important;
 }
 </style>
