@@ -95,11 +95,12 @@ export default {
   },
   methods: {
     success(stream) {
-      const { video } = this.$refs
+      const { camera } = this.$refs
+      console.log(camera)
       // 将视频流设置为video元素的源
-      video.srcObject = stream
-      video.onloadedmetadata = () => {
-        video.play()
+      camera.srcObject = stream
+      camera.onloadedmetadata = () => {
+        camera.play()
       }
       //  录像api的调用
       self.mediaRecorder = new MediaStreamRecorder(stream)
@@ -116,7 +117,7 @@ export default {
         self.timer()
       }
       mediaRecorder.onstop = function () {
-        video.pause()
+        camera.pause()
           Toast({ message: '录制成功！' })
           this.videoStep = 2
           // const videoSrc = res.tempVideoPath
