@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import "mint-ui/lib/style.css";
+import "mint-ui/lib/style.css"
 export default {
   name: "Video-step1",
   data() {

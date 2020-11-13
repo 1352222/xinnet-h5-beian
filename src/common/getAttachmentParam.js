@@ -1,7 +1,5 @@
-const app = getApp()
-
-export default function getAttachmentParam(image) {
-  const { orderCode, icp } = app.globalData
+export default function getAttachmentParam(image, globalData) {
+  const { orderCode, icp } = globalData
   const { icpOrder, icpOrgOrder, icpWebsiteOrder } = icp
   const data = {
     extName: 'jpg',

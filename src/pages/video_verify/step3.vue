@@ -5,7 +5,7 @@
       <div>
         <div class="video">
           <viewer>
-            <img class="image" :src="image" />
+            <img class="image" :src="mergeImageBase64" />
           </viewer>
         </div>
         <div class="video-desc">点击查看核验照片</div>
@@ -25,13 +25,14 @@
     </div>
 
     <canvas width="512" height="512" class="canvas-hidden" ref="video" />
+    <canvas width="384" height="384" class="canvas-hidden2" ref="rawImageVideo" />
   </div>
 </template>
 
 <script>
+import getAttachmentParam from '../../common/getAttachmentParam'
+import { mapState, mapMutations } from "vuex"
 import { Toast, Indicator } from 'mint-ui'
-// import getAttachmentParam from '../../common/getAttachmentParam'
-const app = { globalData: {} }
 
 export default {
   data() {
@@ -42,9 +43,7 @@ export default {
       // 原图片base64
       rawImageBase64: '',
       // 合成图base64格式
-      image: '',
-      // 合成base64图
-      imageBase64: '',
+      mergeImageBase64: '',
       showErrorInfo: false,
       errorInfo: '',
       // 合成背景图
@@ -53,23 +52,31 @@ export default {
     }
   },
   mounted() {
-    const { videoVerifyImage, screenState, images, serverPath } = app.globalData
+    const { videoVerifyImage, screenState, images, serverPath } = this.globalData
     const self = this
     if (screenState == 'right') {
       const image = serverPath + images.screen.filePath
       self.screenState = screenState
-      self.image = image
       self.rawImage = image
+      self.mergeImageBase64 = image
     } else {
       const rawImage = '../../../static/image/temp.jpg' || videoVerifyImage
       self.rawImage = rawImage
       self.promise = self.mergeImage()
     }
   },
-  onunMounted() {
+  destroyed() {
     this.promise = null
   },
+  computed: {
+    ...mapState({
+      globalData: state => state.home.globalData,
+    })
+  },
   methods: {
+    ...mapMutations({
+      setData: 'SET_DATA'
+    }),
     mergeImage() {
       return new Promise((resolve) => {
         const { rawImage, bgtImage, prefix } = this
@@ -86,18 +93,28 @@ export default {
           const img2 = new Image()
           img2.onload = () => {
             ctx.drawImage(img2, sideWidth, 0, mainWidth, height)
-            const res = canvas.toDataURL('image/jpg')
-            this.image = res
-            resolve(this.image)
+            const res = canvas.toDataURL('image/jpeg', 0.5)
+            this.mergeImageBase64 = res
+            resolve(this.mergeImageBase64)
           }
           img2.src = rawImage
         }
         img.src = bgtImage
+
+        const canvas2 = this.$refs.rawImageVideo
+        const ctx2 = canvas2.getContext('2d')
+        const image = new Image()
+        image.onload = () => {
+          ctx2.drawImage(image, 0, 0, 384, 384)
+          const res = canvas2.toDataURL('image/jpeg', 0.5)
+          this.rawImageBase64 = res
+        }
+        image.src = rawImage
       })
     },
 
     getData() {
-      const { icp, images } = app.globalData
+      const { icp, images } = this.globalData
       const screenImage = icp.icpAttachmentOrders.reduce((res, image) => {
         // 重新获取幕布图片
         if (image.filePurpose == 5) {
@@ -106,35 +123,35 @@ export default {
         return res
       }, {})
       const newImage = Object.assign(images, screenImage)
-      app.globalData.images = newImage
+      this.setData({ images: newImage })
       return newImage
     },
 
     restart() {
-      const { orderCode, phone, screenState } = app.globalData
+      const { orderCode, phone, screenState } = this.globalData
       const self = this
 
       if (screenState == 'right') {
         Toast({ message: '请稍后..' })
         // 获取到幕布图片数据
         this.request({
-          url: `${app.globalData.apiPath}/checkPhone?orderCode=${orderCode}&phone=${phone}`,
+          url: `/checkPhone?orderCode=${orderCode}&phone=${phone}`,
           success(res) {
             const { data } = res
             if (data.code == 'success') {
-              app.globalData.icp = data.data
+              self.setData({ icp: data.data })
               const images = self.getData()
               if (images.screen && images.screen.id) {
                 // 重拍先删除幕布图片，成功后回退
                 const param = `attachmentOrderIds=${images.screen.id}`
                 this.request({
-                  url: `${app.globalData.apiPath}/deleteAttachment?${param}`,
+                  url: `/deleteAttachment?${param}`,
                   success(res) {
                     Indicator.close()
                     const { code, data, message } = res.data
                     if (code == 'success') {
                       self.screenState = 'none'
-                      app.globalData.screenState = 'none'
+                      self.setData({ screenState: 'none' })
                       self.$router.push('/video_verify/step1')
                     } else {
                       Toast({ message: message, duration: 3000 })
@@ -160,7 +177,7 @@ export default {
     submitData(data) {
       const self = this
       this.request({
-        url: `${app.globalData.apiPath}/saveAttachment`,
+        url: `/saveAttachment`,
         method: 'POST',
         data,
         success(res) {
@@ -185,64 +202,56 @@ export default {
 
       const self = this
       Indicator.open({ text: '请稍后..' })
-      this.promise.then((mergeImage) => {
-        wx.getFileSystemManager().readFile({
-          filePath,
-          encoding: 'base64',
-          success: res => {
-            const checkData = {
-              orderCode: app.globalData.orderCode,
-              checkAttachment: {
-                ...getAttachmentParam({
-                  isWebsiteChecklist: '0',
-                  filePurpose: 5,
-                  picSequenceNum: '1',
-                  fileState: 'MERGE',
-                  type: 'WEBSITE',
-                  byteFile: this.rawImageBase64
-                })
-              }
-            }
-
-            const array = wx.base64ToArrayBuffer(res.data)
-            const byteFile = wx.arrayBufferToBase64(array)
-            const data = {
-              orderCode: app.globalData.orderCode,
-              checkAttachment: {
-                ...getAttachmentParam({
-                  isWebsiteChecklist: '0',
-                  filePurpose: 5,
-                  picSequenceNum: '1',
-                  fileState: 'MERGE',
-                  type: 'WEBSITE',
-                  byteFile
-                })
-              }
-            }
-
-            const { orderType } = app.globalData
-            const NewCheckIn = orderType == 'NEW_CHECK_IN'
-            const ChangeCheckIn = orderType == 'CHANGE_CHECK_IN'
-            if (NewCheckIn || ChangeCheckIn) {
-              self.submitData(data)
-            } else {
-              this.request({
-                url: `${app.globalData.apiPath}/identify`,
-                method: 'POST',
-                data: checkData,
-                success(res) {
-                  Indicator.close()
-                  const { code, message } = res.data
-                  if (code == 'success') {
-                    self.submitData(data)
-                  } else {
-                    self.setErrorInfo(true, message)
-                  }
-                }
-              })
-            }
+      this.promise.then((mergeImageBase64) => {
+        const checkData = {
+          orderCode: self.globalData.orderCode,
+          checkAttachment: {
+            ...getAttachmentParam({
+              isWebsiteChecklist: '0',
+              filePurpose: 5,
+              picSequenceNum: '1',
+              fileState: 'MERGE',
+              type: 'WEBSITE',
+              byteFile: this.rawImageBase64
+            }, self.globalData)
           }
-        })
+        }
+
+        const data = {
+          orderCode: self.globalData.orderCode,
+          checkAttachment: {
+            ...getAttachmentParam({
+              isWebsiteChecklist: '0',
+              filePurpose: 5,
+              picSequenceNum: '1',
+              fileState: 'MERGE',
+              type: 'WEBSITE',
+              byteFile: mergeImageBase64
+            }, self.globalData)
+          }
+        }
+
+        const { orderType } = self.globalData
+        const NewCheckIn = orderType == 'NEW_CHECK_IN'
+        const ChangeCheckIn = orderType == 'CHANGE_CHECK_IN'
+        if (NewCheckIn || ChangeCheckIn) {
+          self.submitData(data)
+        } else {
+          this.request({
+            url: `/identify`,
+            method: 'POST',
+            data: checkData,
+            success(res) {
+              Indicator.close()
+              const { code, message } = res.data
+              if (code == 'success') {
+                self.submitData(data)
+              } else {
+                self.setErrorInfo(true, message)
+              }
+            }
+          })
+        }
       })
     }
   }
@@ -369,5 +378,11 @@ export default {
   position: absolute;
   top: -10000px;
   left: 0;
+}
+
+.canvas-hidden2 {
+  position: absolute;
+  top: -10000px;
+  left: 10000px;
 }
 </style>

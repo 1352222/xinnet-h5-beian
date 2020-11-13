@@ -33,8 +33,11 @@ const home = {
         }
     },
     mutations: {
-        [types.SET_DATA](state, globalData) {
-            state.globalData = globalData
+        [types.SET_DATA](state, payload) {
+            state.globalData = {
+                ...state.globalData,
+                ...payload
+            }
         }
     },
     actions: {},

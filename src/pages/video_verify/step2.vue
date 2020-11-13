@@ -46,15 +46,12 @@
 </template>
 
 <script>
-import 'mint-ui/lib/style.css'
 import MediaStreamRecorder from 'msr'
 import { Toast, Indicator } from 'mint-ui'
+import { mapState, mapMutations } from 'vuex'
 import debounce from '../../common/debounce'
 import getUserMedia from '../../common/camera'
-import axios from 'axios'
-const app = {
-  globalData: {}
-}
+import 'mint-ui/lib/style.css'
 
 export default {
   name: "Video-step2",
@@ -96,7 +93,16 @@ export default {
     this.num = num
     this.number = number
   },
+  computed: {
+    ...mapState({
+      globalData: state => state.home.globalData,
+    })
+  },
   methods: {
+    ...mapMutations({
+      setData: 'SET_DATA'
+    }),
+
     getMediaObj() {
       const { navigator } = window
       if ((navigator.mediaDevices && navigator.mediaDevices.getUserMedia) || navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia) {
@@ -222,7 +228,7 @@ export default {
           } else if (data && !data.passed) {
             self.setErrorInfo(true, errorMsg)
           } else if (data && data.passed) {
-            app.globalData.videoVerifyImage = data.base64FaceImage
+            self.setData({ videoVerifyImage: data.base64FaceImage })
             self.setErrorInfo()
             this.$router.push('/video_verify/step3')
           }
