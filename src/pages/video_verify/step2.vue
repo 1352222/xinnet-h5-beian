@@ -1,7 +1,7 @@
 <template>
 <div class="video-step2">
   <div v-if="videoStep == 1" class="videotape">
-    <video ref="camera" autoplay style="height: 100%; width: 100%;"></video>
+    <video ref="camera" style="height: 100%; width: 100%;"></video>
     <div class="top-layer layer" />
     <div class="left-layer layer" />
     <div class="right-layer layer" />
@@ -14,7 +14,7 @@
     <div class="foot-desc">请保持完整人脸在视频框中（需纯色背景）</div>
     <div v-if="videoState" class="foot-time">{{time}}S</div>
     <div v-if="videoDisabled || videoState && time < 6" class="video-button video-button-disabled" />
-    <div v-else @touch="handleClick" :class="['video-button', videoState ? 'video-button-start' : '']">
+    <div v-else @click="handleClick" :class="['video-button', videoState ? 'video-button-start' : '']">
       <div class="block"></div>
     </div>
   </div>
@@ -23,19 +23,23 @@
     <div class="body">
       <div>
         <div class="video-wrap">
-          <video class="video" :src="videoSrc" />
+          <form ref="form" enctype="multipart/form-data">
+            <video ref="video" class="video" controls="controls">
+              <source name="video" :src="videoSrc" type="video/mp4" />
+            </video>
+          </form>
         </div>
         <div class="video-desc">点击查看视频</div>
         <div class="video-error" v-if="showError">
-          <img class="error-icon" :src="errorImg" />
+          <img class="error-icon" :src="warnImage" />
           <text>{{error}}</text>
         </div>
       </div>
     </div>
 
     <div class="foot clearfix">
-      <button class="btn default" @touch="restart">重新拍摄</button>
-      <button class="btn primary btn-primary-bg" @touch="submit">确认使用</button>
+      <mt-button class="btn default" @click="restart">重新拍摄</mt-button>
+      <mt-button class="btn primary btn-primary-bg" @click="submit">确认使用</mt-button>
     </div>
   </div>
 </div>
@@ -43,13 +47,14 @@
 
 <script>
 import 'mint-ui/lib/style.css'
+import MediaStreamRecorder from 'msr'
+import { Toast, Indicator } from 'mint-ui'
 import debounce from '../../common/debounce'
-import { getFileInfo } from '../../common/compressImage'
 import getUserMedia from '../../common/camera'
+import axios from 'axios'
 const app = {
   globalData: {}
 }
-let self
 
 export default {
   name: "Video-step2",
@@ -67,18 +72,16 @@ export default {
       videoState: false,
       imageSrc: '',
       videoSrc: '',
+      // 暂时未使用
+      showVideoSrc: '',
       videoDisabled: false,
-      errorImg: '../../static/images/warn.png'
+      warnImage: '../../../static/image/warn.png',
+      mediaRecorder: null,
+      videoBlob: null
     }
   },
   created() {
-    self = this
-    const { navigator } = global
-    if (navigator.mediaDevices.getUserMedia || navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia) {
-      getUserMedia({ video: true, audio: true }, this.success)
-    } else {
-      Toast({ title: "你的浏览器不支持访问用户媒体设备" })
-    }
+    this.getMediaObj()
   },
   mounted() {
     const { generateNum } = this
@@ -94,57 +97,32 @@ export default {
     this.number = number
   },
   methods: {
+    getMediaObj() {
+      const { navigator } = window
+      if ((navigator.mediaDevices && navigator.mediaDevices.getUserMedia) || navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia) {
+        getUserMedia({ video: true }, this.success)
+      } else {
+        Toast({ message: "你的浏览器不支持访问用户媒体设备", duration: 3000 })
+      }
+    },
+
     success(stream) {
       const { camera } = this.$refs
-      console.log(camera)
+      const self = this
       // 将视频流设置为video元素的源
       camera.srcObject = stream
       camera.onloadedmetadata = () => {
         camera.play()
       }
       //  录像api的调用
-      self.mediaRecorder = new MediaStreamRecorder(stream)
-      mediaRecorder.mimeType = 'video/mp4'
-      mediaRecorder.ondataavailable = function (blob) {
+      this.mediaRecorder = new MediaStreamRecorder(stream)
+      this.mediaRecorder.mimeType = 'video/mp4'
+      this.mediaRecorder.ondataavailable = function (blob) {
         //  停止以后调用上传
         if (self.videoSrc == '') {
-          self.videoSrc = blob
-          self.submit(blob)
+          self.videoSrc = window.URL.createObjectURL(blob)
+          self.videoBlob = blob
         }
-      }
-
-      mediaRecorder.onstart = function () {
-        self.timer()
-      }
-      mediaRecorder.onstop = function () {
-        camera.pause()
-          Toast({ message: '录制成功！' })
-          this.videoStep = 2
-          // const videoSrc = res.tempVideoPath
-          // getFileInfo(videoSrc).then(res => {
-            // const { size } = res
-            // console.log('step2-视频大小：' + size)
-            // 返回的byte
-            // if (size > 1024 * 8000) {
-            //   wx.hideLoading()
-            //   // wx.showLoading({ title: '压缩中..', mask: true })
-            //   self.compressVideo(videoSrc, 'high', videoSrc => {
-            //     // wx.hideLoading()
-                  // this.videoSrc = videoSrc
-                  // this.videoStep = 2
-            //     wx.setNavigationBarTitle({
-            //       title: '核验视频确认'
-            //     })
-            //   })
-            // } else {
-              // wx.hideLoading()
-              // this.videoSrc = videoSrc
-              // this.videoStep = 2
-              // wx.setNavigationBarTitle({
-              //   title: '核验视频确认'
-              // })
-            // }
-          // })
       }
     },
 
@@ -175,7 +153,7 @@ export default {
     },
 
     // 1.开始：开计时器，禁用按钮，开始录像，6秒后按钮可用
-    // 2.解释：关闭计时器，结束录像
+    // 2.结束：关闭计时器，结束录像
     handleClick() {
       const { videoState } = this
 
@@ -199,6 +177,7 @@ export default {
     },
 
     restart() {
+      this.getMediaObj()
       this.videoStep = 1
       this.showError = false
       this.error = ''
@@ -213,28 +192,27 @@ export default {
     },
 
     submit() {
-      // wx.showLoading({ title: '请稍后..', mask: true })
-      // console.log(this.videoSrc)
-      // console.log(this.number)
-      // console.log(app.globalData.orderCode)
-      request({
-        url: `${app.globalData.apiPath}/silentImageVerify`,
+      Indicator.open({ text: '请稍后..' })
+
+      const formData = new FormData()
+      formData.append('video', this.videoBlob, 'video')
+      formData.append('orderCode', 'ICP4022671241036226')
+      formData.append('number', this.number)
+      formData.append('ext', 'MP4')
+
+      this.request({
+        url: '/silentImageVerify',
         method: 'POST',
-        data: {
-          orderCode: app.globalData.orderCode,
-          number: this.number,
-          filePath: this.videoSrc,
-          name: 'video',
-          ext: 'MP4'
+        data: formData,
+        headers: {
+          'Content-Type': 'multipart/form-data'
         },
         success: (res) => {
+          Indicator.close()
+          const self = this
           const { code, message, data } = JSON.parse(res.data)
-          // wx.hideLoading()
           if (res && res.statusCode != 200) {
-            Toast({
-              title: '网络异常，请稍后重试',
-              duration: 3000
-            })
+            Toast({ message: '网络异常，请稍后重试', duration: 3000 })
             return
           }
 
@@ -250,10 +228,12 @@ export default {
           }
         },
         fail(error) {
-          // wx.hideLoading()
+          Indicator.close()
           const errorMsg = self.uploadFileTimeoutErrorMsg(error.errMsg)
           self.setErrorInfo(true, errorMsg)
         }
+      }, () => {
+        Indicator.close()
       })
     },
 
@@ -264,35 +244,37 @@ export default {
       }
       return errorMsg
     },
-
-    // compressVideo(src, quality = 'high', completeFunc) {
-    //   wx.compressVideo({
-    //     src,
-    //     quality,
-    //     success(res) {
-    //       console.log(res.size)
-    //       // 返回的KB,压缩大于5M
-    //       if (res.size > 1024 * 8) {
-    //         if (quality == 'high') {
-    //           quality = 'medium'
-    //         } else {
-    //           quality = 'low'
-    //         }
-    //         self.compressVideo(res.tempFilePath, quality, completeFunc)
-    //       } else {
-    //         completeFunc(res.tempFilePath)
-    //       }
-    //     }
-    //   })
-    // },
     
     startRecord() {
-      self.mediaRecorder.start()
+      Toast({ message: '请稍后...', duration: 3000 })
+      this.mediaRecorder.start()
+      this.timer()
     },
 
     stopRecord() {
-      Toast({ title: '请稍后...' })
-      self.mediaRecorder.stop()
+      this.mediaRecorder.stop()
+      this.$refs.camera.pause()
+      this.videoStep = 2
+      Toast({ message: '录制成功！', duration: 3000 })
+    },
+
+    dataURLtoBlob(dataurl) {
+      const arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1]
+      const bstr = atob(arr[1])
+      let n = bstr.length
+      let u8arr = new Uint8Array(n)
+      while (n--) {
+        u8arr[n] = bstr.charCodeAt(n)
+      }
+      return new Blob([u8arr], { type: mime })
+    },
+
+    blobToDataURL(blob, callback) {
+      const file = new FileReader()
+      file.onload = function(e) {
+        callback(e.target.result)
+      }
+      file.readAsDataURL(blob)
     },
   },
 }
@@ -352,14 +334,14 @@ export default {
 .top-desc {
   position: absolute;
   top: 2%;
-  font-size: 30rpx;
+  font-size: 15px;
   color: #fff;
   width: 100%;
   text-align: center;
 }
 .num {
   position: absolute;
-  font-size: 40rpx;
+  font-size: 20px;
   font-weight: bold;
   color: #388de7;
   width: 100%;
@@ -375,7 +357,7 @@ export default {
 .foot-desc {
   position: absolute;
   top: 82%;
-  font-size: 32rpx;
+  font-size: 16px;
   color: #fff;
   width: 100%;
   text-align: center;
@@ -385,17 +367,17 @@ export default {
   position: absolute;
   top: 90%;
   right: 15%;
-  font-size: 32rpx;
+  font-size: 16px;
   color: #388de7;
 }
 
 .video-button {
   position: absolute;
   top: 88%;
-  left: calc(50% - 50rpx);
-  width: 100rpx;
-  height: 100rpx;
-  border: 10rpx solid #fff;
+  left: calc(50% - 25px);
+  width: 50px;
+  height: 50px;
+  border: 5px solid #fff;
   border-radius: 50%;
   background: #f00;
 }
@@ -409,61 +391,61 @@ export default {
 }
 
 .video-button-start .block {
-  width: 50rpx;
-  height: 50rpx;
+  width: 25px;
+  height: 25px;
   background: #f00;
-  margin: 25rpx;
+  margin: 12.5px;
 }
 
 .body {
   background: #fff;
-  padding: 40rpx 0 80rpx;
+  padding: 20px 0 40px;
 }
 
 .video-wrap {
-  width: 442rpx;
-  height: 340rpx;
+  width: 221px;
+  height: 170px;
   background: #f4f8fe;
-  border-radius: 4rpx;
-  margin: 40rpx auto;
+  border-radius: 2px;
+  margin: 20px auto;
 }
 
 .video {
-  width: 402rpx;
-  height: 300rpx;
-  margin: 20rpx;
+  width: 201px;
+  height: 150px;
+  margin: 10px;
 }
 
 .video-desc {
-  font-size: 26rpx;
+  font-size: 13px;
   color: #333;
   text-align: center;
 }
 
 .video-error {
-  font-size: 26rpx;
-  line-height: 26rpx;
+  font-size: 13px;
+  line-height: 13px;
   color: #ff001d;
   text-align: center;
-  margin-top: 20rpx;
+  margin-top: 10px;
 }
 
 .title {
-  font-size: 30rpx;
+  font-size: 15px;
   color: #1b1b20;
-  margin: auto 30rpx;
+  margin: auto 15px;
 }
 
 .foot {
-  margin: 60rpx 30rpx auto;
+  margin: 30px 15px auto;
 }
 
 .foot .btn {
-  width: 330rpx;
-  height: 90rpx;
-  border-radius: 4rpx;
-  font-size: 36rpx;
-  line-height: 60rpx;
+  width: 165px;
+  height: 45px;
+  border-radius: 2px;
+  font-size: 18px;
+  line-height: 30px;
   font-weight: normal;
 }
 
@@ -476,5 +458,9 @@ export default {
 .foot .primary {
   float: right;
   color: #fff;
+}
+
+.btn-primary-bg {
+  background: linear-gradient(to right, #388de7 , #2c6fd2);
 }
 </style>

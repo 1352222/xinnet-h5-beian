@@ -11,12 +11,14 @@ import Viewer from 'v-viewer'
 import 'mint-ui/lib/style.css'
 import 'viewerjs/dist/viewer.css'
 import utils from './common/utils'
+import request from './common/request'
 // import FastClick from 'fastclick'
 
 // FastClick.attch(document.body)
 Vue.use(Mint)
 Vue.use(Vuex)
 Vue.prototype.utils = utils
+Vue.prototype.request = request
 Vue.config.productionTip = false
 Vue.use(Viewer, {
   defaultOptions: {

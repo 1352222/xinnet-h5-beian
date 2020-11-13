@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { Toast, Indicator } from 'mint-ui'
 
 export default function request(params, failCb) {
   const { url, method, success, data, restProps } = params
@@ -11,20 +12,21 @@ export default function request(params, failCb) {
     option.data = data || {}
   }
 
-  const request = axios.create({
-    baseURL: 'https://beian.xinnet.com/group1/'
+  const service = axios.create({
+    baseURL: 'https://tiaoshi.xincache.cn/api/miniprogram'
   })
   
-  axios.interceptors.request.use(function (config) {
+  service.interceptors.request.use(function (config) {
     return config
   }, function (error) {
     return Promise.reject(error)
   })
 
-  axios.interceptors.response.use(function (res) {
+  service.interceptors.response.use(function (res) {
     console.log('ajax请求success')
     console.log(res)
     if (res && res.statusCode != 200) {
+      Indicator.close()
       Toast({
         message: '网络异常，请稍后重试',
         duration: 3000
@@ -44,6 +46,7 @@ export default function request(params, failCb) {
     } else if (error.errMsg && error.errMsg.indexOf('ERR_TIMED_OUT') > -1) {
       msg = '网络异常，请稍后重试'
     }
+    Indicator.close()
     Toast({
       message: msg,
       duration: 3000
@@ -54,5 +57,5 @@ export default function request(params, failCb) {
     return Promise.reject(error)
   })
 
-  return request(option)
+  return service(option)
 }
