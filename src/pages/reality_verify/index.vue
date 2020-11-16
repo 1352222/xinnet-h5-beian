@@ -91,10 +91,10 @@ export default {
       this.agree = !this.agree
     },
     checkForm() {
-      return `/api/miniprogram/checkForm?orderCode=${this.globalData.orderCode || 'ICP4022671241036226'}`
+      return `/api/miniprogram/checkForm?orderCode=${this.globalData.orderCode}`
     },
     promiseBook() {
-      return `/api/miniprogram/promise?orderCode=${this.globalData.orderCode || 'ICP4022671241036226'}`
+      return `/api/miniprogram/promise?orderCode=${this.globalData.orderCode}`
     },
     toBase64() {
       return Promise.all([
