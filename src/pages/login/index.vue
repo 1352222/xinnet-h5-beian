@@ -68,11 +68,10 @@ export default {
       this.loading = true
       this.error = ''
       this.showError = false
-
       const { orderCode, orderType } = this.getParams(window.location.href)
    
       $.ajax({
-        url: `/api/miniprogram/checkPhone?orderCode=${orderCode}&phone=${phone}`,
+        url: `/api/miniprogram/checkPhone?phone=${phone}&orderCode=${orderCode}`,
         success(data) {
           let globalDatas = globalData
           if (data.code === 'success') {

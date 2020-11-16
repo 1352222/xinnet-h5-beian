@@ -4,8 +4,7 @@
     <div class="container-page">
       <div class="con-msg">
         <!-- 企业或企业变更主体 -->
-        <!--  v-if="step === 4 || step === 1 && recordType != 5" -->
-        <div style="margin:0;" class="con-item" @click="toOrg">
+        <div v-if="step === 4 || step === 1 && recordType != 5" style="margin:0;" class="con-item" @click="toOrg">
           <div>
             <img src="~@/assets/icon01.jpg" class="imgs" />
             <span>上传主体证件</span>
