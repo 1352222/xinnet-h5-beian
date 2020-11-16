@@ -60,7 +60,7 @@ export default {
       self.rawImage = image
       self.mergeImageBase64 = image
     } else {
-      const rawImage = '../../../static/image/temp.jpg' || videoVerifyImage
+      const rawImage = videoVerifyImage
       self.rawImage = rawImage
       self.promise = self.mergeImage()
     }

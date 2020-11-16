@@ -202,7 +202,8 @@ export default {
 
       const formData = new FormData()
       formData.append('video', this.videoBlob, 'video')
-      formData.append('orderCode', 'ICP4022671241036226')
+      // formData.append('orderCode', 'ICP4022671241036226')
+      formData.append('orderCode', this.globalData.orderCode)
       formData.append('number', this.number)
       formData.append('ext', 'MP4')
 
@@ -217,7 +218,7 @@ export default {
           Indicator.close()
           const self = this
           const { code, message, data } = JSON.parse(res.data)
-          if (res && res.statusCode != 200) {
+          if (res && res.status != 200) {
             Toast({ message: '网络异常，请稍后重试', duration: 3000 })
             return
           }
