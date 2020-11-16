@@ -42,7 +42,7 @@
           </div>
           <div>
             <mt-button
-              class="btn"
+              class="btn btn-submit"
               size="large"
               :disabled="!agree || loading"
               @click="submit"
@@ -91,10 +91,10 @@ export default {
       this.agree = !this.agree
     },
     checkForm() {
-      return `/api/miniprogram/checkForm?orderCode=${this.globalData.orderCode}`
+      return `/api/miniprogram/checkForm?orderCode=${this.globalData.orderCode || 'ICP4022671241036226'}`
     },
     promiseBook() {
-      return `/api/miniprogram/promise?orderCode=${this.globalData.orderCode}`
+      return `/api/miniprogram/promise?orderCode=${this.globalData.orderCode || 'ICP4022671241036226'}`
     },
     toBase64() {
       return Promise.all([
@@ -298,11 +298,23 @@ export default {
   font-size: 12px;
   transform: scale(0.5);
 }
+
 .btn {
   height: 41px !important;
   font-size: 18px !important;
   border-radius: 4px !important;
 }
+
+.btn-submit {
+  font-size: 18px;
+	border: 1px solid #fff;
+  color: #fff;
+	border-radius: 4px;
+	font-weight: normal;
+  background: linear-gradient(to right, #388de7 , #2c6fd2);
+  margin-top: 20px;
+}
+
 .loading {
   position: absolute;
   top: 45%;

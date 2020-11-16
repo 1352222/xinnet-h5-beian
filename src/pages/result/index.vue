@@ -8,7 +8,7 @@
       class="beian-result-msg"
     >
 			<div class="icon">
-				<img alt="right" src="/static/image/right.png" />
+				<img alt="right" src="~@/assets/right.png" />
 			</div>
 			<div class="title">核验成功</div>
       <div class="desc">
@@ -23,7 +23,7 @@
 
     <div wx:else type="warn" size="90" class="beian-result-msg">
 			<div class="icon">
-				<img alt="right" src="/static/image/wrong.png" />
+				<img alt="right" src="~@/assets/wrong.png" />
 			</div>
       <div class="desc">备案信息不完整，请返回上传资料</div>
       <div class="handle">
