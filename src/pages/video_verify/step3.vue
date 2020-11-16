@@ -203,6 +203,8 @@ export default {
       const self = this
       Indicator.open({ text: '请稍后..' })
       this.promise.then((mergeImageBase64) => {
+        console.log(mergeImageBase64)
+        console.log(this.rawImageBase64)
         const checkData = {
           orderCode: self.globalData.orderCode,
           checkAttachment: {
@@ -212,7 +214,7 @@ export default {
               picSequenceNum: '1',
               fileState: 'MERGE',
               type: 'WEBSITE',
-              byteFile: this.rawImageBase64
+              byteFile: this.rawImageBase64.slice(23)
             }, self.globalData)
           }
         }
@@ -226,7 +228,7 @@ export default {
               picSequenceNum: '1',
               fileState: 'MERGE',
               type: 'WEBSITE',
-              byteFile: mergeImageBase64
+              byteFile: mergeImageBase64.slice(23)
             }, self.globalData)
           }
         }

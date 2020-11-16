@@ -40,15 +40,16 @@
               >
             </label>
           </div>
-          <div>
-            <mt-button
-              class="btn btn-submit"
-              size="large"
-              :disabled="!agree || loading"
-              @click="submit"
-              >完成</mt-button
-            >
-          </div>
+        </div>
+
+        <div class="btn_done">
+          <mt-button
+            class="btn btn_submit"
+            size="large"
+            :disabled="!agree || loading"
+            @click="submit"
+            >完成</mt-button
+          >
         </div>
       </div>
     </div>
@@ -296,6 +297,7 @@ export default {
   /* font-size:10px;
   -webkit-text-size-adjust: none; */
   font-size: 12px;
+  letter-spacing: -.5px;
   transform: scale(0.5);
 }
 
@@ -305,7 +307,7 @@ export default {
   border-radius: 4px !important;
 }
 
-.btn-submit {
+.btn_submit {
   font-size: 18px;
 	border: 1px solid #fff;
   color: #fff;
@@ -313,6 +315,11 @@ export default {
 	font-weight: normal;
   background: linear-gradient(to right, #388de7 , #2c6fd2);
   margin-top: 20px;
+}
+
+.btn_done {
+  width: 80%;
+  margin: auto;
 }
 
 .loading {
