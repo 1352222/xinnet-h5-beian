@@ -13,7 +13,8 @@ export default function request(params, failCb) {
   }
 
   const service = axios.create({
-    baseURL: 'https://tiaoshi.xincache.cn/api/miniprogram'
+    // baseURL: 'https://tiaoshi.xincache.cn/api/miniprogram'
+    baseURL: '/api/miniprogram'
   })
   
   service.interceptors.request.use(function (config) {
@@ -24,8 +25,7 @@ export default function request(params, failCb) {
 
   service.interceptors.response.use(function (res) {
     console.log('ajax请求success')
-    console.log(res)
-    if (res && res.statusCode != 200) {
+    if (res && res.status != 200) {
       Indicator.close()
       Toast({
         message: '网络异常，请稍后重试',
