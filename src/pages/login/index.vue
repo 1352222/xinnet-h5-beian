@@ -19,7 +19,7 @@
         <!-- <button
           class="btn mint-button mint-button--primary mint-button--large"
           formType="submit"
-          :disabled="loading"
+          :disabled="loading" 
           :loading="loading"
         >
           确认
@@ -47,7 +47,7 @@ export default {
   methods: {
     formSubmit(e) {
       e.preventDefault()
-      const phone =  this.phone
+      const phone = this.phone
       const globalData = this.globalData
       const self = this
       if (!phone) {
@@ -73,7 +73,7 @@ export default {
         success(data) {
           // const { data } = res
           let globalDatas = globalData
-          if(data.code === 'success') {
+          if (data.code === 'success') {
             globalDatas.icp = data.data
             globalDatas.orderCode = data.data.icpOrder.orderCode
             globalDatas.recordType = data.data.icpOrder.orgPropertyId
@@ -154,8 +154,8 @@ export default {
   margin-top: 138px;
 }
 .btn {
-  height: 41px!important;
-  font-size: 18px!important;
-  border-radius: 4px!important;
+  height: 41px !important;
+  font-size: 18px !important;
+  border-radius: 4px !important;
 }
 </style>

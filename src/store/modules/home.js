@@ -10,6 +10,9 @@ const home = {
             // 个人
             // orderCode: 'ICP4522313971377992',
             orderCode: '',
+            
+            apiPath: 'https://tiaoshi.xincache.cn/api/miniprogram',
+            serverPath: 'http://tiaoshi.xincache.cn/group1/',
             // phone: 13717616202,
             // phone: 18536595047,
             phone: '',
@@ -30,6 +33,28 @@ const home = {
             websiteState: 'none',
             realityVerifyState: 'none',
             screenState: 'none',
+            org: {
+              // 名称
+              name: '',
+              // 营业执照证件号
+              code: '',
+              images: [],
+              done: false
+              // 负责人
+              // person: ''
+            },
+            front: {
+              name: '',
+              code: '',
+              images: [],
+              done: false
+            },
+            side: {
+              name: '',
+              code: '',
+              images: [],
+              done: false
+            },
         }
     },
     mutations: {
