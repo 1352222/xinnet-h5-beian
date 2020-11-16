@@ -8,22 +8,12 @@
         <input v-model="phone" class="input" name="phone" placeholder-class="input-placeholder" type="text" placeholder="请输入网站负责人的手机号" />
       </div>
       <div class="error-area" v-if="showError">
-      <!-- <icon color="#ff001d" type="info" size="20"></icon> -->
         <img style="width:14px;vertical-align: middle;" class="error-icon" src="~@/assets/warn.png" />
         <span>{{error}}</span>
       </div>
 
       <div class="btn-area">
         <mt-button type="primary" class="btn" size="large" :disabled="loading" :loading="loading">确认</mt-button>
-        <!-- <mt-button type="primary" :disabled="loading" :loading="loading">确认</mt-button> -->
-        <!-- <button
-          class="btn mint-button mint-button--primary mint-button--large"
-          formType="submit"
-          :disabled="loading" 
-          :loading="loading"
-        >
-          确认
-        </button> -->
       </div>
     </form>
   </div>
@@ -45,6 +35,20 @@ export default {
     }
   },
   methods: {
+    getParams(url) {
+      console.log(url)
+      const start = url.indexOf('?') + 1
+      const orderCodeUrl = url.slice(start)
+      const aOrderCodeUrl = orderCodeUrl.split('&')
+      const params = {}
+      for(let i=0; i<aOrderCodeUrl.length; i++) {
+        const temp = aOrderCodeUrl[i].split('=')
+        const key = temp[0]
+        const val = temp[1]
+        params[key] = val
+      }
+      return params
+    },
     formSubmit(e) {
       e.preventDefault()
       const phone = this.phone
@@ -65,15 +69,15 @@ export default {
       this.error = ''
       this.showError = false
 
-      const orderCode = globalData.orderCode
-      // this.setData(this.num)
+      const { orderCode, orderType } = this.getParams(window.location.href)
+   
       $.ajax({
-        url: `/api/miniprogram/checkPhone?orderCode=ICP4022671241036226&phone=13716918573`,
-        // url: `/apiPath/checkPhone?orderCode=${this.globalData.orderCode}&phone=${phone}`,
+        url: `/api/miniprogram/checkPhone?orderCode=${orderCode}&phone=${phone}`,
         success(data) {
-          // const { data } = res
           let globalDatas = globalData
           if (data.code === 'success') {
+            window.sessionStorage.setItem('orderCode', orderCode)
+            window.sessionStorage.setItem('phone', phone)
             globalDatas.icp = data.data
             globalDatas.orderCode = data.data.icpOrder.orderCode
             globalDatas.recordType = data.data.icpOrder.orgPropertyId

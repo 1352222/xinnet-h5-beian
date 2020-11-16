@@ -180,40 +180,84 @@
           <div>2、请确保照片完整清晰、无遮挡物以及杂物等</div>
           <div>3、请将证件照片方向调整为正向</div>
         </div>
-        <div v-if="allowSubmit" class="confirm" bindtap="submit">完成</div>
+        <div v-if="allowSubmit" class="confirm" @click="submit">完成</div>
 
-
-        <div
-          :show="dialogShow"
-          :buttons="buttons"
-          @click="dialogButton"
-          ext-class="beian-dialog"
-        >
-          {{dialogTitle}}
-          <div class="form" v-if="dialogType === 'org'">
-            <label class="fields">
-              <div class="label">主办单位名称：</div>
-              <input class="weui-input" id="orgName" @input="bindinput" :value="org.name" />
-            </label>
-            <label class="fields">
-              <div class="label">主办单位证件号：</div>
-              <input class="weui-input" id="orgCode" @input="bindinput" :value="org.code" />
-            </label>
-            <button @click="dialogButton">修改</button>
+        <div id="dialog" v-show="dialogShow">
+          <div class="border" >
+            <div>
+                <p class="titleXStyle">{{dialogTitle}}</p>
+            </div>
+           <div v-if="dialogType === 'org'">
+              <div class="table-style">
+                <div class="table-describe-style">主办单位名称：</div>
+                <div class="table-content-style">
+                  <input class="weui-input" id="orgName" @input="bindinput" :value="org.name" />
+                </div>
+              </div>
+              <div class="table-style">
+                <div class="table-describe-style">主办单位证件号：</div>
+                <div class="table-content-style">
+                  <input class="weui-input" id="orgCode" @input="bindinput" :value="org.code" />
+                </div>
+              </div>
+           </div>
+           <div v-else-if="dialogType === 'own'">
+              <div class="table-style">
+                <div class="table-describe-style">主办单位负责人：</div>
+                <div class="table-content-style">
+                  <input class="weui-input" id="ownPerson" @input="bindinput" :value="own.person" />
+                </div>
+              </div>
+              <div class="table-style">
+                <div class="table-describe-style">主办单位证件号：</div>
+                <div class="table-content-style">
+                  <input class="weui-input" id="ownCode" @input="bindinput" :value="own.code" />
+                </div>
+              </div>
+           </div>
+            <div class="button-align-bottom">
+              <div class="horizontal-line-style"></div>
+              <div class="button-align-bottom-style">
+                <div class="cancel-button" @click="dialogHidden">取消</div>
+                <div class="vertical-line-style"></div>
+                <div class="punch-button" @click="dialogButton">确定</div>
+              </div>
+            </div>
           </div>
+        </div>
 
-
-          <div class="form" v-else-if="dialogType === 'own'">
-            <label class="fields">
-              <div class="label">主办单位负责人：</div>
-              <input class="weui-input" id="ownPerson" @input="bindinput" :value="own.person" />
-            </label>
-            <label class="fields">
-              <div class="label">主办单位证件号：</div>
-              <input class="weui-input" id="ownCode" @input="bindinput" :value="own.code" />
-            </label>
+        <div id="dialog" v-show="tipsDialogShow1">
+          <div class="border" style="height:25%;top:34%;">
+            <div>
+                <p class="titleXStyle">提示</p>
+            </div>
+            <div class="tips">与PC端填写信息不一致，是否使用手机端信息</div>
+            <div class="button-align-bottom">
+              <div class="horizontal-line-style"></div>
+              <div class="button-align-bottom-style">
+                <div class="cancel-button" @click="tipsDialogButton1('modify')">修改</div>
+                <div class="vertical-line-style"></div>
+                <div class="punch-button" :buttons="tipsButtons1" @click="tipsDialogButton1('use')">使用</div>
+              </div>
+            </div>
           </div>
-          <button @click="dialogButton">修改</button>
+        </div>
+
+        <div id="dialog" v-show="tipsDialogShow2">
+          <div class="border" style="height:25%;top:34%;">
+            <div>
+                <p class="titleXStyle">提示</p>
+            </div>
+            <div class="tips">{{tipsText}}</div>
+            <div class="button-align-bottom">
+              <div class="horizontal-line-style"></div>
+              <div class="button-align-bottom-style">
+                <div class="cancel-button" @click="tipsDialogButton2('verify')">去核实</div>
+                <div class="vertical-line-style"></div>
+                <div class="punch-button" @click="tipsDialogButton2('continue')">继续</div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- <div
@@ -225,16 +269,6 @@
         >
           <div class="tips">与PC端填写信息不一致，是否使用手机端信息</div>
         </div> -->
-
-        <div
-          :mask-closable="false"
-          title="提示"
-          :show="tipsDialogShow2"
-          :buttons="tipsButtons2"
-          bindbuttontap="tipsDialogButton2"
-        >
-          <div class="tips">{{tipsText}}</div>
-        </div>
 
         <!-- <el-dialog
           :mask-closable="false"
@@ -287,7 +321,7 @@
           <div class="tips">{{tipsText}}</div>
         </mp-dialog> -->
 
-        <canvas class="canvas-hidden" style="width: 290px; height: 360px;" canvas-id="Canvas"/>
+        <canvas class="canvas-hidden" ref="canvasimage" style="width: 290px; height: 360px;" canvas-id="Canvas"/>
       </div>
     </div>
   </div>
@@ -298,6 +332,7 @@ import { mapMutations, mapState } from 'vuex'
 import uploadFile from '../upload_file'
 import mergeFile from '../merge_file'
 import { Indicator, Toast } from 'mint-ui'
+import getAttachmentParam from '../../common/getAttachmentParam'
 import $ from 'jquery'
 export default {
   name: 'Orgs',
@@ -478,7 +513,6 @@ export default {
       }
 
       const { icpOrgOrder, icpOrder } = this.globalData.icp
-      console.log(icpOrgOrder, icpOrder, 'iiii')
       const _org = {}
       const _own = {}
       let orgName = ''
@@ -635,10 +669,12 @@ export default {
       return new Promise(resolve => {
         Indicator.open('请稍后..')
         // wx.showLoading({ title: '请稍后..', mask: true })
-        request({
+        $.ajax({
           url: `/api/miniprogram/saveOrgInfo`,
           method: 'POST',
-          data,
+          headers: { 'Content-Type': 'application/json' },
+          dataType: 'json',
+          data: JSON.stringify(data),
           success(res) {
             // wx.hideLoading()
             Indicator.close()
@@ -671,7 +707,6 @@ export default {
     // 修改确认
     dialogButton(e) {
       const { detail } = e
-      console.log(detail, 'ddaa')
       // 确定
       if (detail == 1) {
         this.saveLocalData()
@@ -683,6 +718,9 @@ export default {
         //   dialogShow: false
         // })
       }
+    },
+    dialogHidden() {
+      this.dialogShow = false
     },
     saveLocalData() {
       const { dialogType, orgName, orgCode, ownPerson, ownCode } = this
@@ -765,13 +803,13 @@ export default {
         })
       }
     },
-    clearImage(e) {
+    clearImage(type) {
       const { orderType } = this.globalData
       const org = this.$refs.org
       const front = this.$refs.front
       const side = this.$refs.side
       const merge = this.$refs.merge
-      const { id } = e.currentTarget
+      const { id } = type
 
       if (id == 'org') {
         this.orgDone = false
@@ -818,7 +856,9 @@ export default {
         $.ajax({
           url: `/api/miniprogram/orgAttachment`,
           method: 'POST',
-          data,
+          headers: { 'Content-Type': 'application/json' },
+          dataType: 'json',
+          data: JSON.stringify(data),
           success(res) {
             // wx.hideLoading()
             Indicator.close()
@@ -868,7 +908,7 @@ export default {
             fileState: 'MERGE',
             type: 'ORG',
             byteFile: org.imageBase64
-          })
+          }, this.globalData)
         }
       }
       if (!front.image.id) {
@@ -880,7 +920,7 @@ export default {
             fileState: 'SINGLE',
             type: 'ORG',
             byteFile: front.imageBase64
-          })
+          }, this.globalData)
         }
       }
       if (!side.image.id) {
@@ -892,7 +932,7 @@ export default {
             fileState: 'SINGLE',
             type: 'ORG',
             byteFile: side.imageBase64
-          })
+          }, this.globalData)
         }
       }
       const mergeImage = merge._data.image
@@ -904,8 +944,8 @@ export default {
             picSequenceNum: 3,
             fileState: 'MERGE',
             type: 'ORG',
-            byteFile: merge._data.imageBase64
-          })
+            byteFile: merge._data.imageBase64.slice(23)
+          }, this.globalData)
         }
       }
 
@@ -917,16 +957,17 @@ export default {
           duration: 3000
         })
         // wx.navigateBack()
-        console.log('back,,,wx.navigateBack')
         return
       }
 
       Indicator.open('请稍后...')
       // wx.showLoading({ title: '请稍后..', mask: true })
-      request({
+      $.ajax({
         url: `/api/miniprogram/saveAttachment`,
         method: 'POST',
-        data,
+        headers: { 'Content-Type': 'application/json' },
+        dataType: 'json',
+        data: JSON.stringify(data),
         success(res) {
           // wx.hideLoading()
           Indicator.close()
@@ -937,7 +978,7 @@ export default {
               message: '上传成功！',
               duration: 3000
             })
-            console.log('back,,,wx.navigateBack')
+            this.$router.push('/list')
             // wx.navigateBack()
           } else {
             Toast({
@@ -959,12 +1000,11 @@ export default {
       }
     },
     // 数据不一致
-    tipsDialogButton1(e) {
+    tipsDialogButton1(action) {
       const { NewCheckIn, ChangeCheckIn, NewWebsite, NoOrgNewWebsite } = this
-      const { detail } = e
       // 使用：先保存数据然后工商校验，校验通过提交所有附件数据
       // 如果是变更主体或变更网站隐藏第一个按钮后，第二个按钮index是0，所以用文本判断
-      if (detail.item.text == '使用') {
+      if (action === 'use') {
         this.tipsDialogShow1 = false
         // this.setData({ tipsDialogShow1: false })
         if (NewCheckIn || ChangeCheckIn || NewWebsite || NoOrgNewWebsite) {
@@ -973,7 +1013,7 @@ export default {
           this.saveData().then(this.checkData).then(this.submitData)
         }
         // 修改：展示修改操作
-      } else if (detail.item.text == '修改') {
+      } else if (action === 'modify') {
         // 关闭弹窗，显示修改按钮
         this.tipsDialogShow1 = false
         this.allowUpdate = true
@@ -984,10 +1024,9 @@ export default {
       }
     },
     // 工商数据错误
-    tipsDialogButton2(e) {
-      const { detail } = e
+    tipsDialogButton2(action) {
       // 去核实：停留当前页
-      if (detail.index == 0) {
+      if (action === 'verify') {
         this.tipsDialogShow2 = false
         this.allowUpdate = true
         // this.setData({
@@ -995,7 +1034,7 @@ export default {
         //   allowUpdate: true
         // })
         // 继续：做标记后提交数据
-      } else if (detail.index == 1) {
+      } else if (action === 'continue') {
         this.tipsDialogShow2 = false
         // this.setData({
         //   tipsDialogShow2: false
@@ -1058,7 +1097,6 @@ export default {
       // })
     },
     blockToDataURL(blob, callback) {
-      console.log(blob, 'bbbb')
       let a = new FileReader()
       a.onload = function (e) { callback(e.target.result) }
       a.readAsDataURL(blob)
@@ -1082,32 +1120,32 @@ export default {
         org.imageBase64 = url
         org.imagePath = img
         org.images = [img]
+        org.image = {}
         org.done = true
       } else if (this.id === 'front') {
         front.imageBase64 = url
         front.imagePath = img
         front.images = [img]
+        front.image = {}
         front.done = true
       } else if (this.id === 'side') {
         side.imageBase64 = url
         side.imagePath = img
         side.images = [img]
+        side.image = {}
         side.done = true
       }
-      console.log(org, front, side, 'dattaa')
     },
     chooseImage(url, img) {
       // console.log(this.$refs, this.id, this.baseurl, this.bb, 'fronttttt')
-      this.writeimage(this.baseurl, this.bb)
-      console.log(this.globalData, this.$refs.org, this.$refs.front, this.$refs.side, 'globa11')
+      // this.writeimage(this.baseurl, this.bb)
       const self = this
       const org = $('#org1 > div')
       const front = $('#front1 > div:first-child')
       const side = $('#front1 > div:last-child')
       const merge = this.$refs.merge
       const id = this.id
-      // const data = { orderCode: this.globalData.orderCode }
-      const data = { orderCode: 'ICP4022671241036226' }
+      const data = { orderCode: this.globalData.orderCode }
       const { NewCheckIn, ChangeCheckIn, NewWebsite, NoOrgNewWebsite } = this
       // 新增接入、无主体新增接入不做OCR
       // OCR识别数据回显
@@ -1126,14 +1164,12 @@ export default {
             success(res) {
               Indicator.close()
               const { code, data, message } = res
-              console.log(res.data)
               if (code === 'success') {
                 const org = {
                   name: data.ocrOrgName,
                   code: data.ocrOrgCode,
                   person: data.ocrOrgOwnerName
                 }
-                console.log(org, data, 'dddd')
                 // 每次OCR后更新修改操作表单
                 const orgName = org.name
                 const orgCode = org.code
@@ -1195,7 +1231,8 @@ export default {
                 self.ownPerson = ownPerson
                 self.ownCode = ownCode
                 // self.setData({ own, ownPerson, ownCode })
-                self.setUploadSuccessData()
+                self.writeimage(self.baseurl, self.bb)
+                self.setUploadSuccessData('front')
                 self.setErrorInfo()
                 this.allowUpdate = true
                 // self.setData({
@@ -1205,17 +1242,16 @@ export default {
                 // self.baseurl = ''
                 // self.bb = ''
                 // self.$refs.mergeFile.setImages(self.bb)
-                self.writeimage(self.baseurl, self.bb)
                 // self.$refs.merge.setImages(self.baseurl, self.bb)
                 // console.log(self.front, self.side, 'fffff')
               } else if (code === 'success' && id === 'side') {
-                self.setUploadSuccessData()
+                self.writeimage(self.baseurl, self.bb)
+                self.setUploadSuccessData('side')
                 self.setErrorInfo()
 
                 // self.baseurl = ''
                 // self.bb = ''
 
-                self.writeimage(self.baseurl, self.bb)
               } else {
                 Toast({
                   message: res.message,
@@ -1232,7 +1268,6 @@ export default {
       }
     },
     setUploadSuccessData(type) {
-      console.log(this.$refs.org, 'tttttype1111')
       // const org = this.$refs.org
       // const front = this.$refs.front
       // const side = this.$refs.side
@@ -1599,5 +1634,146 @@ export default {
 
 .beian-dialog .weui-dialog__ft .weui-dialog__btn:after {
   border-left: none;
+}
+
+#dialog {
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.3);
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+}
+.fc-black {
+  color: #333 !important;
+}
+.check-mes {
+  display: block;
+  width: 100%;
+  height: 80px;
+  background-color: #f7f7f7;
+  padding: 10px;
+  font-size: 16px;
+  line-height: 20px;
+  border-radius: 5px;
+}
+
+.horizontal-line-style {
+  background: #dcdcdc;
+  width: 100%;
+  height: 1px;
+}
+.vertical-line-style {
+  background: #000;
+  width: 1px;
+  height: 100%;
+}
+.titleXStyle {
+  margin-top: 20px;
+  font-size: 18px;
+  color: #333333;
+  letter-spacing: 0;
+  text-align: center;
+  line-height: 26px;
+  font-weight: bold;
+}
+.table-style {
+  margin-left: 20px;
+  margin-right: 20px;
+  /* display: flex; */
+}
+.table-content-style {
+  font-size: 16px;
+  color: #333333;
+  line-height: 24px;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  order: 2;
+  word-wrap: break-word;
+  overflow: hidden;
+}
+.table-describe-style {
+  color: #999999;
+  letter-spacing: 0;
+  font-size: 16px;
+  line-height: 24px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  /* width: 40px; */
+  display: block;
+  order: 1;
+  flex: 0 0 auto;
+}
+.table-content-remark {
+  background: #f7f7f7;
+  border-radius: 6px;
+  font-size: 16px;
+  color: #333333;
+}
+
+.border {
+  background-color: white;
+  border-radius: 6px;
+  width: 80%;
+  height: 50%;
+  position: absolute;
+  left: 10%;
+  top: 17%;
+  z-index: 1000;
+  /*transform: translate(-50%,-50%);*/
+}
+.media-upload-categray-type {
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-top: 20px;
+  /* display: flex; */
+}
+.cancel-button {
+  width: 50%;
+  text-align: center;
+  font-size: 18px;
+  color: #666666;
+  letter-spacing: 0;
+  line-height: 44px;
+  background: #ffffff;
+}
+.punch-button {
+  flex-grow: 1;
+  text-align: center;
+  color: #3a90f6;
+  line-height: 44px;
+  font-size: 18px;
+  letter-spacing: 0;
+  background: #ffffff;
+}
+.button-align-bottom {
+  bottom: 5px;
+  position: absolute;
+  width: 100%;
+}
+.button-align-bottom-style {
+  width: 100%;
+  display: flex;
+}
+input {
+  line-height: 30px;
+  border-radius: 4px;
+  border: solid 1px #ccc;
+  padding: 0 4px;
+  width: 100%;
+}
+
+.canvas-hidden {
+  position: absolute;
+  top: -10000px;
+  left: 0;
+}
+.tips {
+  line-height: 30px;
+  margin-left: 10px;
+  font-size: 14px;
 }
 </style>

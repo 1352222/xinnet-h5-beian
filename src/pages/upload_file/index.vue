@@ -7,7 +7,9 @@
           <div class="weui-uploader__file" :id="user.item" style="position:absolute;z-index:99;">
             <span  @click.capture="clearImage" data-type="dele" class="delete">×</span>
             <img src="~@/assets/close.png" @click="clearImage" data-type="dele" class="delete" />
-            <img class="weui-uploader__img" :src="user" mode="aspectFill" />
+            <viewer>
+              <img class="weui-uploader__img" :src="user" mode="aspectFill" />
+            </viewer>
           </div>
         </div>
         <!-- <div v-for="(user, i) in images">
@@ -23,7 +25,7 @@
       <div class="weui-uploader__input-box" style="border: none;">
         <!-- @click.capture="chooseImage" -->
         <div class="weui-uploader__input" data-type="upload">
-          <div v-if="images!=undefined && images!=[]">
+          <div v-if="data.images==undefined || JSON.stringify(data.images)=='[]'">
             <img v-if="type === 'org'" class="uploadbgs" src="~@/assets/hotunit.jpg" mode="aspectFill" />
             <img v-else-if="num === 2" class="uploadbgs" src="~@/assets/reverse-side.jpg" mode="aspectFill" />
             <img v-else class="uploadbgs" src="~@/assets/front.jpg" mode="aspectFill" />
@@ -32,7 +34,7 @@
       </div>
       <input type="file" style="z-index:99;opacity:0;" class="uploadbgsbot" @change="chooseImage" id="files" accept="image/*" multiple="multiple" capture="camera">
       <!-- <input type="file" id="takepicture" accept="image/*" class="uploadbgsbot" placeholder="" v-if="!images.length" @click="chooseImage" /> -->
-      <span data-type="upload" @click="chooseImage" v-if="images!=undefined && images!=[]" class="uploadbgsbot">{{buttonText}}</span>
+      <span data-type="upload" @click="chooseImage" v-if="data.images==undefined || JSON.stringify(data.images)=='[]'" class="uploadbgsbot">{{buttonText}}</span>
 
       <span class="borders top-left-border"></span>
       <span class="borders top-right-border"></span>
@@ -99,7 +101,6 @@ export default {
   },
   methods: {
     ready() {
-      console.log(this.data, 'ddd')
       const { type, num, buttonText } = this
       if (type === 'org') {
         if (!buttonText) {
@@ -114,40 +115,38 @@ export default {
     afiles() {
       let file = $('#files')[0].files[0]
       let reader = new FileReader()
-      console.log(file, reader, '11123')
     },
     setImage(imagePath, image) {
       const self = this
       // this.imagePath = imagePath
       // this.images = [imagePath]
-      // this.image = image
+      this.image = image
       // this.done = true
-      imagePathToBase64(imagePath, self, 'Canvas')
+      // imagePathToBase64(imagePath, self, 'Canvas')
     },
     clearImage() {
       const self = this
-      // const { id } = this.image
-      console.log(self, this.image, this.data, 'iiii')
+      const { id } = this.image
       // // 服务器获取图片调用接口删除
-      // if (id) {
-      //   const param = `attachmentOrderIds=${id}`
-      //   $.ajax({
-      //     url: `/api/miniprogram/deleteAttachment?${param}`,
-      //     success(res) {
-      //       const { code, data, message } = res.data
-      //       if (code === 'success') {
-      //         self.clearImageData()
-      //       } else {
-      //         Toast({
-      //           message: message,
-      //           duration: 3000
-      //         })
-      //       }
-      //     }
-      //   })
-      // } else {
-      //   this.clearImageData()
-      // }
+      if (id) {
+        const param = `attachmentOrderIds=${id}`
+        $.ajax({
+          url: `/api/miniprogram/deleteAttachment?${param}`,
+          success(res) {
+            const { code, data, message } = res.data
+            if (code === 'success') {
+              self.clearImageData()
+            } else {
+              Toast({
+                message: message,
+                duration: 3000
+              })
+            }
+          }
+        })
+      } else {
+        this.clearImageData()
+      }
     },
     clearImageData() {
       this.images = []
@@ -160,12 +159,13 @@ export default {
       const num = this.num
       const key = type === 'org' ? 'orgCertificate' : `${type}Certificate${num}`
       let currentImage = this.globalData.images[key]
-      let globalDatas = globalData
+      let globalDatas = this.globalData
       if (currentImage) {
         globalDatas.images[key] = {}
         this.setData(globalDatas)
       }
-      this.triggerEvent('clearimage')
+      this.$parent.clearImage(type)
+      // this.triggerEvent('clearimage')
     },
     bytes(e) {
       let bytes = new Uint8Array(e.target.result)
@@ -185,7 +185,6 @@ export default {
       reader.onload = e => {
         let data, datas
         if (typeof e.target.result === 'object') {
-          // console.log(e.target, file, e.target.value, [e.target.result], new Blob([e.target.result]), window.URL.createObjectURL(new Blob([e.target.result])), 'w111')
           // data = this.bytes(e)
           let url = this.bytes(e)
           data = 'data:image/jpeg;base64,' + url
@@ -196,27 +195,7 @@ export default {
         this.option.img = data
         this.$parent.cropImagedata(datas, file, this.id, data)
       }
-      // console.log(this.globalData, 'dddaa12')
       reader.readAsArrayBuffer(file)
-      // reader.readAsDataURL(file)
-      // console.log(e, takepicture, cropperType, file, fd, 'chooseimage')
-      // wx.chooseImage({
-      //   // 默认9
-      //   count: 1,
-      //   // 可以指定是原图还是压缩图，默认二者都有
-      //   sizeType: ['original', 'compressed'],
-      //   // sizeType: ['compressed'],
-      //   // 可以指定来源是相册还是相机，默认二者都有
-      //   sourceType: ['camera'],
-      //   success(res) {
-      //     const tempFilePath = res.tempFilePaths[0]
-      //     const tempFilesSize = res.tempFiles[0].size
-      //     self.triggerEvent('cropperimage', { src: tempFilePath })
-      //   },
-      //   fail() {
-      //     self.triggerOnShow = true
-      //   }
-      // })
     },
     // this指向有问题应该是调用时影响的，压缩完成回调
     completeCb (path) {
@@ -283,16 +262,6 @@ export default {
         }
       })
     },
-    previewImage (e) {
-      console.log(e, 'ee11')
-      this.triggerOnShow = true
-      // wx.previewImage({
-      //   // 当前显示图片的http链接
-      //   current: e.currentTarget.id,
-      //   // 需要预览的图片http链接列表
-      //   urls: this.data.images
-      // })
-    },
     ...mapMutations({
       setData: 'SET_DATA'
     })
@@ -322,7 +291,7 @@ export default {
   background: #f00;
 }
 .uploadbgsbot {
-  z-index: 9;
+  /* z-index: 9; */
   height: 30px;
   background: #317ddb;
   font-size: 12px;

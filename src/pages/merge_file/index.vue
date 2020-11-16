@@ -5,7 +5,9 @@
       <span class="borders top-right-border" />
       <span class="borders bottom-left-border" />
       <span class="borders bottom-right-border" />
-      <img v-if="imagePath" class="compound-imgs" :src="imagePath"/>
+      <viewer v-if="imagePath">
+        <img class="compound-imgs" :src="imagePath"/>
+      </viewer>
       <img v-else class="compound-imgs" src="~@/assets/compound.jpg"/>
     </div>
   </div>
@@ -14,6 +16,7 @@
 <script>
 import { mapMutations, mapGetters, mapState } from "vuex"
 import { Toast } from 'mint-ui'
+import { resolve } from 'q';
 export default {
   name: "Merge_file",
   data() {
@@ -38,15 +41,13 @@ export default {
       this.imagePath = imagePath
       this.done = true
       this.image = image
-      // imagePathToBase64(imagePath, this, 'Canvas')
-      // console.log(imagePath, image, 'iimage12')
     },
     setImage(imagePath, image) {
       this.imagePath = imagePath
       this.done = true
       this.image = image
       // this.setData({ imagePath, done: true, image })
-      imagePathToBase64(imagePath, this, 'Canvas')
+      // imagePathToBase64(imagePath, this, 'Canvas')
     },
     clearImage() {
       const self = this
@@ -115,68 +116,41 @@ export default {
     // 保存处理完的图片数据
     setImageData(path, orgDone, cb) {
       const self = this
-      self.imagePath = path
+      // self.imagePath = path
       self.done = true
+      self.image = [path]
+      self.imageBase64 = path
       // 如果所有附件上传完成，执行回调
       if (orgDone) {
         cb()
       }
-      getBase64(path).then(res => {
-        const imageBase64 = res.data
-        self.imageBase64 = imageBase64
-      })
-    },
-    toCompressImage(path, completeCb) {
-      getFileInfo(path).then(res => {
-        const { size } = res
-        if (size > 1024 * 80) {
-          console.log('mergefile112-大于80KB开始压缩：' + size)
-          // 图片质量最低20，如果仍大于80kb压缩尺寸
-          const systemInfo = wx.getSystemInfoSync()
-          const width = systemInfo.windowWidth
-          console.log(path)
-          getLessLimitSizeImage('Canvas', path, 80, width, completeCb)
-        } else {
-          console.log('mergefile124-小于80KB：' + size)
-          completeCb(path)
-        }
-      })
+      // getBase64(path).then(res => {
+      //   const imageBase64 = res.data
+      //   self.imageBase64 = imageBase64
+      // })
     },
     mergeImage(frontPath, sidePath, orgDone, cb) {
-      const ctx = wx.createCanvasContext('Canvas')
-      const systemInfo = wx.getSystemInfoSync()
-      const self = this
-      const newFrontPath = getImageInfo(frontPath)
-      const newSidePath = getImageInfo(sidePath)
-      const width = 580
-      const height = 720 / 2
-      // wx.showLoading({ title: '合成中..', mask: true })
-      Indicator.open('合成中..')
-      return Promise.all([newFrontPath, newSidePath]).then(result => {
-        const [oFront, oSide] = result
-        ctx.drawImage(oFront.path, 0, 0, width, height)
-        ctx.drawImage(oSide.path, 0, height, width, height)
-        console.log('绘图合并完成，开始draw')
-        ctx.draw(false, function () {
-          wx.canvasToTempFilePath({
-            canvasId: 'Canvas',
-            fileType: 'jpg',
-            x: 0,
-            y: 0,
-            width,
-            height: height * 2,
-            // quality: 0.2,
-            quality: 1,
-            success(res) {
-              self.setImageData(res.tempFilePath, orgDone, cb)
-              Indicator.close()
-              // self.toCompressImage(res.tempFilePath, path => {
-              //   self.setImageData(path, orgDone, cb)
-              //   wx.hideLoading()
-              // })
-            }
-          })
-        })
+      return new Promise((resolve) => {
+        const self = this
+        const width = 290
+        const height = 720 / 2
+        const canvas = this.$parent.$refs.canvasimage
+        const ctx = canvas.getContext('2d')
+
+        const img = new Image()
+        img.src = frontPath
+        img.onload = () => {
+          ctx.drawImage(img, 0, 0, width, 80)
+          const img2 = new Image()
+          img2.src = sidePath
+          img2.onload = () => {
+            ctx.drawImage(img2, 0, 70, width, 80)
+            const res = canvas.toDataURL('image/jpeg')
+            this.imagePath = res
+            self.setImageData(this.imagePath, orgDone, cb)
+            resolve(this.imagePath)
+          }
+        }
       })
     },
     ...mapMutations({

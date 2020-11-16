@@ -22,4 +22,10 @@ export default {
   color: #2c3e50;
   margin-top: 60px;
 } */
+.mint-indicator-wrapper {
+  z-index: 10000;
+}
+.mint-indicator-mask {
+  z-index: 10000;
+}
 </style>

@@ -81,7 +81,6 @@ export default {
     }
   },
   mounted: function () {
-    this.onShow()
     this.getData()
     this.first = true
     // this.$router.push('/login')
@@ -169,6 +168,7 @@ export default {
         return res
       }, {})
 
+
       // state: right, wrong, none
       // this.orgState = 'none'
       // this.websiteState = 'none'
@@ -247,38 +247,6 @@ export default {
       this.setData(globalDatas)
     },
 
-    onShow () {
-      // const pages = getCurrentPages()
-      // const currentPage = pages.pop()
-      // console.log(pages)
-      // console.log(pages.length)
-      // console.log(currentPage)
-      const globalData = this.globalData
-      if (!this.first) {
-        // const orderCode = globalData.orderCode
-        // const phone = globalData.phone
-        const self = this
-        $.ajax({
-          // url: `/apiPath/checkPhone?orderCode=${orderCode}&phone=${phone}`,
-          url: `/api/miniprogram/checkPhone?orderCode=ICP4022671241036226&phone=13716918573`,
-          success (data) {
-            let globalDatas = globalData
-            // const { data } = res
-            if (data.code === 'success') {
-              globalDatas.icp = data.data
-              self.setData(globalDatas)
-              self.getData()
-            } else {
-              Toast({
-                message: data.message,
-                duration: 3000
-              })
-            }
-          }
-        })
-      }
-      this.first = false
-    },
     ...mapMutations({
       setData: 'SET_DATA'
     })

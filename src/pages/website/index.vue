@@ -132,26 +132,52 @@
       <!-- v-if="allowSubmit" -->
       <div v-if="allowSubmit" class="confirm" @click="submit">完成</div>
 
-      <!-- <div
-        :mask-closable="false"
-        :title="dialogTitle"
-        v-if="dialogShow"
-        :buttons="buttons"
-        bindbuttontap="dialogButton"
-        ext-class="beian-dialog"
-      >
-        <div class="form">
-          <label class="fields">
-            <div class="label">网站负责人：</div>
-            <input class="weui-input" id="websiteOwnPerson" @input="bindinput" :value="websiteOwn.person" />
-          </label>
-          <label class="fields">
-            <div class="label">网站负责人证件号：</div>
-            <input class="weui-input" id="websiteOwnCode" @input="bindinput" :value="websiteOwn.code" />
-          </label>
+      
+      <div id="dialog" v-show="dialogShow">
+        <div class="border" >
+          <div>
+              <p class="titleXStyle">{{dialogTitle}}</p>
+          </div>
+          <div class="table-style">
+            <div class="table-describe-style">网站负责人：</div>
+            <div class="table-content-style">
+              <input class="weui-input" id="websiteOwnPerson" @input="bindinput" :value="websiteOwn.person" />
+            </div>
+          </div>
+          <div class="table-style">
+            <div class="table-describe-style">网站负责人证件号：</div>
+            <div class="table-content-style">
+              <input class="weui-input" id="websiteOwnCode" @input="bindinput" :value="websiteOwn.code" />
+            </div>
+          </div>
+          <div class="button-align-bottom">
+            <div class="horizontal-line-style"></div>
+            <div class="button-align-bottom-style">
+              <div class="cancel-button" @click="() => {this.dialogShow = false}">取消</div>
+              <div class="vertical-line-style"></div>
+              <div class="punch-button" @click="dialogButton">确定</div>
+            </div>
+          </div>
         </div>
-        <button @click="dialogButton">修改</button>
-      </div> -->
+      </div>
+      
+      <div id="dialog" v-show="tipsDialogShow1">
+        <div class="border" style="height:25%;top:34%;" >
+          <div>
+              <p class="titleXStyle">提示</p>
+          </div>
+          <div class="tips">与PC端填写信息不一致，是否使用手机端信息</div>
+          <div class="button-align-bottom">
+            <div class="horizontal-line-style"></div>
+            <div class="button-align-bottom-style">
+              <div class="punch-button" @click="tipsDialogButton1('use')">使用</div>
+              <div class="vertical-line-style"></div>
+              <div class="cancel-button" @click="tipsDialogButton1('modify')">修改</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- 修改操作弹框 -->
       <!-- <mp-dialog
           mask-closable="{{false}}"
@@ -185,6 +211,7 @@
         </mp-dialog> -->
       <canvas
         class="canvas-hidden"
+        ref="canvasimage"
         style="width: 290px; height: 360px;"
         canvas-id="Canvas"
       />
@@ -197,6 +224,7 @@ import { mapMutations, mapState } from 'vuex'
 import { Indicator, Toast } from 'mint-ui'
 import uploadFile from '../upload_file'
 import mergeFile from '../merge_file'
+import getAttachmentParam from '../../common/getAttachmentParam'
 import $ from 'jquery'
 export default {
   name: 'Website',
@@ -571,7 +599,9 @@ export default {
         $.ajax({
           url: `/api/miniprogram/saveWebsiteInfo`,
           method: "POST",
-          data,
+          headers: { 'Content-Type': 'application/json' },
+          dataType: 'json',
+          data: JSON.stringify(data),
           success(res) {
             // wx.hideLoading()
             Indicator.close()
@@ -694,8 +724,7 @@ export default {
       const merge = this.$refs.merge
 
       const id = this.id
-      // const data = { orderCode: this.globalData.orderCode }
-      const data = { orderCode: 'ICP4022671241036226' }
+      const data = { orderCode: this.globalData.orderCode }
       const NewCheckIn = this.NewCheckIn
       const ChangeCheckIn = this.ChangeCheckIn
       // 新增接入，变更接入，变更主体不做OCR
@@ -726,14 +755,14 @@ export default {
                 self.websiteOwn = websiteOwn
                 self.websiteOwnPerson = websiteOwnPerson
                 self.websiteOwnCode = websiteOwnCode
+                self.writeimage(self.baseurl, self.bb)
                 self.setUploadSuccessData()
                 self.setErrorInfo()
                 self.allowUpdate = true
-                self.writeimage(self.baseurl, self.bb)
               } else if (code === "success" && id === "side") {
+                self.writeimage(self.baseurl, self.bb)
                 self.setUploadSuccessData()
                 self.setErrorInfo()
-                self.writeimage(self.baseurl, self.bb)
               } else {
                 self.setUploadFailData(self.idCardBackAttachment)
                 self.setErrorInfo(true, message)
@@ -807,18 +836,40 @@ export default {
       const { orderType, recordType } = this.globalData
       const front = $("#front")
       const side = $("#side")
-      const merge = $("#merge")
-      const { id } = e.currentTarget
+      const merge = this.$refs.merge
+      const id = this.id
 
       if (id === "front") {
         merge.clearImage()
         this.frontDone = false
         this.mergeDone = false
+        this.front = {
+          name: "",
+          code: "",
+          done: false,
+          option: {},
+          images: [],
+          image: {},
+          imagePath: "",
+          imageBase64: "",
+          buttonText: "",
+        }
         // this.setData({ frontDone: false, mergeDone: false })
       } else if (id === "side") {
         merge.clearImage()
         this.sideDone = false
         this.mergeDone = false
+        this.side = {
+          name: "",
+          code: "",
+          done: false,
+          option: {},
+          images: [],
+          image: {},
+          imagePath: "",
+          imageBase64: "",
+          buttonText: "",
+        }
         // this.setData({ sideDone: false, mergeDone: false })
       }
       // 非变更主体
@@ -829,6 +880,29 @@ export default {
       }
       this.setAllowSubmit(false)
       this.delImageLock()
+    },
+    delImageLock() {
+      const { orderCode, orderType, recordType } = this.globalData
+      let type
+      if (orderType == 'CHANGE_ORG') {
+        type = 'types=ORG'
+      } else if (recordType == 5) {
+        type = 'types=ORG&type=WEBSITE'
+      } else if (recordType != 5) {
+        type = 'types=WEBSITE'
+      }
+      $.ajax({
+        url: `/api/miniprogram/unlock?orderCode=${orderCode}&${type}`,
+        success(res) {
+          const { code, message } = res
+          if (code != 'success') {
+            Toast({
+              message: message,
+              duration: 3000,
+            })
+          }
+        }
+      })
     },
     // 调用对局比对、检验工商接口
     checkData() {
@@ -844,13 +918,15 @@ export default {
         },
       }
       return new Promise((resolve) => {
-        request({
+        $.ajax({
           url: `/api/miniprogram/idCardAttachment`,
           method: "POST",
-          data,
+          headers: { 'Content-Type': 'application/json' },
+          dataType: 'json',
+          data: JSON.stringify(data),
           success(res) {
             Indicator.close()
-            const { code, data, message } = res.data
+            const { code, data, message } = res
             if (!data) {
               self.setErrorInfo(true, message)
               return
@@ -864,7 +940,7 @@ export default {
               ) ||
               code != "success"
             ) {
-              this.tipsDialogShow1 = true
+              self.tipsDialogShow1 = true
               // self.setData({ tipsDialogShow1: true })
               return
             }
@@ -876,14 +952,14 @@ export default {
     },
     // 完成提交所有附件
     submitData() {
-      const front = $("#front")
-      const side = $("#side")
-      const merge = $("#merge")
+      const front = this.front
+      const side = this.side
+      const merge = this.$refs.merge
       const { orderCode, recordType } = this.globalData
-      const data = { orderCode }
+      const data = { orderCode: orderCode }
       const type = recordType === 5 ? "ORG" : "WEBSITE"
       const filePurpose = recordType === 5 ? 3 : 4
-      if (!front.data.image.id) {
+      if (!front.image.id) {
         data.idCardFrontAttachment = {
           ...getAttachmentParam({
             isWebsiteChecklist: "0",
@@ -891,11 +967,11 @@ export default {
             fileState: "SINGLE",
             filePurpose,
             type,
-            byteFile: front.data.imageBase64,
-          }),
+            byteFile: front.imageBase64,
+          }, this.globalData),
         }
       }
-      if (!side.data.image.id) {
+      if (!side.image.id) {
         data.idCardBackAttachment = {
           ...getAttachmentParam({
             isWebsiteChecklist: "0",
@@ -903,11 +979,11 @@ export default {
             fileState: "SINGLE",
             filePurpose,
             type,
-            byteFile: side.data.imageBase64,
-          }),
+            byteFile: side.imageBase64,
+          }, this.globalData),
         }
       }
-      const mergeImage = merge.data.image
+      const mergeImage = merge._data.image
       if (!(mergeImage.length && mergeImage[0].id)) {
         data.idCardMergeAttachment = {
           ...getAttachmentParam({
@@ -916,14 +992,14 @@ export default {
             fileState: "MERGE",
             filePurpose,
             type,
-            byteFile: merge.data.imageBase64,
-          }),
+            byteFile: merge._data.imageBase64.slice(23),
+          }, this.globalData),
         }
       }
       // 3张附件未修改不用提交
       if (
-        front.data.image.id &&
-        side.data.image.id &&
+        front.image.id &&
+        side.image.id &&
         mergeImage.length &&
         mergeImage[0].id
       ) {
@@ -932,15 +1008,17 @@ export default {
           message: "上传成功！",
           duration: 3000,
         })
-        wx.navigateBack()
+        // wx.navigateBack()
         return
       }
 
       Indicator.open("请稍后...")
-      request({
+      $.ajax({
         url: `/api/miniprogram/saveAttachment`,
         method: "POST",
-        data,
+        headers: { 'Content-Type': 'application/json' },
+        dataType: 'json',
+        data: JSON.stringify(data),
         success(res) {
           Indicator.close()
           const { code, data, message } = res.data
@@ -949,7 +1027,7 @@ export default {
               message: "上传成功！",
               duration: 3000,
             })
-            wx.navigateBack()
+            this.$router.push('/list')
           } else {
             Toast({
               message: message,
@@ -972,11 +1050,10 @@ export default {
       }
     },
     // 数据不一致
-    tipsDialogButton1(e) {
-      const { detail } = e
+    tipsDialogButton1(action) {
       const { NewCheckIn, ChangeCheckIn, NoOrgNewWebsite } = this
       // 使用：先保存数据然后工商校验，校验通过提交所有附件数据
-      if (detail.item.text === "使用") {
+      if (action === 'use') {
         this.tipsDialogShow1 = false
         // this.setData({
         //   tipsDialogShow1: false
@@ -987,7 +1064,7 @@ export default {
           this.saveData().then(this.checkData).then(this.submitData)
         }
         // 修改：展示修改操作
-      } else if (detail.item.text === "修改") {
+      } else if (action === 'modify') {
         // 关闭弹窗，显示修改按钮
         this.tipsDialogShow1 = false
         this.allowUpdate = true
@@ -1371,5 +1448,147 @@ export default {
 
 .beian-dialog .weui-dialog__ft .weui-dialog__btn:after {
   border-left: none;
+}
+
+
+#dialog {
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.3);
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+}
+.fc-black {
+  color: #333 !important;
+}
+.check-mes {
+  display: block;
+  width: 100%;
+  height: 80px;
+  background-color: #f7f7f7;
+  padding: 10px;
+  font-size: 16px;
+  line-height: 20px;
+  border-radius: 5px;
+}
+
+.horizontal-line-style {
+  background: #dcdcdc;
+  width: 100%;
+  height: 1px;
+}
+.vertical-line-style {
+  background: #000;
+  width: 1px;
+  height: 100%;
+}
+.titleXStyle {
+  margin-top: 20px;
+  font-size: 18px;
+  color: #333333;
+  letter-spacing: 0;
+  text-align: center;
+  line-height: 26px;
+  font-weight: bold;
+}
+.table-style {
+  margin-left: 20px;
+  margin-right: 20px;
+  /* display: flex; */
+}
+.table-content-style {
+  font-size: 16px;
+  color: #333333;
+  line-height: 24px;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  order: 2;
+  word-wrap: break-word;
+  overflow: hidden;
+}
+.table-describe-style {
+  color: #999999;
+  letter-spacing: 0;
+  font-size: 16px;
+  line-height: 24px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  /* width: 40px; */
+  display: block;
+  order: 1;
+  flex: 0 0 auto;
+}
+.table-content-remark {
+  background: #f7f7f7;
+  border-radius: 6px;
+  font-size: 16px;
+  color: #333333;
+}
+
+.border {
+  background-color: white;
+  border-radius: 6px;
+  width: 80%;
+  height: 50%;
+  position: absolute;
+  left: 10%;
+  top: 17%;
+  z-index: 1000;
+  /*transform: translate(-50%,-50%);*/
+}
+.media-upload-categray-type {
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-top: 20px;
+  /* display: flex; */
+}
+.cancel-button {
+  width: 50%;
+  text-align: center;
+  font-size: 18px;
+  color: #666666;
+  letter-spacing: 0;
+  line-height: 44px;
+  background: #ffffff;
+}
+.punch-button {
+  flex-grow: 1;
+  text-align: center;
+  color: #3a90f6;
+  line-height: 44px;
+  font-size: 18px;
+  letter-spacing: 0;
+  background: #ffffff;
+}
+.button-align-bottom {
+  bottom: 5px;
+  position: absolute;
+  width: 100%;
+}
+.button-align-bottom-style {
+  width: 100%;
+  display: flex;
+}
+input {
+  line-height: 30px;
+  border-radius: 4px;
+  border: solid 1px #ccc;
+  padding: 0 4px;
+  width: 100%;
+}
+
+.canvas-hidden {
+  position: absolute;
+  top: -10000px;
+  left: 0;
+}
+.tips {
+  line-height: 30px;
+  margin-left: 10px;
+  font-size: 14px;
 }
 </style>

@@ -8,7 +8,7 @@ export default function getAttachmentParam(image, globalData) {
     fileSource: 'CUSTOMER',
     // 附件的id，没有覆盖功能传null（有id不需要上传）
     attachmentOrderId: null,
-    orderCode,
+    orderCode: orderCode,
     orderId: icpOrder ? icpOrder.id : '',
     ispOrgId: icpOrgOrder ? icpOrgOrder.id : '',
     ispWebsiteId: icpWebsiteOrder ? icpWebsiteOrder.id : '',
