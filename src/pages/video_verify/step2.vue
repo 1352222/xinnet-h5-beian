@@ -1,20 +1,472 @@
 <template>
-  <div id="video-step2">
-    step2
+<div class="video-step2">
+  <div v-if="videoStep == 1" class="videotape">
+    <video ref="camera" style="height: 100%; width: 100%;"></video>
+    <div class="top-layer layer" />
+    <div class="left-layer layer" />
+    <div class="right-layer layer" />
+    <div class="bottom-layer layer" />
+    <div class="foot-layer" />
+
+    <div class="top-desc">请点击拍摄按键后，用普通话大声朗读以下数字</div>
+    <div class="top-num num">{{num}}</div>
+    <div class="bottom-num num">{{num}}</div>
+    <div class="foot-desc">请保持完整人脸在视频框中（需纯色背景）</div>
+    <div v-if="videoState" class="foot-time">{{time}}S</div>
+    <div v-if="videoDisabled || videoState && time < 6" class="video-button video-button-disabled" />
+    <div v-else @click="handleClick" :class="['video-button', videoState ? 'video-button-start' : '']">
+      <div class="block"></div>
+    </div>
   </div>
+
+  <div v-if="videoStep == 2">
+    <div class="body">
+      <div>
+        <div class="video-wrap">
+          <form ref="form" enctype="multipart/form-data">
+            <video ref="video" class="video" controls="controls">
+              <source name="video" :src="videoSrc" type="video/mp4" />
+            </video>
+          </form>
+        </div>
+        <div class="video-desc">点击查看视频</div>
+        <div class="video-error" v-if="showError">
+          <img class="error-icon" :src="warnImage" />
+          <text>{{error}}</text>
+        </div>
+      </div>
+    </div>
+
+    <div class="foot clearfix">
+      <mt-button class="btn default" @click="restart">重新拍摄</mt-button>
+      <mt-button class="btn primary btn-primary-bg" @click="submit">确认使用</mt-button>
+    </div>
+  </div>
+</div>
 </template>
 
 <script>
+import MediaStreamRecorder from 'msr'
+import { Toast, Indicator } from 'mint-ui'
+import { mapState, mapMutations } from 'vuex'
+import debounce from '../../common/debounce'
+import getUserMedia from '../../common/camera'
 import 'mint-ui/lib/style.css'
+
 export default {
-  name: 'Video-step2',
-  data () {
+  name: "Video-step2",
+  data() {
     return {
+      // 录制步骤
+      videoStep: 1,
+      error: '人脸核验失败，请网站负责人按照要求重新拍摄',
+      showError: false,
+      num: '9 3 7 0',
+      number: '',
+      time: 0,
+      ticktock: null,
+      // 录制状态：true录制中，false停止
+      videoState: false,
+      imageSrc: '',
+      videoSrc: '',
+      // 暂时未使用
+      showVideoSrc: '',
+      videoDisabled: false,
+      warnImage: '../../../static/image/warn.png',
+      mediaRecorder: null,
+      videoBlob: null
     }
   },
+  created() {
+    this.getMediaObj()
+  },
+  mounted() {
+    const { generateNum } = this
+    const num1 = generateNum()
+    const num2 = generateNum()
+    const num3 = generateNum()
+    const num4 = generateNum()
+    // 显示的数据
+    const num = Array.of(num1, num2, num3, num4).join(' ')
+    // 接口使用数据
+    const number = Array.of(num1, num2, num3, num4).join('')
+    this.num = num
+    this.number = number
+  },
+  computed: {
+    ...mapState({
+      globalData: state => state.home.globalData,
+    })
+  },
   methods: {
-  }
+    ...mapMutations({
+      setData: 'SET_DATA'
+    }),
+
+    getMediaObj() {
+      const { navigator } = window
+      if ((navigator.mediaDevices && navigator.mediaDevices.getUserMedia) || navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia) {
+        getUserMedia({ video: true }, this.success)
+      } else {
+        Toast({ message: "你的浏览器不支持访问用户媒体设备", duration: 3000 })
+      }
+    },
+
+    success(stream) {
+      const { camera } = this.$refs
+      const self = this
+      // 将视频流设置为video元素的源
+      camera.srcObject = stream
+      camera.onloadedmetadata = () => {
+        camera.play()
+      }
+      //  录像api的调用
+      this.mediaRecorder = new MediaStreamRecorder(stream)
+      this.mediaRecorder.mimeType = 'video/mp4'
+      this.mediaRecorder.ondataavailable = function (blob) {
+        //  停止以后调用上传
+        if (self.videoSrc == '') {
+          self.videoSrc = window.URL.createObjectURL(blob)
+          self.videoBlob = blob
+        }
+      }
+    },
+
+    generateNum() {
+      return Math.round(Math.random() * 9)
+    },
+
+    stopTimer() {
+      clearInterval(this.ticktock)
+      this.time = 0
+    },
+
+    action() {
+      if (this.time < 10) {
+        this.time += 1
+      } else {
+        // 视频建议3~6秒，超过10秒自动结束
+        this.stopTimer()
+        // 录制完毕
+        this.stopRecord()
+        this.videoState = false
+      }
+    },
+
+    // 定时器
+    timer() {
+      this.ticktock = setInterval(this.action, 1000)
+    },
+
+    // 1.开始：开计时器，禁用按钮，开始录像，6秒后按钮可用
+    // 2.结束：关闭计时器，结束录像
+    handleClick() {
+      const { videoState } = this
+
+      this.action()
+
+      if (!this.videoState) {
+        // 录制开始
+        this.startRecord()
+        this.videoState = !videoState
+      } else {
+        // 关闭计时器
+        this.stopTimer()
+        // 录制完毕
+        this.stopRecord()
+        this.videoDisabled = true
+        this.videoState = !videoState
+        setTimeout(() => {
+          this.videoDisabled = false
+        }, 3000)
+      }
+    },
+
+    restart() {
+      this.getMediaObj()
+      this.videoStep = 1
+      this.showError = false
+      this.error = ''
+      // wx.setNavigationBarTitle({
+      //   title: '拍摄核验视频'
+      // })
+    },
+
+    setErrorInfo(showError = false, error = '') {
+      this.showError = showError
+      this.error = error
+    },
+
+    submit() {
+      Indicator.open({ text: '请稍后..' })
+
+      const formData = new FormData()
+      formData.append('video', this.videoBlob, 'video')
+      formData.append('orderCode', 'ICP4022671241036226')
+      formData.append('number', this.number)
+      formData.append('ext', 'MP4')
+
+      this.request({
+        url: '/silentImageVerify',
+        method: 'POST',
+        data: formData,
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        },
+        success: (res) => {
+          Indicator.close()
+          const self = this
+          const { code, message, data } = JSON.parse(res.data)
+          if (res && res.statusCode != 200) {
+            Toast({ message: '网络异常，请稍后重试', duration: 3000 })
+            return
+          }
+
+          const errorMsg = self.uploadFileTimeoutErrorMsg(message)
+          if (code != 'success') {
+            self.setErrorInfo(true, errorMsg)
+          } else if (data && !data.passed) {
+            self.setErrorInfo(true, errorMsg)
+          } else if (data && data.passed) {
+            self.setData({ videoVerifyImage: data.base64FaceImage })
+            self.setErrorInfo()
+            this.$router.push('/video_verify/step3')
+          }
+        },
+        fail(error) {
+          Indicator.close()
+          const errorMsg = self.uploadFileTimeoutErrorMsg(error.errMsg)
+          self.setErrorInfo(true, errorMsg)
+        }
+      }, () => {
+        Indicator.close()
+      })
+    },
+
+    uploadFileTimeoutErrorMsg(error) {
+      let errorMsg = error
+      if (error == 'uploadFile:fail socket timeout error') {
+        errorMsg = '视频核验失败，请网站负责人按照要求重新拍摄'
+      }
+      return errorMsg
+    },
+    
+    startRecord() {
+      Toast({ message: '请稍后...', duration: 3000 })
+      this.mediaRecorder.start()
+      this.timer()
+    },
+
+    stopRecord() {
+      this.mediaRecorder.stop()
+      this.$refs.camera.pause()
+      this.videoStep = 2
+      Toast({ message: '录制成功！', duration: 3000 })
+    },
+
+    dataURLtoBlob(dataurl) {
+      const arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1]
+      const bstr = atob(arr[1])
+      let n = bstr.length
+      let u8arr = new Uint8Array(n)
+      while (n--) {
+        u8arr[n] = bstr.charCodeAt(n)
+      }
+      return new Blob([u8arr], { type: mime })
+    },
+
+    blobToDataURL(blob, callback) {
+      const file = new FileReader()
+      file.onload = function(e) {
+        callback(e.target.result)
+      }
+      file.readAsDataURL(blob)
+    },
+  },
 }
 </script>
-<style>
+<style scoped>
+.video-step2 {
+  width: 100%;
+  height: 100%;
+  background: #e4eaf6;
+}
+
+.videotape {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.layer {
+  position: absolute;
+  background: #333;
+  opacity: 0.4;
+}
+
+.top-layer {
+  width: 100%;
+  height: 13%;
+  top: 0;
+  left: 0;
+}
+.bottom-layer {
+  width: 100%;
+  height: 13%;
+  bottom: 20%;
+  left: 0;
+}
+.left-layer {
+  width: 13%;
+  height: 54%;
+  top: 13%;
+  left: 0;
+}
+.right-layer {
+  width: 13%;
+  height: 54%;
+  top: 13%;
+  right: 0;
+}
+.foot-layer {
+  position: absolute;
+  background: #333;
+  width: 100%;
+  height: 20%;
+  bottom: 0;
+  left: 0;
+}
+
+.top-desc {
+  position: absolute;
+  top: 2%;
+  font-size: 15px;
+  color: #fff;
+  width: 100%;
+  text-align: center;
+}
+.num {
+  position: absolute;
+  font-size: 20px;
+  font-weight: bold;
+  color: #388de7;
+  width: 100%;
+  text-align: center;
+}
+.top-num {
+  top: 7%;
+}
+.bottom-num {
+  top: 72%;
+}
+
+.foot-desc {
+  position: absolute;
+  top: 82%;
+  font-size: 16px;
+  color: #fff;
+  width: 100%;
+  text-align: center;
+}
+
+.foot-time {
+  position: absolute;
+  top: 90%;
+  right: 15%;
+  font-size: 16px;
+  color: #388de7;
+}
+
+.video-button {
+  position: absolute;
+  top: 88%;
+  left: calc(50% - 25px);
+  width: 50px;
+  height: 50px;
+  border: 5px solid #fff;
+  border-radius: 50%;
+  background: #f00;
+}
+
+.video-button-start {
+  background: #fff;
+}
+
+.video-button-disabled {
+  background: gray;
+}
+
+.video-button-start .block {
+  width: 25px;
+  height: 25px;
+  background: #f00;
+  margin: 12.5px;
+}
+
+.body {
+  background: #fff;
+  padding: 20px 0 40px;
+}
+
+.video-wrap {
+  width: 221px;
+  height: 170px;
+  background: #f4f8fe;
+  border-radius: 2px;
+  margin: 20px auto;
+}
+
+.video {
+  width: 201px;
+  height: 150px;
+  margin: 10px;
+}
+
+.video-desc {
+  font-size: 13px;
+  color: #333;
+  text-align: center;
+}
+
+.video-error {
+  font-size: 13px;
+  line-height: 13px;
+  color: #ff001d;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.title {
+  font-size: 15px;
+  color: #1b1b20;
+  margin: auto 15px;
+}
+
+.foot {
+  margin: 30px 15px auto;
+}
+
+.foot .btn {
+  width: 165px;
+  height: 45px;
+  border-radius: 2px;
+  font-size: 18px;
+  line-height: 30px;
+  font-weight: normal;
+}
+
+.foot .default {
+  float: left;
+  color: #333;
+
+}
+
+.foot .primary {
+  float: right;
+  color: #fff;
+}
+
+.btn-primary-bg {
+  background: linear-gradient(to right, #388de7 , #2c6fd2);
+}
 </style>
