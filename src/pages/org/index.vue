@@ -1,6 +1,6 @@
 <template>
-  <div id="org">
-    <div v-if="cropper">
+  <div id="orgs">
+    <div v-if="cropper" class="croppers">
       <!-- <vue-cropper
         ref='cropper'
         :src="imgSrc"
@@ -10,32 +10,57 @@
         style="width:100%;height:300px;"
       /> -->
       <VueCropper
-        ref="croppers"
-        :img="option.img ? option.img : '~@/assets/front.jpg'"
+        ref="cropper"
+        :img="option.img"
         :outputSize="option.size"
-        :outputType="option.type"
+        :outputType="option.outputType"
+        :info="true"
+        :full="option.full"
+        :canMove="option.canMove"
+        :canMoveBox="option.canMoveBox"
+        :original="option.original"
+        :autoCrop="option.autoCrop"
+        :fixed="option.fixed"
+        :fixedNumber="option.fixedNumber"
+        :centerBox="option.centerBox"
+        :infoTrue="option.infoTrue"
+        :fixedBox="option.fixedBox"
         :ready="cropImage"
         :zoom="cropImage"
         :cropmove="cropImage"
-        :style="'width:' + cropperWidth + 'px;height:' + cropperHeight + 'px;display:block;'"
       />
-      <img :src="srcs" style="width:300px;height:220px;" />
-      <span class="image-cropper-hint">点击中间裁剪框可查看裁剪后的图片tttt</span>
+        <!-- :style="'width:' + cropperWidth + 'px;height:' + cropperHeight + 'px;display:block;'" -->
+      <span class="image-cropper-hint">点击中间裁剪框可查看裁剪后的图片</span>
       <div class="image-cropper-bottoms">
         <button
           class="image-cropper-button"
           type="primary"
-          catchtouchstart='rotate'
-          catchtouchend='end'
+          @click="changeScale(1)"
+          size="mini"
+        >
+          放大
+        </button>
+        <button
+          class="image-cropper-button"
+          type="primary"
+          @click="changeScale(-1)"
+          size="mini"
+        >
+          缩小
+        </button>
+        <button
+          class="image-cropper-button"
+          type="primary"
           data-type="rotate"
           size="mini"
+          @click="rotate"
         >
           旋转
         </button>
         <button
           class="image-cropper-button"
           type="primary"
-          bindtap="getCropperImage"
+          @click="getCropperImage('blob')"
           size="mini"
         >
           确定
@@ -43,19 +68,20 @@
         <button
           class="image-cropper-button"
           type="warn"
-          bindtap="resetImage"
+          @click="resetImage"
           size="mini"
+          style="background:#f2f2f2;color:#fa5151;"
         >
           丢弃
         </button>
       </div>
     </div>
-    <div>
+    <div v-else>
       <div class="container-page log-list">
         <div class="error-info" v-if="showErrorInfo">
           <img class="error-icon" src="~@/assets/warn.png" />
           {{errorInfo}}
-        </div>  
+        </div>
       </div>
 
       <div class="org-top">
@@ -63,10 +89,12 @@
         <div class="bgtop">
           <div class="weui-cell" style="padding:0;">
             <div class="weui-cell__bd">
-              <div class="weui-uploader upload-bgs" style="margin-left: 180rpx;">
+              <div id="org1" class="weui-uploader upload-bgs" style="margin-left: 180rpx;">
                 <upload-file
                   type="org"
                   id="org"
+                  ref="org"
+                  :data="org"
                   bind:cropperimage="cropperImage"
                   bind:chooseimage="chooseImage"
                   bind:clearimage="clearImage"
@@ -105,12 +133,14 @@
         <div class="bgtop">
           <div class="weui-cell" style="padding: 0;">
             <div>
-              <div class="clearfix">
+              <div id="front1" class="clearfix">
                 <upload-file
                   class="box-left"
                   type="own"
                   :num="1"
                   id="front"
+                  ref="front"
+                  :data="front"
                   bind:cropperimage="cropperImage"
                   bind:chooseimage="chooseImage"
                   bind:clearimage="clearImage"
@@ -120,6 +150,8 @@
                   type="own"
                   :num="2"
                   id="side"
+                  ref="side"
+                  :data="side"
                   bind:cropperimage="cropperImage"
                   bind:chooseimage="chooseImage"
                   bind:clearimage="clearImage"
@@ -130,8 +162,7 @@
         </div>
 
         <span class="tit">合成照</span>
-        <merge-file id="merge" type="own" />
-
+        <merge-file ref="merge" id="merge" type="own" />
         <div class="image-info" v-if="frontDone && (own.person || own.code)">
           <div>
             <span class="label">主办单位负责人：</span>
@@ -141,7 +172,7 @@
             <span class="label">主办单位负责人证件号：</span>
             <span class="value">{{own.code}}</span>
           </div>
-          <span v-if="allowUpdate" class="update-button" bindtap="updateOwn">修改</span>
+          <span v-if="allowUpdate" class="update-button" @click="updateOwn">修改</span>
         </div>
         <div class="image-desc" v-else>
           <div>拍照须知：</div>
@@ -149,55 +180,108 @@
           <div>2、请确保照片完整清晰、无遮挡物以及杂物等</div>
           <div>3、请将证件照片方向调整为正向</div>
         </div>
-        
         <div v-if="allowSubmit" class="confirm" bindtap="submit">完成</div>
 
-        <!-- <mp-dialog
-          mask-closable="{{false}}"
-          title="{{dialogTitle}}"
-          show="{{dialogShow}}"
-          buttons="{{buttons}}"
+
+        <div
+          :show="dialogShow"
+          :buttons="buttons"
+          @click="dialogButton"
+          ext-class="beian-dialog"
+        >
+          {{dialogTitle}}
+          <div class="form" v-if="dialogType === 'org'">
+            <label class="fields">
+              <div class="label">主办单位名称：</div>
+              <input class="weui-input" id="orgName" @input="bindinput" :value="org.name" />
+            </label>
+            <label class="fields">
+              <div class="label">主办单位证件号：</div>
+              <input class="weui-input" id="orgCode" @input="bindinput" :value="org.code" />
+            </label>
+            <button @click="dialogButton">修改</button>
+          </div>
+
+
+          <div class="form" v-else-if="dialogType === 'own'">
+            <label class="fields">
+              <div class="label">主办单位负责人：</div>
+              <input class="weui-input" id="ownPerson" @input="bindinput" :value="own.person" />
+            </label>
+            <label class="fields">
+              <div class="label">主办单位证件号：</div>
+              <input class="weui-input" id="ownCode" @input="bindinput" :value="own.code" />
+            </label>
+          </div>
+          <button @click="dialogButton">修改</button>
+        </div>
+
+        <!-- <div
+          :mask-closable="false"
+          title="提示"
+          :show="tipsDialogShow1"
+          :buttons="tipsButtons1"
+          bindbuttontap="tipsDialogButton1"
+        >
+          <div class="tips">与PC端填写信息不一致，是否使用手机端信息</div>
+        </div> -->
+
+        <div
+          :mask-closable="false"
+          title="提示"
+          :show="tipsDialogShow2"
+          :buttons="tipsButtons2"
+          bindbuttontap="tipsDialogButton2"
+        >
+          <div class="tips">{{tipsText}}</div>
+        </div>
+
+        <!-- <el-dialog
+          :mask-closable="false"
+          :title="dialogTitle"
+          :show="dialogShow"
+          :buttons="buttons"
           bindbuttontap="dialogButton"
           ext-class="beian-dialog"
         >
-          <div class="form" wx:if="{{dialogType == 'org'}}">
+          <div class="form" v-if="dialogType === 'org'">
             <label class="fields">
               <div class="label">主办单位名称：</div>
-              <input class="weui-input" id="orgName" bindinput="bindinput" value="{{org.name}}" />
+              <input class="weui-input" id="orgName" @click="bindinput" :value="org.name" />
             </label>
             <label class="fields">
               <div class="label">主办单位证件号：</div>
-              <input class="weui-input" id="orgCode" bindinput="bindinput" value="{{org.code}}" />
+              <input class="weui-input" id="orgCode" @click="bindinput" :value="org.code" />
             </label>
           </div>
 
-          <div class="form" wx:elif="{{dialogType == 'own'}}">
+          <div class="form" v-else-if="dialogType === 'own'">
             <label class="fields">
               <div class="label">主办单位负责人：</div>
-              <input class="weui-input" id="ownPerson" bindinput="bindinput" value="{{own.person}}" />
+              <input class="weui-input" id="ownPerson" @click="bindinput" :value="own.person" />
             </label>
             <label class="fields">
               <div class="label">主办单位证件号：</div>
-              <input class="weui-input" id="ownCode" bindinput="bindinput" value="{{own.code}}" />
+              <input class="weui-input" id="ownCode" @click="bindinput" :value="own.code" />
             </label>
           </div>
-        </mp-dialog>
+        </el-dialog> -->
 
-        <mp-dialog
-          mask-closable="{{false}}"
+        <!-- <mp-dialog
+          :mask-closable="false"
           title="提示"
-          show="{{tipsDialogShow1}}"
-          buttons="{{tipsButtons1}}"
+          :show="tipsDialogShow1"
+          :buttons="tipsButtons1"
           bindbuttontap="tipsDialogButton1"
         >
           <div class="tips">与PC端填写信息不一致，是否使用手机端信息</div>
         </mp-dialog>
 
         <mp-dialog
-          mask-closable="{{false}}"
+          :mask-closable="false"
           title="提示"
-          show="{{tipsDialogShow2}}"
-          buttons="{{tipsButtons2}}"
+          :show="tipsDialogShow2"
+          :buttons="tipsButtons2"
           bindbuttontap="tipsDialogButton2"
         >
           <div class="tips">{{tipsText}}</div>
@@ -210,159 +294,1022 @@
 </template>
 
 <script>
-import { mapMutations, mapGetters, mapState } from "vuex"
+import { mapMutations, mapState } from 'vuex'
 import uploadFile from '../upload_file'
 import mergeFile from '../merge_file'
+import { Indicator, Toast } from 'mint-ui'
 import $ from 'jquery'
 export default {
-    name: "Org",
-    components: { uploadFile, mergeFile },
-    data() {
-        return {// 开始裁剪状态
-          option: {},
-          cropper: false,
-          cropperType: '',
-          // image cropper
-          src:'',
-          srcs: '',
-          cropperWidth: 300,//宽度
-          cropperHeight: 220,//高度
-          // 是否显示错误提示
-          showErrorInfo: false,
-          errorInfo: '',
-          height: 0,
-          canvasWidth: 375,
-          canvasHight: 667,
-          loading: false,
-          // 状态
-          orgDone: false,
-          frontDone: false,
-          sideDone: false,
-          mergeDone: false,
-          allowSubmit: false,
-          allowUpdate: false,
-          // dialog
-          dialogTitle: '',
-          dialogShow: false,
-          // org, own
-          dialogType: '',
-          buttons: [{text: '取消'}, {text: '保存'}],
-          // tips dialog
-          tipsDialogShow1: false,
-          tipsDialogShow2: false,
-          tipsButtons1: [{text: '使用'}, {text: '修改'}],
-          tipsButtons2: [{text: '去核实'}, {text: '继续'}],
-          tipsText: '',
-          // 主办单位信息
-          org: {
-            // 名称
-            name: '',
-            // 营业执照证件号
-            code: '',
-            // 负责人
-            // person: ''
-          },
-          // 主办单位负责人信息
-          own: {
-            // 负责人
-            person: '',
-            // 负责人证件号
-            code: ''
-          },
-          // 修改后表单数据
-          orgName: '',
-          orgCode: '',
-          // orgPerson: '',
-          ownPerson: '',
-          ownCode: '',
-          // 企业证件提示title
-          orgTitle: '请上传营业执照',
-          NewCheckIn: '',
-          ChangeCheckIn: '',
-          NewWebsite: '',
-          NoOrgNewWebsite: ''
+  name: 'Orgs',
+  components: { uploadFile, mergeFile },
+  data() {
+    return {
+      bb: '',
+      baseurl: '',
+      type: '',
+      // 开始裁剪状态
+      option: {
+        img: '',
+        info: true, // 裁剪框的大小信息
+        outputSize: 0.8, // 裁剪生成图片的质量
+        outputType: 'jpeg', // 裁剪生成图片的格式
+        canScale: false, // 图片是否允许滚轮缩放
+        autoCrop: true, // 是否默认生成截图框
+        // autoCropWidth: 300, // 默认生成截图框宽度
+        // autoCropHeight: 200, // 默认生成截图框高度
+        fixedBox: false, // 固定截图框大小 不允许改变
+        fixed: false, // 是否开启截图框宽高固定比例
+        fixedNumber: [7, 5], // 截图框的宽高比例
+        full: true, // 是否输出原图比例的截图
+        canMoveBox: false, // 截图框能否拖动
+        original: false, // 上传图片按照原始比例渲染
+        centerBox: true, // 截图框是否被限制在图片里面
+        infoTrue: true // true 为展示真实输出图片宽高 false 展示看到的截图框宽高
+      },
+      id: '',
+      fileName: '',
+      cropper: false,
+      cropperType: '',
+      // image cropper
+      src: '',
+      srcs: '',
+      cropperWidth: 300,//宽度
+      cropperHeight: 220,//高度
+      // 是否显示错误提示
+      showErrorInfo: false,
+      errorInfo: '',
+      height: 0,
+      canvasWidth: 375,
+      canvasHight: 667,
+      loading: false,
+      // 状态
+      orgDone: false,
+      frontDone: false,
+      sideDone: false,
+      mergeDone: false,
+      allowSubmit: false,
+      allowUpdate: false,
+      // dialog
+      dialogTitle: '',
+      dialogShow: false,
+      // org, own
+      dialogType: '',
+      buttons: [{ text: '取消' }, { text: '保存' }],
+      // tips dialog
+      tipsDialogShow1: false,
+      tipsDialogShow2: false,
+      tipsButtons1: [{ text: '使用' }, { text: '修改' }],
+      tipsButtons2: [{ text: '去核实' }, { text: '继续' }],
+      tipsText: '',
+      // 主办单位信息
+      org: {
+        // 名称
+        name: '',
+        // 营业执照证件号
+        code: '',
+        done: false,
+        option: {},
+        images: [],
+        image: {},
+        imagePath: '',
+        imageBase64: '',
+        buttonText: ''
+        // 负责人
+        // person: ''
+      },
+      front: {
+        name: '',
+        code: '',
+        done: false,
+        option: {},
+        images: [],
+        image: {},
+        imagePath: '',
+        imageBase64: '',
+        buttonText: ''
+      },
+      side: {
+        name: '',
+        code: '',
+        done: false,
+        option: {},
+        images: [],
+        image: {},
+        imagePath: '',
+        imageBase64: '',
+        buttonText: ''
+      },
+      // 主办单位负责人信息
+      own: {
+        // 负责人
+        person: '',
+        // 负责人证件号
+        code: ''
+      },
+      // 修改后表单数据
+      orgName: '',
+      orgCode: '',
+      // orgPerson: '',
+      ownPerson: '',
+      ownCode: '',
+      // 企业证件提示title
+      orgTitle: '请上传营业执照',
+      NewCheckIn: '',
+      ChangeCheckIn: '',
+      NewWebsite: '',
+      NoOrgNewWebsite: ''
+    }
+  },
+  mounted: function () {
+    this.height = this.globalData.height * 2 + 100
+    this.onLoad()
+  },
+  methods: {
+    onLoad() {
+      //获取到image-cropper实例
+      this.cropper = this.$refs.cropper
+
+      const org = this.$refs.org
+      const front = this.$refs.front
+      const side = this.$refs.side
+      const merge = this.$refs.merge
+
+
+      const images = this.globalData.images
+      const {
+        orgCertificate,
+        ownCertificate1,
+        ownCertificate2,
+        ownCertificate3,
+      } = images
+      let orgDone = org.data.done
+      let frontDone = front.data.done
+      let sideDone = side.data.done
+      let mergeDone = merge._data.done
+
+      const serverPath = this.globalData.serverPath
+      if (orgCertificate && orgCertificate.id) {
+        orgDone = true
+        this.org.imagePath = serverPath + orgCertificate.filePath
+        this.org.images = [serverPath + orgCertificate.filePath]
+        this.org.image = orgCertificate
+        this.org.done = true
+        org.setImage(serverPath + orgCertificate.filePath, orgCertificate)
+      }
+      if (ownCertificate1 && ownCertificate1.id) {
+        frontDone = true
+        this.front.imagePath = serverPath + ownCertificate1.filePath
+        this.front.images = [serverPath + ownCertificate1.filePath]
+        this.front.image = ownCertificate1
+        this.front.done = true
+        front.setImage(serverPath + ownCertificate1.filePath, ownCertificate1)
+      }
+      if (ownCertificate2 && ownCertificate2.id) {
+        sideDone = true
+        this.side.imagePath = serverPath + ownCertificate2.filePath
+        this.side.images = [serverPath + ownCertificate2.filePath]
+        this.side.image = ownCertificate2
+        this.side.done = true
+        side.setImage(serverPath + ownCertificate2.filePath, ownCertificate2)
+      }
+      if (ownCertificate3 && ownCertificate3.id) {
+        mergeDone = true
+        merge.setImage(serverPath + ownCertificate3.filePath, [ownCertificate3])
+      }
+
+      const { icpOrgOrder, icpOrder } = this.globalData.icp
+      console.log(icpOrgOrder, icpOrder, 'iiii')
+      const _org = {}
+      const _own = {}
+      let orgName = ''
+      let orgCode = ''
+      // let orgPerson = ''
+      let ownPerson = ''
+      let ownCode = ''
+      // 组织机构代码弹窗不同提示
+      // 组织机构代码orgTitle不同
+      if (icpOrder) {
+        if (icpOrder.certificateTypeId == 12) {
+          this.tipsText = '组织机构代码证信息不正确，请核实'
+          this.orgTitle = '请上传组织机构代码'
+          this.org.buttonText = '点击拍摄组织机构代码'
+          // org._data.buttonText = '点击拍摄组织机构代码'
+          // this.setData({ tipsText: '组织机构代码证信息不正确，请核实', orgTitle: '请上传组织机构代码' })
+          // org.setData({ buttonText: '点击拍摄组织机构代码' })
+        } else {
+          this.tipsText = '工商信息不正确，是否继续进行备案操作'
+          // this.setData({ tipsText: '工商信息不正确，是否继续进行备案操作' })
         }
+      }
+
+      if (icpOrgOrder) {
+        if (icpOrgOrder && icpOrgOrder.orgName) {
+          _org.name = icpOrgOrder.orgName
+          // 修改操作表单的数据
+          orgName = icpOrgOrder.orgName
+        }
+        if (icpOrgOrder && icpOrgOrder.certificateCode) {
+          _org.code = icpOrgOrder.certificateCode
+          orgCode = icpOrgOrder.certificateCode
+        }
+        if (icpOrgOrder && icpOrgOrder.orgOwnerName) {
+          _org.person = icpOrgOrder.orgOwnerName
+          _own.person = icpOrgOrder.orgOwnerName
+          // orgPerson = icpOrgOrder.orgOwnerName
+          ownPerson = icpOrgOrder.orgOwnerName
+        }
+        if (icpOrgOrder && icpOrgOrder.orgOwnerCertificateCode) {
+          _own.code = icpOrgOrder.orgOwnerCertificateCode
+          ownCode = icpOrgOrder.orgOwnerCertificateCode
+        }
+      }
+
+      const { orderType } = this.globalData
+      const NewCheckIn = orderType == 'NEW_CHECK_IN'
+      const ChangeCheckIn = orderType == 'CHANGE_CHECK_IN'
+      const NewWebsite = orderType == 'NEW_WEBSITE'
+      const NoOrgNewWebsite = orderType == 'NO_ORG_NEW_WEBSITE'
+      const ChangeOrg = orderType == 'CHANGE_ORG'
+
+      // 变更主体 信息与PC端不一致时只能修改不能使用
+      if (ChangeOrg) {
+        this.tipsButtons1 = [{ text: '修改' }]
+        // this.setData({ tipsButtons1: [{ text: '修改' }] })
+      }
+
+      this.NewCheckIn = NewCheckIn
+      this.ChangeCheckIn = ChangeCheckIn
+      this.NewWebsite = NewWebsite
+      this.NoOrgNewWebsite = NoOrgNewWebsite
+      this.ChangeOrg = ChangeOrg
+      this.org = _org
+      this.own = _own
+      this.orgName = orgName
+      this.orgCode = orgCode
+      this.ownPerson = ownPerson
+      this.ownCode = ownCode
+      this.orgDone = orgDone
+      this.frontDone = frontDone
+      this.sideDone = sideDone
+      this.mergeDone = mergeDone
+      // this.setData({
+      //   NewCheckIn,
+      //   ChangeCheckIn,
+      //   NewWebsite,
+      //   NoOrgNewWebsite,
+      //   ChangeOrg,
+      //   org: _org,
+      //   own: _own,
+      //   orgName,
+      //   orgCode,
+      //   // orgPerson,
+      //   ownPerson,
+      //   ownCode,
+      //   orgDone,
+      //   frontDone,
+      //   sideDone,
+      //   mergeDone
+      // })
+      if (orgDone && frontDone && sideDone && mergeDone) {
+        this.setAllowSubmit()
+      }
     },
-    mounted: function() {
-      this.height = this.globalData.height * 2 + 100
+    setAllowSubmit(allowSubmit = true) {
+      this.allowSubmit = allowSubmit
+      // this.setData({ allowSubmit })
     },
-    methods: {
-        // 丢弃图片数据
-      resetImage(e) {
-          this.src = ''
-          this.cropper = false
-          this.cropperType = ''
-          // this.setData({ src: '', cropper: false, cropperType: '' })
-      },
-      realTime() {
-        this.previews = data
-      },
-      cropImages(a) {
-        this.src = a
-        console.log(this.$refs.cropper, a, 'cropImages11')
-        this.$refs.cropper && this.$refs.cropper.replace(a)
-      },
-      cropImagedata(a) {
-        console.log(this.$refs.cropper, a, 'aaa')
-        this.srcs = a
-        this.option.img = a
-        this.option.size = 0.1
-        this.option.type = false
-        console.log(this.option, 'opttt11')
-        this.$refs.croppers.img = a
-        // this.$refs.cropper && this.$refs.cropper.replace(a)
-      },
-      cropImage() {
-        console.log(this.$refs.cropper, 'cropimage1')
-      },
-        // 调用裁剪工具
-      cropperImage(e) {
-        const { src } = e.detail
-        const { id } = e.currentTarget
-        this.src = src
-        this.cropper = true
-        this.cropperType = id
-        Indicator.close()
-        // this.setData({ src, cropper: true, cropperType: id })
-        // wx.hideLoading()
-      },
-        // 完成裁剪
-      getCropperImage() {
-        const self = this
-        this.cropper.getImg((o)=>{
-          const tempFilePath = o.url
-          const cropperType = self.cropperType
-          this.cropper = false
-          const cropper = self.$(`#${cropperType}`)
-          cropper.getCropperImage(tempFilePath)
-          //   self.setData({ cropper: false }, () => {
-          //     const cropper = self.selectComponent(`#${cropperType}`)
-          //     cropper.getCropperImage(tempFilePath)
-          //   })
+    changeScale(num) {
+      num = num || 1
+      this.$refs.cropper.changeScale(num)
+    },
+    // 裁剪图片旋转
+    rotate() {
+      this.$refs.cropper.rotateRight()
+    },
+    // 丢弃图片数据
+    resetImage(e) {
+      this.srcs = ''
+      this.option.img = ''
+      this.cropper = false
+      this.cropperType = ''
+    },
+    updateOrg() {
+      this.dialogTitle = '修改营业执照'
+      this.dialogType = 'org'
+      this.dialogShow = true
+    },
+    updateOwn() {
+      this.dialogTitle = '修改证件信息'
+      this.dialogType = 'own'
+      this.dialogShow = true
+    },
+    // 修改单条数据触发
+    bindinput(e) {
+      const key = e.currentTarget.id
+      const value = e.target.value
+      this[key] = value
+    },
+    // 修改数据
+    saveData() {
+      const self = this
+      const {
+        dialogType,
+        orgName,
+        orgCode,
+        // orgPerson,
+        ownPerson,
+        ownCode
+      } = this
+      const data = {
+        orderCode: this.globalData.orderCode,
+        orgAttachment: {
+          ocrOrgName: orgName,
+          ocrOrgCode: orgCode
+          // ocrOrgOwnerName: orgPerson
+        },
+        idCardFrontAttachment: {
+          ocrOrgOwnerName: ownPerson,
+          ocrOrgOwnerCode: ownCode
+        }
+      }
+      return new Promise(resolve => {
+        Indicator.open('请稍后..')
+        // wx.showLoading({ title: '请稍后..', mask: true })
+        request({
+          url: `/api/miniprogram/saveOrgInfo`,
+          method: 'POST',
+          data,
+          success(res) {
+            // wx.hideLoading()
+            Indicator.close()
+            // 保存成功后同步数据
+            this.org = {
+              name: orgName,
+              code: orgCode
+              // person: orgPerson
+            }
+            this.own = {
+              code: ownCode,
+              person: ownPerson
+            }
+            // self.setData({
+            //   org: {
+            //     name: orgName,
+            //     code: orgCode
+            //     // person: orgPerson
+            //   },
+            //   own: {
+            //     code: ownCode,
+            //     person: ownPerson
+            //   }
+            // })
+            resolve()
+          }
         })
-      },
-      toLoginPage() {
-        this.$router.push('/login')
-      },
-      ...mapMutations({
-        setData: "SET_DATA",
-      }),
+      })
     },
-    computed: {
-      ...mapState({
-        globalData: state => state.home.globalData,
-      }),
+    // 修改确认
+    dialogButton(e) {
+      const { detail } = e
+      console.log(detail, 'ddaa')
+      // 确定
+      if (detail == 1) {
+        this.saveLocalData()
+        this.dialogShow = false
+        // this.setData({ dialogShow: false })
+      } else {
+        this.dialogShow = false
+        // this.setData({
+        //   dialogShow: false
+        // })
+      }
     },
+    saveLocalData() {
+      const { dialogType, orgName, orgCode, ownPerson, ownCode } = this
+      const data = {}
+      if (dialogType == 'org') {
+        data.org = {
+          name: orgName,
+          code: orgCode
+          // person: orgPerson
+        }
+        this.data = data
+        // this.setData(data)
+      } else if (dialogType == 'own') {
+        data.own = {
+          code: ownCode,
+          person: ownPerson
+        }
+        this.data = data
+        // this.setData(data)
+      }
+    },
+    setUploadFailData(id) {
+      // const { id } = e.target
+      const org = this.$refs.org
+      const front = this.$refs.front
+      const side = this.$refs.side
+
+      if (id == 'org') {
+        org.clearImageData()
+      } else if (id == 'side') {
+        side.clearImageData()
+      } else if (id == 'front') {
+        front.clearImageData()
+      }
+    },
+    setErrorInfo(showErrorInfo = false, errorInfo = '') {
+      this.showErrorInfo = showErrorInfo
+      this.errorInfo = errorInfo
+      // this.setData({ showErrorInfo, errorInfo })
+    },
+    delImageLock() {
+      const { orderCode } = this.globalData
+      $.ajax({
+        url: `/api/miniprogram/unlock?orderCode=${orderCode}&types=ORG`,
+        success(res) {
+          const { code, message } = res
+          if (code != 'success') {
+            Toast({
+              message: message,
+              duration: 3000
+            })
+          }
+        }
+      })
+    },
+    clearVerifyImage() {
+      const { realityVerify, promiseBook } = this.globalData.images
+      let param = ''
+      if (realityVerify && realityVerify.id) {
+        param = `attachmentOrderIds=${realityVerify.id}`
+      }
+      if (promiseBook && promiseBook.id) {
+        const url = `attachmentOrderIds=${promiseBook.id}`
+        param = param ? param + '&' + url : url
+      }
+      if (param) {
+        $.ajax({
+          url: `/api/miniprogram/deleteAttachment?${param}`,
+          success(res) {
+            const { code, message } = res
+            if (code == 'success') {
+              this.globalData.images.screen = {}
+            } else {
+              Toast({
+                message: message,
+                duration: 3000
+              })
+            }
+          }
+        })
+      }
+    },
+    clearImage(e) {
+      const { orderType } = this.globalData
+      const org = this.$refs.org
+      const front = this.$refs.front
+      const side = this.$refs.side
+      const merge = this.$refs.merge
+      const { id } = e.currentTarget
+
+      if (id == 'org') {
+        this.orgDone = false
+        // this.setData({ orgDone: false })
+      } else if (id == 'front') {
+        merge.clearImage()
+        this.frontDone = false
+        this.mergeDone = false
+        // this.setData({ frontDone: false, mergeDone: false })
+      } else if (id == 'side') {
+        merge.clearImage()
+        this.sideDone = false
+        this.mergeDone = false
+        // this.setData({ sideDone: false, mergeDone: false })
+      }
+
+      // 非变更主体
+      if (orderType != 'CHANGE_ORG') {
+        this.clearVerifyImage()
+      }
+      this.setAllowSubmit(false)
+      this.delImageLock()
+    },
+    // 调用比对数据、检验工商接口
+    checkData() {
+      Indicator.open('加载中...')
+      const self = this
+      const { orderCode, icp } = this.globalData
+      const { org, own } = this
+      const data = {
+        orderCode,
+        orgAttachment: {
+          ocrOrgName: org.name,
+          ocrOrgCode: org.code,
+          // ocrOrgOwnerName: org.person
+        },
+        idCardFrontAttachment: {
+          ocrOrgOwnerName: own.person,
+          ocrOrgOwnerCode: own.code
+        }
+      }
+
+      return new Promise(resolve => {
+        $.ajax({
+          url: `/api/miniprogram/orgAttachment`,
+          method: 'POST',
+          data,
+          success(res) {
+            // wx.hideLoading()
+            Indicator.close()
+            const { code, data, message } = res
+            if (!data) {
+              self.setErrorInfo(true, message)
+              return
+            }
+            const { orgAttachment, idCardFrontAttachment } = data
+            // OCR数据和库中不一样
+            if (!(orgAttachment.ocrOrgCodeResult && orgAttachment.ocrOrgNameResult && idCardFrontAttachment.ocrOrgOwnerCodeResult && idCardFrontAttachment.ocrOrgOwnerNameResult)) {
+              self.tipsDialogShow1 = true
+              // self.setData({ tipsDialogShow1: true })
+              return
+            }
+
+            // 工商信息或组织机构代码不正确
+            if (!orgAttachment.orgInfoVerify) {
+              self.tipsDialogShow2 = true
+              // self.setData({ tipsDialogShow2: true })
+              self.setErrorInfo(true, message)
+              return
+            }
+
+            resolve()
+          }
+        })
+      })
+    },
+    // 完成提交所有附件
+    submitData() {
+      // const org = this.$refs.org
+      // const front = this.$refs.front
+      // const side = this.$refs.side
+      const org = this.org
+      const front = this.front
+      const side = this.side
+      const merge = this.$refs.merge
+      const data = { orderCode: this.globalData.orderCode }
+
+      if (!org.image.id) {
+        data.orgAttachment = {
+          ...getAttachmentParam({
+            isWebsiteChecklist: '0',
+            filePurpose: 2,
+            picSequenceNum: '1',
+            fileState: 'MERGE',
+            type: 'ORG',
+            byteFile: org.imageBase64
+          })
+        }
+      }
+      if (!front.image.id) {
+        data.idCardFrontAttachment = {
+          ...getAttachmentParam({
+            isWebsiteChecklist: '0',
+            filePurpose: 3,
+            picSequenceNum: 1,
+            fileState: 'SINGLE',
+            type: 'ORG',
+            byteFile: front.imageBase64
+          })
+        }
+      }
+      if (!side.image.id) {
+        data.idCardBackAttachment = {
+          ...getAttachmentParam({
+            isWebsiteChecklist: '0',
+            filePurpose: 3,
+            picSequenceNum: 2,
+            fileState: 'SINGLE',
+            type: 'ORG',
+            byteFile: side.imageBase64
+          })
+        }
+      }
+      const mergeImage = merge._data.image
+      if (!(mergeImage.length && mergeImage[0].id)) {
+        data.idCardMergeAttachment = {
+          ...getAttachmentParam({
+            isWebsiteChecklist: '0',
+            filePurpose: 3,
+            picSequenceNum: 3,
+            fileState: 'MERGE',
+            type: 'ORG',
+            byteFile: merge._data.imageBase64
+          })
+        }
+      }
+
+      // 4张附件未修改不用提交
+      if (org.image.id && front.image.id && side.image.id && mergeImage.length && mergeImage[0].id) {
+        // wx.showToast({ title: '上传成功！' })
+        Toast({
+          message: '上传成功！',
+          duration: 3000
+        })
+        // wx.navigateBack()
+        console.log('back,,,wx.navigateBack')
+        return
+      }
+
+      Indicator.open('请稍后...')
+      // wx.showLoading({ title: '请稍后..', mask: true })
+      request({
+        url: `/api/miniprogram/saveAttachment`,
+        method: 'POST',
+        data,
+        success(res) {
+          // wx.hideLoading()
+          Indicator.close()
+          const { code, data, message } = res
+          if (code == 'success') {
+            // wx.showToast({ title: '上传成功！' })
+            Toast({
+              message: '上传成功！',
+              duration: 3000
+            })
+            console.log('back,,,wx.navigateBack')
+            // wx.navigateBack()
+          } else {
+            Toast({
+              message: 'message',
+              duration: 3000
+            })
+          }
+        }
+      })
+    },
+    // 完成
+    submit() {
+      const { NewCheckIn, ChangeCheckIn, NewWebsite, NoOrgNewWebsite } = this
+      // 变更接入不用数据对比，不用校验工商数据
+      if (NewCheckIn || ChangeCheckIn || NewWebsite || NoOrgNewWebsite) {
+        this.submitData()
+      } else {
+        this.checkData().then(this.submitData)
+      }
+    },
+    // 数据不一致
+    tipsDialogButton1(e) {
+      const { NewCheckIn, ChangeCheckIn, NewWebsite, NoOrgNewWebsite } = this
+      const { detail } = e
+      // 使用：先保存数据然后工商校验，校验通过提交所有附件数据
+      // 如果是变更主体或变更网站隐藏第一个按钮后，第二个按钮index是0，所以用文本判断
+      if (detail.item.text == '使用') {
+        this.tipsDialogShow1 = false
+        // this.setData({ tipsDialogShow1: false })
+        if (NewCheckIn || ChangeCheckIn || NewWebsite || NoOrgNewWebsite) {
+          this.saveData().then(this.submitData)
+        } else {
+          this.saveData().then(this.checkData).then(this.submitData)
+        }
+        // 修改：展示修改操作
+      } else if (detail.item.text == '修改') {
+        // 关闭弹窗，显示修改按钮
+        this.tipsDialogShow1 = false
+        this.allowUpdate = true
+        // this.setData({
+        //   tipsDialogShow1: false,
+        //   allowUpdate: true
+        // })
+      }
+    },
+    // 工商数据错误
+    tipsDialogButton2(e) {
+      const { detail } = e
+      // 去核实：停留当前页
+      if (detail.index == 0) {
+        this.tipsDialogShow2 = false
+        this.allowUpdate = true
+        // this.setData({
+        //   tipsDialogShow2: false,
+        //   allowUpdate: true
+        // })
+        // 继续：做标记后提交数据
+      } else if (detail.index == 1) {
+        this.tipsDialogShow2 = false
+        // this.setData({
+        //   tipsDialogShow2: false
+        // })
+        this.submitData()
+      }
+    },
+    realTime() {
+      this.previews = data
+    },
+    cropImagedata(a, file, id, imageBase64) {
+      this.srcs = a
+      this.option.img = a
+      this.cropper = true
+      this.fileName = file.name
+      this.id = id
+    },
+    cropImage() {
+      console.log(this.$refs.cropper, 'cropimage1')
+    },
+    // 调用裁剪工具
+    cropperImage(e) {
+      const { src } = e.detail
+      const { id } = e.currentTarget
+      this.src = src
+      this.cropper = true
+      this.cropperType = id
+      Indicator.close()
+    },
+    // 完成裁剪
+    getCropperImage(type) {
+      let _this = this
+      let formData = new FormData()
+      if (type === 'blob') {
+        this.$refs.cropper.getCropBlob((data) => {
+          let img = window.URL.createObjectURL(data)
+          this.model = true
+          this.modelSrc = img
+          formData.append('file', data, this.fileName)
+          this.cropper = false
+          this.bb = img
+          this.$refs.cropper.getCropData(data => {
+            let url = data.substring(data.indexOf(',') + 1, data.length)
+            this.baseurl = url
+            this.chooseImage(url, img)
+          })
+        })
+      }
+      // const self = this
+      // this.cropper.getImg((o) => {
+      //   const tempFilePath = o.url
+      //   const cropperType = self.cropperType
+      //   this.cropper = false
+      //   const cropper = self.$(`#${cropperType}`)
+      //   cropper.getCropperImage(tempFilePath)
+      //   self.setData({ cropper: false }, () => {
+      //     const cropper = self.selectComponent(`#${cropperType}`)
+      //     cropper.getCropperImage(tempFilePath)
+      //   })
+      // })
+    },
+    blockToDataURL(blob, callback) {
+      console.log(blob, 'bbbb')
+      let a = new FileReader()
+      a.onload = function (e) { callback(e.target.result) }
+      a.readAsDataURL(blob)
+    },
+    bytes(e) {
+      let bytes = new Uint8Array(e.target.result)
+      let binary = ''
+      bytes.map(i => {
+        binary += String.fromCharCode(bytes[i])
+      })
+      return window.btoa(binary)
+    },
+    writeimage(url, img) {
+      // let org = this.$refs.org._data
+      // let front = this.$refs.front._data
+      // let side = this.$refs.side._data
+      let org = this.org
+      let front = this.front
+      let side = this.side
+      if (this.id === 'org') {
+        org.imageBase64 = url
+        org.imagePath = img
+        org.images = [img]
+        org.done = true
+      } else if (this.id === 'front') {
+        front.imageBase64 = url
+        front.imagePath = img
+        front.images = [img]
+        front.done = true
+      } else if (this.id === 'side') {
+        side.imageBase64 = url
+        side.imagePath = img
+        side.images = [img]
+        side.done = true
+      }
+      console.log(org, front, side, 'dattaa')
+    },
+    chooseImage(url, img) {
+      // console.log(this.$refs, this.id, this.baseurl, this.bb, 'fronttttt')
+      this.writeimage(this.baseurl, this.bb)
+      console.log(this.globalData, this.$refs.org, this.$refs.front, this.$refs.side, 'globa11')
+      const self = this
+      const org = $('#org1 > div')
+      const front = $('#front1 > div:first-child')
+      const side = $('#front1 > div:last-child')
+      const merge = this.$refs.merge
+      const id = this.id
+      // const data = { orderCode: this.globalData.orderCode }
+      const data = { orderCode: 'ICP4022671241036226' }
+      const { NewCheckIn, ChangeCheckIn, NewWebsite, NoOrgNewWebsite } = this
+      // 新增接入、无主体新增接入不做OCR
+      // OCR识别数据回显
+      if (id == 'org') {
+        if (!NewCheckIn && !ChangeCheckIn && !NewWebsite && !NoOrgNewWebsite) {
+          data.orgAttachment = {
+            byteFile: url
+          }
+          Indicator.open('识别中..')
+          $.ajax({
+            url: `/api/miniprogram/ocrOrg`,
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            dataType: 'json',
+            data: JSON.stringify(data),
+            success(res) {
+              Indicator.close()
+              const { code, data, message } = res
+              console.log(res.data)
+              if (code === 'success') {
+                const org = {
+                  name: data.ocrOrgName,
+                  code: data.ocrOrgCode,
+                  person: data.ocrOrgOwnerName
+                }
+                console.log(org, data, 'dddd')
+                // 每次OCR后更新修改操作表单
+                const orgName = org.name
+                const orgCode = org.code
+                // const orgPerson = org.person
+                self.org = org
+                self.orgName = orgName
+                self.orgCode = orgCode
+                // self.setData({ org, orgName, orgCode })
+                // self.setUploadSuccessData('org')
+                // self.setErrorInfo()
+                // ORC识别成功可以修改
+                self.allowUpdate = true
+                self.writeimage(self.baseurl, self.bb)
+                // self.setData({
+                //   allowUpdate: true
+                // })
+                // self.baseurl = ''
+                // self.bb = ''
+              } else {
+                Toast({
+                  message: res.message,
+                  duration: 3000
+                })
+                self.setUploadFailData(this.id)
+                self.setErrorInfo(true, message)
+              }
+            }
+          }, () => {
+            self.setUploadFailData(this.id)
+          })
+        } else {
+          self.setUploadSuccessData('org')
+        }
+      } else if (id == 'front' || id == 'side') {
+        if (!NewCheckIn && !ChangeCheckIn && !NewWebsite && !NoOrgNewWebsite) {
+          data.idCardFrontAttachment = {
+            byteFile: url,
+            side: id == 'side' ? 'back' : 'front'
+          }
+          Indicator.open('识别中..')
+          $.ajax({
+            url: `/api/miniprogram/ocrIdCard`,
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            dataType: 'json',
+            data: JSON.stringify(data),
+            success(res) {
+              Indicator.close()
+              const { code, data, message } = res
+              if (code === 'success' && id === 'front') {
+                const own = {
+                  person: data.ocrOrgOwnerName,
+                  code: data.ocrOrgOwnerCode
+                }
+                // 每次OCR后更新修改操作表单
+                const ownPerson = own.person
+                const ownCode = own.code
+                self.own = own
+                self.ownPerson = ownPerson
+                self.ownCode = ownCode
+                // self.setData({ own, ownPerson, ownCode })
+                self.setUploadSuccessData()
+                self.setErrorInfo()
+                this.allowUpdate = true
+                // self.setData({
+                //   allowUpdate: true
+                // })
+
+                // self.baseurl = ''
+                // self.bb = ''
+                // self.$refs.mergeFile.setImages(self.bb)
+                self.writeimage(self.baseurl, self.bb)
+                // self.$refs.merge.setImages(self.baseurl, self.bb)
+                // console.log(self.front, self.side, 'fffff')
+              } else if (code === 'success' && id === 'side') {
+                self.setUploadSuccessData()
+                self.setErrorInfo()
+
+                // self.baseurl = ''
+                // self.bb = ''
+
+                self.writeimage(self.baseurl, self.bb)
+              } else {
+                Toast({
+                  message: res.message,
+                  duration: 3000
+                })
+                self.setUploadFailData(this.id)
+                self.setErrorInfo(true, message)
+              }
+            }
+          }, () => self.setUploadFailData(this.id))
+        } else {
+          self.setUploadSuccessData()
+        }
+      }
+    },
+    setUploadSuccessData(type) {
+      console.log(this.$refs.org, 'tttttype1111')
+      // const org = this.$refs.org
+      // const front = this.$refs.front
+      // const side = this.$refs.side
+      const org = this.org
+      const front = this.front
+      const side = this.side
+      const merge = this.$refs.merge
+      // const merge = this.selectComponent('#merge')
+
+      // 正反面均已上传执行合并
+      if (front.done && side.done && type !== 'org') {
+        // 营业执照上传完成，调用回调显示提交按钮状态
+        merge.mergeImage(
+          front.imagePath,
+          side.imagePath,
+          org.done,
+          this.setAllowSubmit
+        )
+      }
+
+      // 设置各附件上传状态
+      if (front.done && side.done && merge._data.done && org.done) {
+        this.setAllowSubmit(true)
+      } else {
+        this.setAllowSubmit(false)
+      }
+      this.orgDone = org.done
+      this.frontDone = front.done
+      this.sideDone = side.done
+      this.mergeDone = merge._data.done
+      // this.setData({
+      //   orgDone: org.data.done,
+      //   frontDone: front.data.done,
+      //   sideDone: side.data.done,
+      //   mergeDone: merge.data.done
+      // })
+    },
+    toLoginPage() {
+      this.$router.push('/login')
+    },
+    ...mapMutations({
+      setData: "SET_DATA",
+    }),
+  },
+  computed: {
+    ...mapState({
+      globalData: state => state.home.globalData,
+    }),
+  },
 }
 </script>
 <style scoped>
-#org {
-  background: #e4eaf6
+#orgs {
+  background: #e4eaf6;
+  width: 100%;
+  height: 100%;
 }
+.croppers {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+.croppers > div:first-child {
+  display: block;
+  position: absolute;
+  left: 0;
+  /* top: 91px; */
+  z-index: 9991;
+  background: rgb(14, 13, 13);
+  width: 100%;
+  height: 100%;
+}
+
 .clearfix:after {
-  content: '';
+  content: "";
   clear: both;
-  display: block
+  display: block;
 }
 
 .box-left {
@@ -380,7 +1327,8 @@ export default {
   background: #e4eaf6;
   box-sizing: border-box;
 }
-.org-top, .org-bottom {
+.org-top,
+.org-bottom {
   background: #fff;
   padding: 0 15px 20px;
   margin-top: 15px;
@@ -402,10 +1350,10 @@ export default {
   margin: 5px;
 }
 .weui-cells:after {
-  border:none;
+  border: none;
 }
 .weui-cell:after {
-  border:none;
+  border: none;
 }
 
 .borders {
@@ -488,7 +1436,7 @@ export default {
   border-radius: 10px;
   font-size: 13px;
   color: #fff;
-  background: linear-gradient(to right, #388de7 , #2c6fd2);
+  background: linear-gradient(to right, #388de7, #2c6fd2);
 }
 .image-info .label {
   color: #666;
@@ -497,7 +1445,8 @@ export default {
   color: #333;
 }
 
-.dialog {}
+.dialog {
+}
 .weui-dialog {
   width: 325px;
 }
@@ -581,6 +1530,16 @@ export default {
 
 .image-cropper-button {
   margin-right: 5px;
+  padding: 7px 12px;
+  border-radius: 4px;
+  border: none;
+  color: #fff;
+  background: #07c160;
+  font-weight: 600;
+  outline: 0;
+}
+.image-cropper-button:focus {
+  outline: 0;
 }
 
 .beian-dialog .weui-dialog {
@@ -595,7 +1554,7 @@ export default {
   text-align: center;
   color: #fff;
   border: none;
-  background: linear-gradient(to right, #3754c9 , #2a6bc7);
+  background: linear-gradient(to right, #3754c9, #2a6bc7);
 }
 
 .beian-dialog .weui-dialog__hd .weui-dialog__title {
@@ -634,13 +1593,11 @@ export default {
 }
 
 .beian-dialog .weui-dialog__ft .weui-dialog__btn_primary {
-  background: linear-gradient(to right, #388de7 , #2c6fd2);
+  background: linear-gradient(to right, #388de7, #2c6fd2);
   color: #fff;
 }
 
 .beian-dialog .weui-dialog__ft .weui-dialog__btn:after {
   border-left: none;
 }
-
-
 </style>

@@ -7,26 +7,26 @@
 <script>
 import { mapMutations, mapGetters, mapState } from "vuex"
 export default {
-    name: "Result",
-    data() {
-        return {
-            num: 0,
-        }
+  name: "Result",
+  data() {
+    return {
+      num: 0,
+    }
+  },
+  methods: {
+    ...mapMutations({
+      setNum: "SET_NUM",
+    }),
+    increase() {
+      this.num++
+      this.setNum(this.num)
     },
-    methods: {
-        ...mapMutations({
-            setNum: "SET_NUM",
-        }),
-        increase() {
-            this.num++
-            this.setNum(this.num)
-        },
-    },
-    computed: {
-        ...mapState({
-            number: state => state.home.number,
-        }),
-    },
+  },
+  computed: {
+    ...mapState({
+      number: state => state.home.number,
+    }),
+  },
 }
 </script>
 <style>

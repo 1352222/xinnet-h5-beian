@@ -20,16 +20,16 @@
 <script>
 import 'mint-ui/lib/style.css'
 export default {
-    name: "Video-step1",
-    data() {
-        return {
-        }
-    },
-    methods: {
-      submit() {
-        this.$router.push('/video_verify/step2')
-      }
-    },
+  name: 'Video-step1',
+  data () {
+    return {
+    }
+  },
+  methods: {
+    submit () {
+      this.$router.push('/video_verify/step2')
+    }
+  }
 }
 </script>
 <style scoped>
@@ -84,13 +84,13 @@ export default {
   height: 192px;
   background-size: 100% 100%;
   background-repeat: no-repeat;
-  background-image: url('~@/assets/video-verify-bg.png')
+  background-image: url("~@/assets/video-verify-bg.png");
 }
 .btn {
-  width: 100%!important;
-  height: 40px!important;
-  font-size: 18px!important;
-  border-radius: 4px!important;
-  background: linear-gradient(to right, #388de7 , #2c6fd2)!important;
+  width: 100% !important;
+  height: 40px !important;
+  font-size: 18px !important;
+  border-radius: 4px !important;
+  background: linear-gradient(to right, #388de7, #2c6fd2) !important;
 }
 </style>
