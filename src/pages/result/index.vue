@@ -7,10 +7,14 @@
       size="90"
       class="beian-result-msg"
     >
-      <div slot="desc" class="desc">
+			<div class="icon">
+				<img alt="right" src="/static/image/right.png" />
+			</div>
+			<div class="title">核验成功</div>
+      <div class="desc">
         您可返回PC端上传其他附件、查看备案信息、提交审核
       </div>
-      <div slot="handle">
+      <div class="handle">
         <button @click="back" class="weui-btn btn-submit" type="primary">
           返回
         </button>
@@ -18,7 +22,9 @@
     </div>
 
     <div wx:else type="warn" size="90" class="beian-result-msg">
-			<div class="icon"></div>
+			<div class="icon">
+				<img alt="right" src="/static/image/wrong.png" />
+			</div>
       <div class="desc">备案信息不完整，请返回上传资料</div>
       <div class="handle">
         <button @click="back" class="weui-btn btn-submit" type="primary">
@@ -81,6 +87,22 @@ export default {
 .beian-result-msg {
 	width: 100%;
   height: 100%;
+	min-height: 100%;
+	padding-top: 48px;
+	text-align: center;
+	line-height: 1.4;
+	box-sizing: border-box;
+
+}
+
+.icon {
+	margin-bottom: 32px;
+}
+
+.title {
+	font-weight: 700;
+	font-size: 22px;
+	margin-bottom: 20px;
 }
 
 .weui-btn {
@@ -94,5 +116,22 @@ export default {
 
 .desc {
   color: #333;
+	font-size: 17px;
+	font-weight: normal;
+	padding: 0 10%;
+}
+
+.handle {
+	margin-top: 100px;
+}
+
+.btn-submit {
+	height: 38px;
+	line-height: 38px;
+	font-size: 18px;
+	border: 1px solid #fff;
+	border-radius: 4px;
+	font-weight: normal;
+  background: linear-gradient(to right, #388de7 , #2c6fd2);
 }
 </style>
