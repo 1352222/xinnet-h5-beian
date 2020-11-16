@@ -36,7 +36,6 @@ export default {
   },
   methods: {
     getParams(url) {
-      console.log(url)
       const start = url.indexOf('?') + 1
       const orderCodeUrl = url.slice(start)
       const aOrderCodeUrl = orderCodeUrl.split('&')
@@ -68,7 +67,7 @@ export default {
       this.loading = true
       this.error = ''
       this.showError = false
-      const { orderCode, orderType } = this.getParams(window.location.href)
+      const { orderCode, orderType } = this.getParams(window.location.search)
    
       $.ajax({
         url: `/api/miniprogram/checkPhone?phone=${phone}&orderCode=${orderCode}`,
