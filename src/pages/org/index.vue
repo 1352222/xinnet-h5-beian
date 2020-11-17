@@ -129,7 +129,7 @@
       </div>
 
       <div class="org-bottom">
-        <span class="tit">请上传法人证件信息11</span>
+        <span class="tit">请上传法人证件信息</span>
         <div class="bgtop">
           <div class="weui-cell" style="padding: 0;">
             <div>
@@ -803,13 +803,12 @@ export default {
         })
       }
     },
-    clearImage(type) {
+    clearImage(id) {
       const { orderType } = this.globalData
       const org = this.org
       const front = this.front
       const side = this.side
       const merge = this.$refs.merge
-      const { id } = type
 
       if (id == 'org') {
         this.orgDone = false
