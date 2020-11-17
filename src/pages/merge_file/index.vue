@@ -5,8 +5,6 @@
       <span class="borders top-right-border" />
       <span class="borders bottom-left-border" />
       <span class="borders bottom-right-border" />
-      {{imagePath.length}}
-      {{done}}
       <viewer v-if="imagePath">
         <img class="compound-imgs" :src="imagePath"/>
       </viewer>
