@@ -101,7 +101,6 @@ export default {
         self.videoBlob = new Blob([u8arr], { type: mime })
 
         self.videoStep = 2
-        Toast({ message: '录制成功！', duration: 3000 })
         self.$nextTick(() => {
           $(self.$refs.video).on('canplay', () => {
             const duration = self.$refs.video.duration
@@ -114,6 +113,8 @@ export default {
             } else if (duration > max) {
               Toast({ message: '视频录制时长超过规定时长', duration: 3000 })
               self.disabled = true
+            } else {
+              Toast({ message: '录制成功！', duration: 3000 })
             }
           })
         })

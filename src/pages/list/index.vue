@@ -4,7 +4,7 @@
     <div class="container-page">
       <div class="con-msg">
         <!-- 企业或企业变更主体 -->
-        <div v-if="step === 4 || step === 1 && recordType != 5" style="margin:0;" class="con-item" @click="toOrg">
+        <div v-if="step === 4 || step === 1 && globalData.recordType != 5" style="margin:0;" class="con-item" @click="toOrg">
           <div>
             <img src="~@/assets/icon01.jpg" class="imgs" />
             <span>上传主体证件</span>
@@ -16,7 +16,7 @@
           </div>
         </div>
 
-        <div v-if="step === 4 || step === 3 || step === 1 && recordType === 5" class="con-item" @click="toWebsite">
+        <div v-if="step === 4 || step === 3 || step === 1 && globalData.recordType === 5" class="con-item" @click="toWebsite">
           <div>
             <img src="~@/assets/icon02.jpg" class="imgs" />
             <span>{{uploadOrgWebsiteTitle}}</span>
@@ -72,12 +72,10 @@ export default {
         websiteState: 'none',
         realityVerifyState: 'none',
         screenState: 'none',
-      },
-      images: {},
-      recordType: ''
+      }
     }
   },
-  mounted: function () {
+  mounted () {
     const phone = window.sessionStorage.getItem('phone')
     const orderCode = window.sessionStorage.getItem('orderCode')
     const self = this
@@ -88,15 +86,7 @@ export default {
         success(data) {
           const res = data.data
           if (data.code === 'success') {
-            self.setData({
-              icp: res,
-              orderCode: res.icpOrder.orderCode,
-              recordType: res.icpOrder.orgPropertyId,
-              orderType: res.icpOrder.orderType,
-              phone: phone,
-              loading: false
-            })
-            self.getData()
+            self.getData(res, phone)
           } else {
             Toast({
               message: data.message,
@@ -155,8 +145,8 @@ export default {
       this.$router.push('/reality_verify')
       // }
     },
-    getData () {
-      const { icpAttachmentOrders, icpOrder } = this.globalData.icp
+    getData (res, phone) {
+      const { icpAttachmentOrders, icpOrder } = res
       let step
       let uploadOrgWebsiteTitle = '上传网站负责人证件'
       // 变更主体
@@ -266,11 +256,14 @@ export default {
         }
       }
 
-      this.images = images
       this.state = state
-      this.recordType = this.globalData.recordType
-      // this.setData({ step, uploadOrgWebsiteTitle, images, state, recordType: app.globalData.recordType })
       let globalDatas = this.globalData
+      globalDatas.icp = res
+      globalDatas.orderCode = res.icpOrder.orderCode
+      globalDatas.recordType = res.icpOrder.orgPropertyId
+      globalDatas.orderType = res.icpOrder.orderType
+      globalDatas.phone = phone
+      globalDatas.loading = false
       globalDatas.orgState = state.orgState
       globalDatas.websiteState = state.websiteState
       globalDatas.realityVerifyState = state.realityVerifyState

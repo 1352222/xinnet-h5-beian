@@ -74,20 +74,31 @@ export default {
     };
   },
   mounted () {
-    const { images } = this.globalData
-    if (images.realityVerify && images.realityVerify.id) {
-      this.agree = images.realityVerify.id ? true : false
+    if (this.globalData.orderCode) {
+      this.onLoad()
+    } else {
+      this.$watch('globalData.loading', loading => {
+        if (!loading) {
+          this.onLoad()
+        }
+      })
     }
-
-    this.toBase64().then((res) => {
-      if (res.length) {
-        this.checkFormBase64 = res[0].slice(23)
-        this.promiseBookBase64 = res[1].slice(23)
-      }
-      this.loading = false
-    })
   },
   methods: {
+    onLoad() {
+      const { images } = this.globalData
+      if (images.realityVerify && images.realityVerify.id) {
+        this.agree = images.realityVerify.id ? true : false
+      }
+
+      this.toBase64().then((res) => {
+        if (res.length) {
+          this.checkFormBase64 = res[0].slice(23)
+          this.promiseBookBase64 = res[1].slice(23)
+        }
+        this.loading = false
+      })
+    },
     checkboxChange(e) {
       this.agree = !this.agree
     },

@@ -48,7 +48,28 @@ export default {
   methods: {
 		back() {
 			this.$router.push('/list')
-		}
+    },
+    onLoad() {
+      const { recordType, orgState, websiteState, realityVerifyState, screenState } = this.globalData
+      // 个人
+      if (recordType == '5' && websiteState == 'right' && screenState == 'right' && realityVerifyState == 'right') {
+        this.done = true
+        // wx.setNavigationBarTitle({
+        //   title: '提交成功'
+        // })
+      // 企业
+      } else if (recordType != '5' && orgState == 'right' && websiteState == 'right' && screenState == 'right' && realityVerifyState == 'right') {
+        this.done = true
+        // wx.setNavigationBarTitle({
+        //   title: '提交成功'
+        // })
+      } else {
+        this.done = false
+        // wx.setNavigationBarTitle({
+        //   title: '提交失败'
+        // })
+      }
+    }
   },
   computed: {
     ...mapState({
@@ -56,24 +77,14 @@ export default {
     })
 	},
 	mounted() {
-		const { recordType, orgState, websiteState, realityVerifyState, screenState } = this.globalData
-    // 个人
-    if (recordType == '5' && websiteState == 'right' && screenState == 'right' && realityVerifyState == 'right') {
-			this.done = true
-      // wx.setNavigationBarTitle({
-      //   title: '提交成功'
-      // })
-    // 企业
-    } else if (recordType != '5' && orgState == 'right' && websiteState == 'right' && screenState == 'right' && realityVerifyState == 'right') {
-      this.done = true
-      // wx.setNavigationBarTitle({
-      //   title: '提交成功'
-      // })
+    if (this.globalData.orderCode) {
+      this.onLoad()
     } else {
-			this.done = false
-      // wx.setNavigationBarTitle({
-      //   title: '提交失败'
-      // })
+      this.$watch('globalData.loading', loading => {
+        if (!loading) {
+          this.onLoad()
+        }
+      })
     }
 	}
 }

@@ -1,14 +1,6 @@
 <template>
   <div id="orgs">
     <div v-if="cropper" class="croppers">
-      <!-- <vue-cropper
-        ref='cropper'
-        :src="imgSrc"
-        :ready="cropImage"
-        :zoom="cropImage"
-        :cropmove="cropImage"
-        style="width:100%;height:300px;"
-      /> -->
       <VueCropper
         ref="cropper"
         :img="option.img"
@@ -112,12 +104,6 @@
             <span class="label">主办单位证件号：</span>
             <span class="value">{{org.code}}</span>
           </div>
-        <!--
-        <div>
-            <span class="label">主办单位负责人：</span>
-            <span class="value">{{org.person}}</span>
-        </div>
-        -->
           <div v-if="allowUpdate" class="update-button" @click="updateOrg">修改</div>
         </div>
         <div class="image-desc" v-else>
@@ -259,68 +245,6 @@
             </div>
           </div>
         </div>
-
-        <!-- <div
-          :mask-closable="false"
-          title="提示"
-          :show="tipsDialogShow1"
-          :buttons="tipsButtons1"
-          bindbuttontap="tipsDialogButton1"
-        >
-          <div class="tips">与PC端填写信息不一致，是否使用手机端信息</div>
-        </div> -->
-
-        <!-- <el-dialog
-          :mask-closable="false"
-          :title="dialogTitle"
-          :show="dialogShow"
-          :buttons="buttons"
-          bindbuttontap="dialogButton"
-          ext-class="beian-dialog"
-        >
-          <div class="form" v-if="dialogType === 'org'">
-            <label class="fields">
-              <div class="label">主办单位名称：</div>
-              <input class="weui-input" id="orgName" @click="bindinput" :value="org.name" />
-            </label>
-            <label class="fields">
-              <div class="label">主办单位证件号：</div>
-              <input class="weui-input" id="orgCode" @click="bindinput" :value="org.code" />
-            </label>
-          </div>
-
-          <div class="form" v-else-if="dialogType === 'own'">
-            <label class="fields">
-              <div class="label">主办单位负责人：</div>
-              <input class="weui-input" id="ownPerson" @click="bindinput" :value="own.person" />
-            </label>
-            <label class="fields">
-              <div class="label">主办单位证件号：</div>
-              <input class="weui-input" id="ownCode" @click="bindinput" :value="own.code" />
-            </label>
-          </div>
-        </el-dialog> -->
-
-        <!-- <mp-dialog
-          :mask-closable="false"
-          title="提示"
-          :show="tipsDialogShow1"
-          :buttons="tipsButtons1"
-          bindbuttontap="tipsDialogButton1"
-        >
-          <div class="tips">与PC端填写信息不一致，是否使用手机端信息</div>
-        </mp-dialog>
-
-        <mp-dialog
-          :mask-closable="false"
-          title="提示"
-          :show="tipsDialogShow2"
-          :buttons="tipsButtons2"
-          bindbuttontap="tipsDialogButton2"
-        >
-          <div class="tips">{{tipsText}}</div>
-        </mp-dialog> -->
-
         <canvas class="canvas-hidden" ref="canvasimage" style="width: 290px; height: 360px;" canvas-id="Canvas"/>
       </div>
     </div>
@@ -457,7 +381,15 @@ export default {
   },
   mounted: function () {
     this.height = this.globalData.height * 2 + 100
-    this.onLoad()
+    if (this.globalData.orderCode) {
+      this.onLoad()
+    } else {
+      this.$watch('globalData.loading', loading => {
+        if (!loading) {
+          this.onLoad()
+        }
+      })
+    }
   },
   methods: {
     onLoad() {
@@ -468,7 +400,6 @@ export default {
       const front = this.$refs.front
       const side = this.$refs.side
       const merge = this.$refs.merge
-
 
       const images = this.globalData.images
       const {
