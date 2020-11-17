@@ -5,9 +5,7 @@
       <span class="borders top-right-border" />
       <span class="borders bottom-left-border" />
       <span class="borders bottom-right-border" />
-      <viewer v-if="imagePath">
-        <img class="compound-imgs" :src="imagePath"/>
-      </viewer>
+      <img v-if="imagePath" class="compound-imgs" :src="imagePath"/>
       <img v-else class="compound-imgs" src="~@/assets/compound.jpg"/>
     </div>
   </div>
@@ -58,7 +56,9 @@ export default {
       if (image.length > 1) {
         param = `attachmentOrderIds=${image[0].id}&attachmentOrderIds=${image[1].id}`
       } else if (image.length === 1) {
-        param = `attachmentOrderIds=${image[0].id}`
+        if (image[0].id) {
+          param = `attachmentOrderIds=${image[0].id}`
+        }
       }
       // 服务器获取图片调用接口删除
       if (param) {
@@ -133,19 +133,22 @@ export default {
     mergeImage(frontPath, sidePath, orgDone, cb) {
       return new Promise((resolve) => {
         const self = this
-        const width = 290
+        // const width = 290
+        const width = 104
         const height = 720 / 2
         const canvas = this.$parent.$refs.canvasimage
         const ctx = canvas.getContext('2d')
+        canvas.width = 104
+        canvas.height = 137
 
         const img = new Image()
         img.src = frontPath
         img.onload = () => {
-          ctx.drawImage(img, 0, 0, width, 80)
+          ctx.drawImage(img, 0, 0, width, 68)
           const img2 = new Image()
           img2.src = sidePath
           img2.onload = () => {
-            ctx.drawImage(img2, 0, 70, width, 80)
+            ctx.drawImage(img2, 0, 68, width, 69)
             const res = canvas.toDataURL('image/jpeg')
             this.imagePath = res
             self.setImageData(this.imagePath, orgDone, cb)

@@ -212,7 +212,7 @@
       <canvas
         class="canvas-hidden"
         ref="canvasimage"
-        style="width: 290px; height: 360px;"
+        style="width: 104px; height: 137px;"
         canvas-id="Canvas"
       />
     </div>
@@ -551,10 +551,6 @@ export default {
       }
     },
     cropperload(e) {},
-    rotate() {
-      //在用户旋转的基础上旋转90°
-      this.cropper.setAngle((this.cropper.data.angle += 90))
-    },
     end(e) {
       clearInterval(this.data[e.currentTarget.dataset.type])
     },
@@ -832,12 +828,11 @@ export default {
         })
       }
     }, // 删除网站负责人附件也删除幕布照和合成照
-    clearImage(e) {
+    clearImage(id) {
       const { orderType, recordType } = this.globalData
-      const front = this.front
-      const side = this.side
+      const front = this.$refs.front
+      const side = this.$refs.side
       const merge = this.$refs.merge
-      const id = this.id
 
       if (id === "front") {
         merge.clearImage()

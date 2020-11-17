@@ -805,9 +805,9 @@ export default {
     },
     clearImage(type) {
       const { orderType } = this.globalData
-      const org = this.$refs.org
-      const front = this.$refs.front
-      const side = this.$refs.side
+      const org = this.org
+      const front = this.front
+      const side = this.side
       const merge = this.$refs.merge
       const { id } = type
 
@@ -818,11 +818,33 @@ export default {
         merge.clearImage()
         this.frontDone = false
         this.mergeDone = false
+        this.front = {
+          name: '',
+          code: '',
+          done: false,
+          option: {},
+          images: [],
+          image: {},
+          imagePath: '',
+          imageBase64: '',
+          buttonText: ''
+        }
         // this.setData({ frontDone: false, mergeDone: false })
       } else if (id == 'side') {
         merge.clearImage()
         this.sideDone = false
         this.mergeDone = false
+        this.side = {
+          name: '',
+          code: '',
+          done: false,
+          option: {},
+          images: [],
+          image: {},
+          imagePath: '',
+          imageBase64: '',
+          buttonText: ''
+        }
         // this.setData({ sideDone: false, mergeDone: false })
       }
 
@@ -897,6 +919,7 @@ export default {
       const front = this.front
       const side = this.side
       const merge = this.$refs.merge
+      const self = this
       const data = { orderCode: this.globalData.orderCode }
 
       if (!org.image.id) {
@@ -956,6 +979,7 @@ export default {
           message: '上传成功！',
           duration: 3000
         })
+        self.$router.push('/list')
         // wx.navigateBack()
         return
       }
@@ -978,7 +1002,7 @@ export default {
               message: '上传成功！',
               duration: 3000
             })
-            this.$router.push('/list')
+            self.$router.push('/list')
             // wx.navigateBack()
           } else {
             Toast({

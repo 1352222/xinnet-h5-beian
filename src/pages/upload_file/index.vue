@@ -12,13 +12,6 @@
             </viewer>
           </div>
         </div>
-        <!-- <div v-for="(user, i) in images">
-          <div class="weui-uploader__file" bindtap="previewImage" :id="user.item" style="position:absolute;z-index:99;">
-            <span catchtap="clearImage" data-type="dele" class="delete">×</span>
-            <img src="~@/assets/close.png" catchtap="clearImage" data-type="dele" class="delete" />
-            <img class="weui-uploader__img" :src="user.item" mode="aspectFill" />
-          </div>
-        </div> -->
       </div>
 
       <!-- <input type="file" @change="afiles" id="files" accept="image/*" multiple="multiple" capture="camera"> -->
@@ -164,7 +157,7 @@ export default {
         globalDatas.images[key] = {}
         this.setData(globalDatas)
       }
-      this.$parent.clearImage(type)
+      this.$parent.clearImage(this.id)
       // this.triggerEvent('clearimage')
     },
     bytes(e) {
@@ -176,7 +169,7 @@ export default {
       return window.btoa(binary)
     },
     chooseImage(event, num) {
-      let takepicture = $('#takepicture')
+      // let takepicture = $('#takepicture')
       const self = this
       const cropperType = this.cropperType
       let file = event.target.files[0]
@@ -196,71 +189,6 @@ export default {
         this.$parent.cropImagedata(datas, file, this.id, data)
       }
       reader.readAsArrayBuffer(file)
-    },
-    // this指向有问题应该是调用时影响的，压缩完成回调
-    completeCb (path) {
-      const self = this
-      getBase64(path).then(res => {
-        // 转换后赋值给imagesPath
-        self.setData({
-          imagePath: path,
-          images: [path],
-          imageBase64: res.data,
-          done: true
-        })
-        self.triggerEvent('chooseimage')
-      })
-    },
-    getCropperImage (tempFilePath) {
-      const self = this
-      const path = tempFilePath
-      Indicator.open('请稍后...')
-      getFileInfo(path).then(res => {
-        // if (res.size > 1024 * 80) {
-        //   wx.hideLoading()
-        //   wx.showLoading({ title: '压缩中..', mask: true })
-        //   this.toCompressImage(path, 20)
-        // } else {
-        Indicator.close()
-        getImageInfo(path).then(res => {
-          self.completeCb(res.path)
-        })
-        // }
-      })
-    },
-    toCompressImage (path, quality = 20) {
-      const self = this
-      wx.compressImage({
-        src: path,
-        quality,
-        success (res) {
-          const filePath = res.tempFilePath
-          getFileInfo(filePath).then(res => {
-            const { size } = res
-            // 大于80kb压缩并上传
-            if (size > 1024 * 80) {
-              console.log('uploadfile-166-大于80KB开始压缩：' + size)
-              const systemInfo = wx.getSystemInfoSync()
-              const width = systemInfo.windowWidth
-              getLessLimitSizeImage('Canvas', filePath, 80, width, path => {
-                getImageInfo(path).then(res => {
-                  console.log('uploadfile-171压缩完成')
-                  // wx.hideLoading()
-                  Indicator.close()
-                  self.completeCb(res.path)
-                })
-              })
-            } else {
-              console.log('uploadfile-177-图片小于80KB，实际' + (size / 1024) + 'kb')
-              getImageInfo(path).then(res => {
-                // wx.hideLoading()
-                Indicator.close()
-                self.completeCb(res.path)
-              })
-            }
-          })
-        }
-      })
     },
     ...mapMutations({
       setData: 'SET_DATA'
