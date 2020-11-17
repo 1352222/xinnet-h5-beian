@@ -172,17 +172,17 @@ export default {
       }
       const images = icpAttachmentOrders.reduce((res, image) => {
         // 主办单位证件
-        if (image.filePurpose === 2 && image.type === 'ORG' && !image.otherFileType) {
+        if (image.filePurpose === '2' && image.type === 'ORG' && !image.otherFileType) {
           res['orgCertificate'] = image
         }
 
         // 主体负责人证件
-        if (image.filePurpose === 3 && image.type === 'ORG' && !image.otherFileType) {
+        if (image.filePurpose === '3' && image.type === 'ORG' && !image.otherFileType) {
           res[`ownCertificate${image.picSequenceNum}`] = image
         }
 
         // 网站负责人证件
-        if (image.filePurpose === 4 && image.type === 'WEBSITE' && !image.otherFileType) {
+        if (image.filePurpose === '4' && image.type === 'WEBSITE' && !image.otherFileType) {
           res[`websiteCertificate${image.picSequenceNum}`] = image
         }
 
