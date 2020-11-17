@@ -8,11 +8,9 @@
     <div class="body">
       <div>
         <div class="video-wrap">
-          <form ref="form" enctype="multipart/form-data">
-            <video ref="video" class="video" controls="controls">
-              <source name="video" :src="videoSrc" type="video/mp4" />
-            </video>
-          </form>
+          <video ref="video" class="video" controls="controls">
+            <source :src="videoSrc" type="video/mp4" />
+          </video>
         </div>
         <div class="video-desc">点击查看视频</div>
         <div class="video-error" v-if="showError">
@@ -24,7 +22,7 @@
 
     <div class="foot clearfix">
       <mt-button class="btn default" @click="restart">重新拍摄</mt-button>
-      <mt-button class="btn primary btn-primary-bg" @click="submit">确认使用</mt-button>
+      <mt-button :disabled="disabled" class="btn primary btn-primary-bg" @click="submit">确认使用</mt-button>
     </div>
   </div>
 </div>
@@ -50,12 +48,16 @@ export default {
       number: '',
       videoSrc: '',
       warnImage: '../../../static/image/warn.png',
-      videoBlob: null
+      videoBlob: null,
+      // 确定使用按钮状态
+      disabled: false
     }
   },
   mounted() {
     this.generateCode()
     this.showMessageBox()
+  },
+  destroyed() {
   },
   computed: {
     ...mapState({
@@ -85,7 +87,6 @@ export default {
       const self = this
       const video = self.$refs.camera.files[0]
       const reader = new FileReader()
-      console.log(video)
       reader.onload = function() {
         self.videoSrc = this.result
 
@@ -101,6 +102,21 @@ export default {
 
         self.videoStep = 2
         Toast({ message: '录制成功！', duration: 3000 })
+        self.$nextTick(() => {
+          $(self.$refs.video).on('canplay', () => {
+            const duration = self.$refs.video.duration
+            const min = 6
+            const max = 10
+            self.disabled = false
+            if (duration < min) {
+              Toast({ message: '视频录制时长不足规定时长', duration: 3000 })
+              self.disabled = true
+            } else if (duration > max) {
+              Toast({ message: '视频录制时长超过规定时长', duration: 3000 })
+              self.disabled = true
+            }
+          })
+        })
       }
       reader.readAsDataURL(video)
     },
