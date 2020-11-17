@@ -1,24 +1,9 @@
 <template>
 <div class="video-step2">
-  <div v-if="videoStep == 1" class="videotape">
-    <video ref="camera" style="height: 100%; width: 100%;"></video>
-    <div class="top-layer layer" />
-    <div class="left-layer layer" />
-    <div class="right-layer layer" />
-    <div class="bottom-layer layer" />
-    <div class="foot-layer" />
-
-    <div class="top-desc">请点击拍摄按键后，用普通话大声朗读以下数字</div>
-    <div class="top-num num">{{num}}</div>
-    <div class="bottom-num num">{{num}}</div>
-    <div class="foot-desc">请保持完整人脸在视频框中（需纯色背景）</div>
-    <div v-if="videoState" class="foot-time">{{time}}S</div>
-    <div v-if="videoDisabled || videoState && time < 6" class="video-button video-button-disabled" />
-    <div v-else @click="handleClick" :class="['video-button', videoState ? 'video-button-start' : '']">
-      <div class="block"></div>
-    </div>
+  <input @change="changeCamera" style="display: none;" type="file" ref="camera" accept="video/*" capture="user">
+  <div v-if="videoStep == 1" class="call-camera" @click="callCamera">
+    <p>轻触屏幕继续</P>
   </div>
-
   <div v-if="videoStep == 2">
     <div class="body">
       <div>
@@ -46,11 +31,9 @@
 </template>
 
 <script>
-import MediaStreamRecorder from 'msr'
-import { Toast, Indicator } from 'mint-ui'
+import { Toast, Indicator, MessageBox } from 'mint-ui'
 import { mapState, mapMutations } from 'vuex'
-import debounce from '../../common/debounce'
-import getUserMedia from '../../common/camera'
+import $ from 'jquery'
 import 'mint-ui/lib/style.css'
 
 let mediaRecorder = null
@@ -65,34 +48,14 @@ export default {
       showError: false,
       num: '9 3 7 0',
       number: '',
-      time: 0,
-      ticktock: null,
-      // 录制状态：true录制中，false停止
-      videoState: false,
-      imageSrc: '',
       videoSrc: '',
-      // 暂时未使用
-      showVideoSrc: '',
-      videoDisabled: false,
       warnImage: '../../../static/image/warn.png',
       videoBlob: null
     }
   },
-  created() {
-    this.getMediaObj()
-  },
   mounted() {
-    const { generateNum } = this
-    const num1 = generateNum()
-    const num2 = generateNum()
-    const num3 = generateNum()
-    const num4 = generateNum()
-    // 显示的数据
-    const num = Array.of(num1, num2, num3, num4).join(' ')
-    // 接口使用数据
-    const number = Array.of(num1, num2, num3, num4).join('')
-    this.num = num
-    this.number = number
+    this.generateCode()
+    this.showMessageBox()
   },
   computed: {
     ...mapState({
@@ -104,93 +67,73 @@ export default {
       setData: 'SET_DATA'
     }),
 
-    getMediaObj() {
-      const { navigator } = window
-      if ((navigator.mediaDevices && navigator.mediaDevices.getUserMedia) || navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia) {
-        getUserMedia({ video: true }, this.success)
-      } else {
-        Toast({ message: "你的浏览器不支持访问用户媒体设备", duration: 3000 })
+    showMessageBox() {
+      MessageBox.alert(`<p style="font-size: 14px; color: #000;">请牢记如下核验码：<br><span style="font-size: 18px; font-weight: bold; color: #26a2ff;">${this.num}</span></p>`, '').then(() => {
+        this.callCamera()
+      })
+    },
+
+    // 调用相机录像
+    callCamera() {
+      if (this.videoStep == 1) {
+        $(this.$refs.camera).trigger('click')
       }
     },
 
-    success(stream) {
-      const { camera } = this.$refs
+    // 录像完成
+    changeCamera() {
       const self = this
-      // 将视频流设置为video元素的源
-      camera.srcObject = stream
-      camera.onloadedmetadata = () => {
-        camera.play()
-      }
-      //  录像api的调用
-      mediaRecorder = new MediaStreamRecorder(stream)
-      mediaRecorder.mimeType = 'video/mp4'
-      mediaRecorder.ondataavailable = function (blob) {
-        //  停止以后调用上传
-        if (self.videoSrc == '') {
-          self.videoSrc = window.URL.createObjectURL(blob)
-          self.videoBlob = blob
+      const video = self.$refs.camera.files[0]
+      const reader = new FileReader()
+      console.log(video)
+      reader.onload = function() {
+        self.videoSrc = this.result
+
+        let arr = this.result.split(',')
+        let mime = arr[0].match(/:(.*?);/)[1]
+        let bstr = atob(arr[1])
+        let n = bstr.length
+        let u8arr = new Uint8Array(n)
+        while (n--) {
+          u8arr[n] = bstr.charCodeAt(n)
         }
+        self.videoBlob = new Blob([u8arr], { type: mime })
+
+        self.videoStep = 2
+        Toast({ message: '录制成功！', duration: 3000 })
       }
+      reader.readAsDataURL(video)
+    },
+
+    restart() {
+      this.videoStep = 1
+      this.showError = false
+      this.error = ''
+      this.$nextTick(() => {
+        this.generateCode()
+        this.showMessageBox()
+      })
+      // wx.setNavigationBarTitle({
+        //   title: '拍摄核验视频'
+      // })
+    },
+
+    generateCode() {
+      const { generateNum } = this
+      const num1 = generateNum()
+      const num2 = generateNum()
+      const num3 = generateNum()
+      const num4 = generateNum()
+      // 显示的数据
+      const num = Array.of(num1, num2, num3, num4).join(' ')
+      // 接口使用数据
+      const number = Array.of(num1, num2, num3, num4).join('')
+      this.num = num
+      this.number = number
     },
 
     generateNum() {
       return Math.round(Math.random() * 9)
-    },
-
-    stopTimer() {
-      clearInterval(this.ticktock)
-      this.time = 0
-    },
-
-    action() {
-      if (this.time < 10) {
-        this.time += 1
-      } else {
-        // 视频建议3~6秒，超过10秒自动结束
-        this.stopTimer()
-        // 录制完毕
-        this.stopRecord()
-        this.videoState = false
-      }
-    },
-
-    // 定时器
-    timer() {
-      this.ticktock = setInterval(this.action, 1000)
-    },
-
-    // 1.开始：开计时器，禁用按钮，开始录像，6秒后按钮可用
-    // 2.结束：关闭计时器，结束录像
-    handleClick() {
-      const { videoState } = this
-
-      this.action()
-
-      if (!this.videoState) {
-        // 录制开始
-        this.startRecord()
-        this.videoState = !videoState
-      } else {
-        // 关闭计时器
-        this.stopTimer()
-        // 录制完毕
-        this.stopRecord()
-        this.videoDisabled = true
-        this.videoState = !videoState
-        setTimeout(() => {
-          this.videoDisabled = false
-        }, 3000)
-      }
-    },
-
-    restart() {
-      this.getMediaObj()
-      this.videoStep = 1
-      this.showError = false
-      this.error = ''
-      // wx.setNavigationBarTitle({
-      //   title: '拍摄核验视频'
-      // })
     },
 
     setErrorInfo(showError = false, error = '') {
@@ -251,40 +194,8 @@ export default {
         errorMsg = '视频核验失败，请网站负责人按照要求重新拍摄'
       }
       return errorMsg
-    },
-    
-    startRecord() {
-      Toast({ message: '请稍后...', duration: 3000 })
-      mediaRecorder.start()
-      this.timer()
-    },
-
-    stopRecord() {
-      mediaRecorder.stop()
-      this.$refs.camera.pause()
-      this.videoStep = 2
-      Toast({ message: '录制成功！', duration: 3000 })
-    },
-
-    dataURLtoBlob(dataurl) {
-      const arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1]
-      const bstr = atob(arr[1])
-      let n = bstr.length
-      let u8arr = new Uint8Array(n)
-      while (n--) {
-        u8arr[n] = bstr.charCodeAt(n)
-      }
-      return new Blob([u8arr], { type: mime })
-    },
-
-    blobToDataURL(blob, callback) {
-      const file = new FileReader()
-      file.onload = function(e) {
-        callback(e.target.result)
-      }
-      file.readAsDataURL(blob)
-    },
-  },
+    }
+  }
 }
 </script>
 <style scoped>
@@ -470,5 +381,21 @@ export default {
 
 .btn-primary-bg {
   background: linear-gradient(to right, #388de7 , #2c6fd2);
+}
+
+.call-camera {
+  position: relative;;
+  width: 100%;
+  height: 100%;
+}
+.call-camera > p {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.msg-box {
+  font-size: 14px !important;
 }
 </style>
