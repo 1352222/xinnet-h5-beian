@@ -330,7 +330,15 @@ export default {
   },
   mounted: function () {
     this.height = this.globalData.height * 2 + 100
-    this.onLoad()
+    if (this.globalData.orderCode) {
+      this.onLoad()
+    } else {
+      this.$watch('globalData.loading', loading => {
+        if (!loading) {
+          this.onLoad()
+        }
+      })
+    }
   },
   methods: {
     onLoad() {

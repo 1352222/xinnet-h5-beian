@@ -52,17 +52,14 @@ export default {
     }
   },
   mounted() {
-    const { videoVerifyImage, screenState, images, serverPath } = this.globalData
-    const self = this
-    if (screenState == 'right') {
-      const image = serverPath + images.screen.filePath
-      self.screenState = screenState
-      self.rawImage = image
-      self.mergeImageBase64 = image
+    if (this.globalData.orderCode) {
+      this.onLoad()
     } else {
-      const rawImage = videoVerifyImage
-      self.rawImage = rawImage
-      self.promise = self.mergeImage()
+      this.$watch('globalData.loading', loading => {
+        if (!loading) {
+          this.onLoad()
+        }
+      })
     }
   },
   destroyed() {
@@ -74,6 +71,20 @@ export default {
     })
   },
   methods: {
+    onLoad() {
+      const { videoVerifyImage, screenState, images, serverPath } = this.globalData
+      const self = this
+      if (screenState == 'right') {
+        const image = serverPath + images.screen.filePath
+        self.screenState = screenState
+        self.rawImage = image
+        self.mergeImageBase64 = image
+      } else {
+        const rawImage = videoVerifyImage
+        self.rawImage = rawImage
+        self.promise = self.mergeImage()
+      }
+    },
     ...mapMutations({
       setData: 'SET_DATA'
     }),
