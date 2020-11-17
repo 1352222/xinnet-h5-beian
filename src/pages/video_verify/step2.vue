@@ -53,6 +53,8 @@ import debounce from '../../common/debounce'
 import getUserMedia from '../../common/camera'
 import 'mint-ui/lib/style.css'
 
+let mediaRecorder = null
+
 export default {
   name: "Video-step2",
   data() {
@@ -73,7 +75,6 @@ export default {
       showVideoSrc: '',
       videoDisabled: false,
       warnImage: '../../../static/image/warn.png',
-      mediaRecorder: null,
       videoBlob: null
     }
   },
@@ -95,7 +96,7 @@ export default {
   },
   computed: {
     ...mapState({
-      globalData: state => state.home.globalData,
+      globalData: state => state.home.globalData
     })
   },
   methods: {
@@ -121,9 +122,9 @@ export default {
         camera.play()
       }
       //  录像api的调用
-      this.mediaRecorder = new MediaStreamRecorder(stream)
-      this.mediaRecorder.mimeType = 'video/mp4'
-      this.mediaRecorder.ondataavailable = function (blob) {
+      mediaRecorder = new MediaStreamRecorder(stream)
+      mediaRecorder.mimeType = 'video/mp4'
+      mediaRecorder.ondataavailable = function (blob) {
         //  停止以后调用上传
         if (self.videoSrc == '') {
           self.videoSrc = window.URL.createObjectURL(blob)
@@ -254,12 +255,12 @@ export default {
     
     startRecord() {
       Toast({ message: '请稍后...', duration: 3000 })
-      this.mediaRecorder.start()
+      mediaRecorder.start()
       this.timer()
     },
 
     stopRecord() {
-      this.mediaRecorder.stop()
+      mediaRecorder.stop()
       this.$refs.camera.pause()
       this.videoStep = 2
       Toast({ message: '录制成功！', duration: 3000 })

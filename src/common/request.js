@@ -24,7 +24,8 @@ export default function request(params, failCb) {
   })
 
   service.interceptors.response.use(function (res) {
-    console.log('ajax请求success')
+    console.log('ajax成功回调！')
+    console.log(res)
     if (res && res.status != 200) {
       Indicator.close()
       Toast({
@@ -36,7 +37,7 @@ export default function request(params, failCb) {
     }
     return res
   }, function (error) {
-    console.log('ajax请求失败，fail')
+    console.log('ajax失败回调！')
     console.log(error)
     let msg = error.errMsg
     if (error.errMsg && error.errMsg.indexOf('请求超时') > -1) {
@@ -44,6 +45,8 @@ export default function request(params, failCb) {
     } else if (error.errMsg && error.errMsg.indexOf('ERR_ADDRESS_UNREACHABLE') > -1) {
       msg = '网络异常，请稍后重试'
     } else if (error.errMsg && error.errMsg.indexOf('ERR_TIMED_OUT') > -1) {
+      msg = '网络异常，请稍后重试'
+    } else {
       msg = '网络异常，请稍后重试'
     }
     Indicator.close()

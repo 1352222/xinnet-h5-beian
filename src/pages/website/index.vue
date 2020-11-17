@@ -1021,7 +1021,7 @@ export default {
         data: JSON.stringify(data),
         success(res) {
           Indicator.close()
-          const { code, data, message } = res.data
+          const { code, data, message } = res
           if (code === "success") {
             Toast({
               message: "上传成功！",

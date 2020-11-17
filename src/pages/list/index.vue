@@ -66,8 +66,6 @@ export default {
   data() {
     return {
       first: false,
-      step: 1,
-      uploadOrgWebsiteTitle: '',
       // 取值right, wrong, none
       state: {
         orgState: 'none',
@@ -80,7 +78,45 @@ export default {
     }
   },
   mounted: function () {
-    this.getData()
+    const phone = window.sessionStorage.getItem('phone')
+    const orderCode = window.sessionStorage.getItem('orderCode')
+    const self = this
+    if (phone && orderCode) {
+      self.setData({ loading: true })
+      $.ajax({
+        url: `/api/miniprogram/checkPhone?orderCode=${orderCode}&phone=${phone}`,
+        success(data) {
+          const res = data.data
+          if (data.code === 'success') {
+            self.setData({
+              icp: res,
+              orderCode: res.icpOrder.orderCode,
+              recordType: res.icpOrder.orgPropertyId,
+              orderType: res.icpOrder.orderType,
+              phone: phone,
+              loading: false
+            })
+            self.getData()
+          } else {
+            Toast({
+              message: data.message,
+              duration: 3000
+            })
+          }
+        },
+        error() {
+          self.setData({ loading: false })
+        }
+      })
+    }
+    // if (!this.globalData.loading) {
+    //   this.getData()
+    // }
+    // this.$watch('globalData.loading', (loading) => {
+    //   if (!loading) {
+    //     this.getData()
+    //   }
+    // })
     this.first = true
     // this.$router.push('/login')
   },
@@ -134,7 +170,6 @@ export default {
       } else {
         step = 4
       }
-
       const images = icpAttachmentOrders.reduce((res, image) => {
         // 主办单位证件
         if (image.filePurpose === 2 && image.type === 'ORG' && !image.otherFileType) {
@@ -231,8 +266,6 @@ export default {
         }
       }
 
-      this.step = step
-      this.uploadOrgWebsiteTitle = uploadOrgWebsiteTitle
       this.images = images
       this.state = state
       this.recordType = this.globalData.recordType
@@ -243,6 +276,8 @@ export default {
       globalDatas.realityVerifyState = state.realityVerifyState
       globalDatas.screenState = state.screenState
       globalDatas.images = images
+      globalDatas.step = step
+      globalDatas.uploadOrgWebsiteTitle = uploadOrgWebsiteTitle
       this.setData(globalDatas)
     },
 
@@ -252,7 +287,9 @@ export default {
   },
   computed: {
     ...mapState({
-      globalData: state => state.home.globalData
+      globalData: state => state.home.globalData,
+      step: state => state.home.globalData.step,
+      uploadOrgWebsiteTitle: state => state.home.globalData.uploadOrgWebsiteTitle
     })
   }
 }

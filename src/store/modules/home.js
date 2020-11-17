@@ -4,6 +4,11 @@ const home = {
     state: {
         number: 1,
         globalData: {
+            loading: false,
+            // 列表步骤
+            step: 1,
+            // 列表网站负责人文案
+            uploadOrgWebsiteTitle: '',
             height: 0,
             // 企业
             // orderCode: 'ICP4257698047009124',
