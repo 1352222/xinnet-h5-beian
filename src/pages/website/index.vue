@@ -834,8 +834,8 @@ export default {
     }, // 删除网站负责人附件也删除幕布照和合成照
     clearImage(e) {
       const { orderType, recordType } = this.globalData
-      const front = $("#front")
-      const side = $("#side")
+      const front = this.front
+      const side = this.side
       const merge = this.$refs.merge
       const id = this.id
 
@@ -959,6 +959,7 @@ export default {
       const data = { orderCode: orderCode }
       const type = recordType === 5 ? "ORG" : "WEBSITE"
       const filePurpose = recordType === 5 ? 3 : 4
+      const self = this
       if (!front.image.id) {
         data.idCardFrontAttachment = {
           ...getAttachmentParam({
@@ -1008,6 +1009,7 @@ export default {
           message: "上传成功！",
           duration: 3000,
         })
+        self.$router.push('/list')
         // wx.navigateBack()
         return
       }
@@ -1027,7 +1029,7 @@ export default {
               message: "上传成功！",
               duration: 3000,
             })
-            this.$router.push('/list')
+            self.$router.push('/list')
           } else {
             Toast({
               message: message,

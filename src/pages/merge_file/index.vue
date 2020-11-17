@@ -5,6 +5,8 @@
       <span class="borders top-right-border" />
       <span class="borders bottom-left-border" />
       <span class="borders bottom-right-border" />
+      {{imagePath.length}}
+      {{done}}
       <viewer v-if="imagePath">
         <img class="compound-imgs" :src="imagePath"/>
       </viewer>
@@ -17,6 +19,7 @@
 import { mapMutations, mapGetters, mapState } from "vuex"
 import { Toast } from 'mint-ui'
 import { resolve } from 'q';
+import $ from 'jquery'
 export default {
   name: "Merge_file",
   data() {
@@ -64,7 +67,7 @@ export default {
         $.ajax({
           url: `/api/miniprogram/deleteAttachment?${param}`,
           success(res) {
-            const { code, data, message } = res.data
+            const { code, data, message } = res
             if (code === 'success') {
               self.clearImageData()
             } else {
@@ -88,23 +91,23 @@ export default {
         const key2 = `websiteCertificate3`
         const currentImage1 = this.globalData.images[key1]
         if (currentImage1) {
-          let globalDatas = globalData
+          let globalDatas = this.globalData
           globalDatas.images[key1] = {}
-          self.setData(globalDatas)
+          this.setData(globalDatas)
         }
         const currentImage2 = this.globalData.images[key2]
         if (currentImage2) {
-          let globalDatas = globalData
+          let globalDatas = this.globalData
           globalDatas.images[key2] = {}
-          self.setData(globalDatas)
+          this.setData(globalDatas)
         }
       } else {
         let key = `${type}Certificate3`
         let currentImage = this.globalData.images[key]
         if (currentImage) {
-          let globalDatas = globalData
+          let globalDatas = this.globalData
           globalDatas.images[key] = {}
-          self.setData(globalDatas)
+          this.setData(globalDatas)
         }
       }
       this.imagePath = ''
