@@ -18,7 +18,7 @@
       <div class="weui-uploader__input-box" style="border: none;">
         <!-- @click.capture="chooseImage" -->
         <div class="weui-uploader__input" data-type="upload">
-          <div v-if="data.images==undefined || JSON.stringify(data.images)=='[]'">
+          <div v-if="(data.images ? data.images : images)==undefined || JSON.stringify(data.images ? data.images : images)=='[]'">
             <img v-if="type === 'org'" class="uploadbgs" src="~@/assets/hotunit.jpg" mode="aspectFill" />
             <img v-else-if="num === 2" class="uploadbgs" src="~@/assets/reverse-side.jpg" mode="aspectFill" />
             <img v-else class="uploadbgs" src="~@/assets/front.jpg" mode="aspectFill" />
@@ -27,7 +27,7 @@
       </div>
       <input type="file" style="z-index:99;opacity:0;" class="uploadbgsbot" @change="chooseImage" id="files" accept="image/*" multiple="multiple" capture="camera">
       <!-- <input type="file" id="takepicture" accept="image/*" class="uploadbgsbot" placeholder="" v-if="!images.length" @click="chooseImage" /> -->
-      <span data-type="upload" @click="chooseImage" v-if="data.images==undefined || JSON.stringify(data.images)=='[]'" class="uploadbgsbot">{{buttonText}}</span>
+      <span data-type="upload" @click="chooseImage" v-if="(data.images ? data.images : images)==undefined || JSON.stringify(data.images ? data.images : images)=='[]'" class="uploadbgsbot">{{buttonText}}</span>
 
       <span class="borders top-left-border"></span>
       <span class="borders top-right-border"></span>
