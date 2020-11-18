@@ -2,7 +2,8 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <!-- <meta name="viewport" content="width=device-width,initial-scale=1.0"> -->
     <title>xinnet-beian</title>
     <style>
       html, body, #app {
@@ -14,6 +15,18 @@
     </style>
     <script src="//cdn.bootcdn.net/ajax/libs/eruda/2.3.3/eruda.js"></script>
     <script>eruda.init();</script>
+    <script>
+      window.onload = function() {
+        document.addEventListener('touchstart', function(event) {
+          if (event.touches.length > 1) {
+            event.preventDefault()
+          }
+        })
+        document.addEventListener('gesturestart', function(event) {
+          event.preventDefault()
+        })
+      }
+    </script>
   </head>
   <body>
     <div id="app"></div>
