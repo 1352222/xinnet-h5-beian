@@ -3,7 +3,7 @@
     <div class="weui-uploader__bd upload-bg upload-file">
       <div class="weui-uploader__files" id="uploaderFiles">
         <!-- {{data.images ? data.images : ''}} -->
-        <div v-for="(user, i) in data.images" :key="i">
+        <div v-for="(user, i) in (data.images ? data.images : images)" :key="i">
           <div class="weui-uploader__file" :id="user.item" style="position:absolute;z-index:99;">
             <span  @click.capture="clearImage" data-type="dele" class="delete">×</span>
             <img src="~@/assets/close.png" @click="clearImage" data-type="dele" class="delete" />
@@ -111,10 +111,10 @@ export default {
     },
     setImage(imagePath, image) {
       const self = this
-      // this.imagePath = imagePath
-      // this.images = [imagePath]
+      this.imagePath = imagePath
+      this.images = [imagePath]
       this.image = image
-      // this.done = true
+      this.done = true
       // imagePathToBase64(imagePath, self, 'Canvas')
     },
     clearImage() {
