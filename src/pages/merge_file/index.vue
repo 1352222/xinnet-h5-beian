@@ -125,10 +125,6 @@ export default {
       if (orgDone) {
         cb()
       }
-      // getBase64(path).then(res => {
-      //   const imageBase64 = res.data
-      //   self.imageBase64 = imageBase64
-      // })
     },
     mergeImage(frontPath, sidePath, orgDone, cb) {
       return new Promise((resolve) => {

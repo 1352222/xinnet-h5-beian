@@ -396,9 +396,9 @@ export default {
       //获取到image-cropper实例
       this.cropper = this.$refs.cropper
 
-      const org = this.$refs.org
-      const front = this.$refs.front
-      const side = this.$refs.side
+      const org = this.org
+      const front = this.front
+      const side = this.side
       const merge = this.$refs.merge
 
       const images = this.globalData.images
@@ -541,7 +541,6 @@ export default {
     },
     setAllowSubmit(allowSubmit = true) {
       this.allowSubmit = allowSubmit
-      // this.setData({ allowSubmit })
     },
     changeScale(num) {
       num = num || 1
@@ -607,7 +606,6 @@ export default {
           dataType: 'json',
           data: JSON.stringify(data),
           success(res) {
-            // wx.hideLoading()
             Indicator.close()
             // 保存成功后同步数据
             this.org = {
@@ -619,17 +617,7 @@ export default {
               code: ownCode,
               person: ownPerson
             }
-            // self.setData({
-            //   org: {
-            //     name: orgName,
-            //     code: orgCode
-            //     // person: orgPerson
-            //   },
-            //   own: {
-            //     code: ownCode,
-            //     person: ownPerson
-            //   }
-            // })
+
             resolve()
           }
         })
@@ -637,44 +625,23 @@ export default {
     },
     // 修改确认
     dialogButton(e) {
-      const { detail } = e
-      // 确定
-      if (detail == 1) {
-        this.saveLocalData()
-        this.dialogShow = false
-        // this.setData({ dialogShow: false })
-      } else {
-        this.dialogShow = false
-        // this.setData({
-        //   dialogShow: false
-        // })
-      }
+      this.saveLocalData()
+      this.dialogShow = false
     },
     dialogHidden() {
       this.dialogShow = false
     },
     saveLocalData() {
       const { dialogType, orgName, orgCode, ownPerson, ownCode } = this
-      const data = {}
       if (dialogType == 'org') {
-        data.org = {
-          name: orgName,
-          code: orgCode
-          // person: orgPerson
-        }
-        this.data = data
-        // this.setData(data)
+        this.org.name = orgName
+        this.org.code = orgCode
       } else if (dialogType == 'own') {
-        data.own = {
-          code: ownCode,
-          person: ownPerson
-        }
-        this.data = data
-        // this.setData(data)
+        this.own.code = ownCode
+        this.own.person = ownPerson
       }
     },
     setUploadFailData(id) {
-      // const { id } = e.target
       const org = this.$refs.org
       const front = this.$refs.front
       const side = this.$refs.side
@@ -690,7 +657,6 @@ export default {
     setErrorInfo(showErrorInfo = false, errorInfo = '') {
       this.showErrorInfo = showErrorInfo
       this.errorInfo = errorInfo
-      // this.setData({ showErrorInfo, errorInfo })
     },
     delImageLock() {
       const { orderCode } = this.globalData
@@ -743,7 +709,17 @@ export default {
 
       if (id == 'org') {
         this.orgDone = false
-        // this.setData({ orgDone: false })
+        this.org = {
+          name: '',
+          code: '',
+          done: false,
+          option: {},
+          images: [],
+          image: {},
+          imagePath: '',
+          imageBase64: '',
+          buttonText: ''
+        }
       } else if (id == 'front') {
         merge.clearImage()
         this.frontDone = false
@@ -759,7 +735,6 @@ export default {
           imageBase64: '',
           buttonText: ''
         }
-        // this.setData({ frontDone: false, mergeDone: false })
       } else if (id == 'side') {
         merge.clearImage()
         this.sideDone = false
@@ -775,7 +750,6 @@ export default {
           imageBase64: '',
           buttonText: ''
         }
-        // this.setData({ sideDone: false, mergeDone: false })
       }
 
       // 非变更主体
@@ -812,7 +786,6 @@ export default {
           dataType: 'json',
           data: JSON.stringify(data),
           success(res) {
-            // wx.hideLoading()
             Indicator.close()
             const { code, data, message } = res
             if (!data) {
@@ -823,14 +796,12 @@ export default {
             // OCR数据和库中不一样
             if (!(orgAttachment.ocrOrgCodeResult && orgAttachment.ocrOrgNameResult && idCardFrontAttachment.ocrOrgOwnerCodeResult && idCardFrontAttachment.ocrOrgOwnerNameResult)) {
               self.tipsDialogShow1 = true
-              // self.setData({ tipsDialogShow1: true })
               return
             }
 
             // 工商信息或组织机构代码不正确
             if (!orgAttachment.orgInfoVerify) {
               self.tipsDialogShow2 = true
-              // self.setData({ tipsDialogShow2: true })
               self.setErrorInfo(true, message)
               return
             }
@@ -1131,15 +1102,11 @@ export default {
                 self.org = org
                 self.orgName = orgName
                 self.orgCode = orgCode
-                // self.setData({ org, orgName, orgCode })
-                // self.setUploadSuccessData('org')
-                // self.setErrorInfo()
+                self.writeimage(self.baseurl, self.bb)
+                self.setUploadSuccessData('org')
+                self.setErrorInfo()
                 // ORC识别成功可以修改
                 self.allowUpdate = true
-                self.writeimage(self.baseurl, self.bb)
-                // self.setData({
-                //   allowUpdate: true
-                // })
                 // self.baseurl = ''
                 // self.bb = ''
               } else {
@@ -1202,7 +1169,6 @@ export default {
                 self.writeimage(self.baseurl, self.bb)
                 self.setUploadSuccessData('side')
                 self.setErrorInfo()
-
                 // self.baseurl = ''
                 // self.bb = ''
 
@@ -1672,7 +1638,7 @@ export default {
   background-color: white;
   border-radius: 6px;
   width: 80%;
-  height: 50%;
+  height: 300px;
   position: absolute;
   left: 10%;
   top: 17%;
