@@ -189,6 +189,7 @@ export default {
         this.$parent.cropImagedata(datas, file, this.id, data)
       }
       reader.readAsArrayBuffer(file)
+      event.target.value = ''
     },
     ...mapMutations({
       setData: 'SET_DATA'
