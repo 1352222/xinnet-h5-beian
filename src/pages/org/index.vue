@@ -81,7 +81,7 @@
         <div class="bgtop">
           <div class="weui-cell" style="padding:0;">
             <div class="weui-cell__bd">
-              <div id="org1" class="weui-uploader upload-bgs" style="margin-left: 180rpx;">
+              <div id="org1" class="weui-uploader upload-bgs" style="text-align:center">
                 <upload-file
                   type="org"
                   id="org"
