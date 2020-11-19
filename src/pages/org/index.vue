@@ -408,9 +408,9 @@ export default {
         ownCertificate2,
         ownCertificate3,
       } = images
-      let orgDone = org.data.done
-      let frontDone = front.data.done
-      let sideDone = side.data.done
+      let orgDone = org.done
+      let frontDone = front.done
+      let sideDone = side.done
       let mergeDone = merge._data.done
 
       const serverPath = this.globalData.serverPath
@@ -420,7 +420,7 @@ export default {
         this.org.images = [serverPath + orgCertificate.filePath]
         this.org.image = orgCertificate
         this.org.done = true
-        org.setImage(serverPath + orgCertificate.filePath, orgCertificate)
+        this.$refs.org.setImage(serverPath + orgCertificate.filePath, orgCertificate)
       }
       if (ownCertificate1 && ownCertificate1.id) {
         frontDone = true
@@ -428,7 +428,7 @@ export default {
         this.front.images = [serverPath + ownCertificate1.filePath]
         this.front.image = ownCertificate1
         this.front.done = true
-        front.setImage(serverPath + ownCertificate1.filePath, ownCertificate1)
+        this.$refs.front.setImage(serverPath + ownCertificate1.filePath, ownCertificate1)
       }
       if (ownCertificate2 && ownCertificate2.id) {
         sideDone = true
@@ -436,7 +436,7 @@ export default {
         this.side.images = [serverPath + ownCertificate2.filePath]
         this.side.image = ownCertificate2
         this.side.done = true
-        side.setImage(serverPath + ownCertificate2.filePath, ownCertificate2)
+        this.$refs.side.setImage(serverPath + ownCertificate2.filePath, ownCertificate2)
       }
       if (ownCertificate3 && ownCertificate3.id) {
         mergeDone = true

@@ -390,11 +390,6 @@ export default {
       this.compType = compType
       // this.setData({ compType })
 
-      // const front = this.selectComponent('#front')
-      // const side = this.selectComponent('#side')
-      // const merge = this.selectComponent('#merge')
-      const front = this.front
-      const side = this.side
       const merge = this.$refs.merge
 
       const { images, serverPath } = this.globalData
@@ -432,7 +427,7 @@ export default {
         this.front.images = [serverPath + certificate1.filePath]
         this.front.image = certificate1
         this.front.done = true
-        front.setImage(serverPath + certificate1.filePath, certificate1)
+        this.$refs.front.setImage(serverPath + certificate1.filePath, certificate1)
       }
       if (certificate2 && certificate2.id) {
         sideDone = true
@@ -440,7 +435,7 @@ export default {
         this.side.images = [serverPath + certificate2.filePath]
         this.side.image = certificate2
         this.side.done = true
-        side.setImage(serverPath + certificate2.filePath, certificate2)
+        this.$refs.side.setImage(serverPath + certificate2.filePath, certificate2)
       }
       if (certificate3[0] && certificate3[0].id) {
         mergeDone = true
