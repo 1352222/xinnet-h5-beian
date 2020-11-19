@@ -12,12 +12,12 @@
 </template>
 
 <script>
-import { mapMutations, mapGetters, mapState } from "vuex"
+import { mapMutations, mapState } from 'vuex'
 import { Toast } from 'mint-ui'
-import { resolve } from 'q';
 import $ from 'jquery'
+
 export default {
-  name: "Merge_file",
+  name: 'Merge_file',
   data() {
     return {
       imagePath: '',
@@ -26,7 +26,7 @@ export default {
       // 未使用
       images: [],
       image: [],
-      done: false,
+      done: false
     }
   },
   props: {
@@ -55,7 +55,7 @@ export default {
 
       if (image.length > 1) {
         param = `attachmentOrderIds=${image[0].id}&attachmentOrderIds=${image[1].id}`
-      } else if (image.length === 1) {
+      } else if (image.length == 1) {
         if (image[0].id) {
           param = `attachmentOrderIds=${image[0].id}`
         }
@@ -65,7 +65,7 @@ export default {
         $.ajax({
           url: `/api/miniprogram/deleteAttachment?${param}`,
           success(res) {
-            const { code, data, message } = res
+            const { code, message } = res
             if (code === 'success') {
               self.clearImageData()
             } else {
@@ -129,22 +129,21 @@ export default {
     mergeImage(frontPath, sidePath, orgDone, cb) {
       return new Promise((resolve) => {
         const self = this
-        // const width = 290
-        const width = 104
+        const width = 580
         const height = 720 / 2
         const canvas = this.$parent.$refs.canvasimage
         const ctx = canvas.getContext('2d')
-        canvas.width = 104
-        canvas.height = 137
+        canvas.width = 580
+        canvas.height = 720
 
         const img = new Image()
         img.src = frontPath
         img.onload = () => {
-          ctx.drawImage(img, 0, 0, width, 68)
+          ctx.drawImage(img, 0, 0, width, height)
           const img2 = new Image()
           img2.src = sidePath
           img2.onload = () => {
-            ctx.drawImage(img2, 0, 68, width, 69)
+            ctx.drawImage(img2, 0, height, width, height)
             const res = canvas.toDataURL('image/jpeg')
             this.imagePath = res
             self.setImageData(this.imagePath, orgDone, cb)
@@ -154,14 +153,14 @@ export default {
       })
     },
     ...mapMutations({
-      setData: "SET_DATA",
-    }),
+      setData: 'SET_DATA'
+    })
   },
   computed: {
     ...mapState({
-      globalData: state => state.home.globalData,
-    }),
-  },
+      globalData: state => state.home.globalData
+    })
+  }
 }
 </script>
 <style scoped>

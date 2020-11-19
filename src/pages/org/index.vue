@@ -24,7 +24,7 @@
         <!-- :style="'width:' + cropperWidth + 'px;height:' + cropperHeight + 'px;display:block;'" -->
       <span class="image-cropper-hint">点击中间裁剪框可查看裁剪后的图片</span>
       <div class="image-cropper-bottoms">
-        <button
+        <!-- <button
           class="image-cropper-button"
           type="primary"
           @click="changeScale(1)"
@@ -39,7 +39,7 @@
           size="mini"
         >
           缩小
-        </button>
+        </button> -->
         <button
           class="image-cropper-button"
           type="primary"
@@ -232,7 +232,7 @@
         <div id="dialog" v-show="tipsDialogShow2">
           <div class="border" style="height:25%;top:34%;">
             <div>
-                <p class="titleXStyle">提示</p>
+              <p class="titleXStyle">提示</p>
             </div>
             <div class="tips">{{tipsText}}</div>
             <div class="button-align-bottom">
@@ -245,7 +245,7 @@
             </div>
           </div>
         </div>
-        <canvas class="canvas-hidden" ref="canvasimage" style="width: 290px; height: 360px;" canvas-id="Canvas"/>
+        <canvas class="canvas-hidden" ref="canvasimage" style="width: 580px; height: 360px;" canvas-id="Canvas"/>
       </div>
     </div>
   </div>
@@ -258,6 +258,7 @@ import mergeFile from '../merge_file'
 import { Indicator, Toast } from 'mint-ui'
 import getAttachmentParam from '../../common/getAttachmentParam'
 import $ from 'jquery'
+
 export default {
   name: 'Orgs',
   components: { uploadFile, mergeFile },
@@ -292,8 +293,8 @@ export default {
       // image cropper
       src: '',
       srcs: '',
-      cropperWidth: 300,//宽度
-      cropperHeight: 220,//高度
+      cropperWidth: 300, // 宽度
+      cropperHeight: 220, // 高度
       // 是否显示错误提示
       showErrorInfo: false,
       errorInfo: '',
@@ -393,7 +394,7 @@ export default {
   },
   methods: {
     onLoad() {
-      //获取到image-cropper实例
+      // 获取到image-cropper实例
       this.cropper = this.$refs.cropper
 
       const org = this.org
@@ -406,7 +407,7 @@ export default {
         orgCertificate,
         ownCertificate1,
         ownCertificate2,
-        ownCertificate3,
+        ownCertificate3
       } = images
       let orgDone = org.done
       let frontDone = front.done
@@ -454,11 +455,11 @@ export default {
       // 组织机构代码弹窗不同提示
       // 组织机构代码orgTitle不同
       if (icpOrder) {
-        if (icpOrder.certificateTypeId == 12) {
+        const certificateTypeId = icpOrder.certificateTypeId || icpOrgOrder.certificateTypeId
+        if (certificateTypeId == 12) {
           this.tipsText = '组织机构代码证信息不正确，请核实'
           this.orgTitle = '请上传组织机构代码'
           this.org.buttonText = '点击拍摄组织机构代码'
-          // org._data.buttonText = '点击拍摄组织机构代码'
           // this.setData({ tipsText: '组织机构代码证信息不正确，请核实', orgTitle: '请上传组织机构代码' })
           // org.setData({ buttonText: '点击拍摄组织机构代码' })
         } else {
@@ -575,9 +576,7 @@ export default {
     },
     // 修改数据
     saveData() {
-      const self = this
       const {
-        dialogType,
         orgName,
         orgCode,
         // orgPerson,
@@ -702,9 +701,9 @@ export default {
     },
     clearImage(id) {
       const { orderType } = this.globalData
-      const org = this.org
-      const front = this.front
-      const side = this.side
+      // const org = this.org
+      // const front = this.front
+      // const side = this.side
       const merge = this.$refs.merge
 
       if (id == 'org') {
@@ -763,13 +762,13 @@ export default {
     checkData() {
       Indicator.open('加载中...')
       const self = this
-      const { orderCode, icp } = this.globalData
+      const { orderCode } = this.globalData
       const { org, own } = this
       const data = {
         orderCode,
         orgAttachment: {
           ocrOrgName: org.name,
-          ocrOrgCode: org.code,
+          ocrOrgCode: org.code
           // ocrOrgOwnerName: org.person
         },
         idCardFrontAttachment: {
@@ -787,7 +786,7 @@ export default {
           data: JSON.stringify(data),
           success(res) {
             Indicator.close()
-            const { code, data, message } = res
+            const { data, message } = res
             if (!data) {
               self.setErrorInfo(true, message)
               return
@@ -896,7 +895,7 @@ export default {
         success(res) {
           // wx.hideLoading()
           Indicator.close()
-          const { code, data, message } = res
+          const { code, message } = res
           if (code == 'success') {
             // wx.showToast({ title: '上传成功！' })
             Toast({
@@ -907,7 +906,7 @@ export default {
             // wx.navigateBack()
           } else {
             Toast({
-              message: 'message',
+              message,
               duration: 3000
             })
           }
@@ -967,9 +966,9 @@ export default {
         this.submitData()
       }
     },
-    realTime() {
-      this.previews = data
-    },
+    // realTime() {
+    //   this.previews = data
+    // },
     cropImagedata(a, file, id, imageBase64) {
       this.srcs = a
       this.option.img = a
@@ -991,7 +990,6 @@ export default {
     },
     // 完成裁剪
     getCropperImage(type) {
-      let _this = this
       let formData = new FormData()
       if (type === 'blob') {
         this.$refs.cropper.getCropBlob((data) => {
@@ -1065,10 +1063,10 @@ export default {
       // console.log(this.$refs, this.id, this.baseurl, this.bb, 'fronttttt')
       // this.writeimage(this.baseurl, this.bb)
       const self = this
-      const org = $('#org1 > div')
-      const front = $('#front1 > div:first-child')
-      const side = $('#front1 > div:last-child')
-      const merge = this.$refs.merge
+      // const org = $('#org1 > div')
+      // const front = $('#front1 > div:first-child')
+      // const side = $('#front1 > div:last-child')
+      // const merge = this.$refs.merge
       const id = this.id
       const data = { orderCode: this.globalData.orderCode }
       const { NewCheckIn, ChangeCheckIn, NewWebsite, NoOrgNewWebsite } = this
@@ -1171,7 +1169,6 @@ export default {
                 self.setErrorInfo()
                 // self.baseurl = ''
                 // self.bb = ''
-
               } else {
                 Toast({
                   message: res.message,
@@ -1229,14 +1226,14 @@ export default {
       this.$router.push('/login')
     },
     ...mapMutations({
-      setData: "SET_DATA",
-    }),
+      setData: 'SET_DATA'
+    })
   },
   computed: {
     ...mapState({
-      globalData: state => state.home.globalData,
-    }),
-  },
+      globalData: state => state.home.globalData
+    })
+  }
 }
 </script>
 <style scoped>

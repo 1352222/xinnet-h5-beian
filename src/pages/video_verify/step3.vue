@@ -31,8 +31,9 @@
 
 <script>
 import getAttachmentParam from '../../common/getAttachmentParam'
-import { mapState, mapMutations } from "vuex"
+import { mapState, mapMutations } from 'vuex'
 import { Toast, Indicator } from 'mint-ui'
+import bgtImage from '../../../static/image/verify_bg.jpg'
 
 export default {
   data() {
@@ -47,7 +48,7 @@ export default {
       showErrorInfo: false,
       errorInfo: '',
       // 合成背景图
-      bgtImage: '../../../static/image/verify_bg.jpg',
+      bgtImage,
       warnImage: '../../../static/image/warn.png'
     }
   },
@@ -67,17 +68,16 @@ export default {
   },
   computed: {
     ...mapState({
-      globalData: state => state.home.globalData,
+      globalData: state => state.home.globalData
     })
   },
   methods: {
     onLoad() {
       const { videoVerifyImage, screenState, images, serverPath } = this.globalData
       const self = this
-      if (screenState == 'right') {
+      if (screenState === 'right') {
         const image = serverPath + images.screen.filePath
         self.screenState = screenState
-        self.rawImage = image
         self.mergeImageBase64 = image
       } else {
         const rawImage = videoVerifyImage
@@ -97,7 +97,6 @@ export default {
         const height = 512
         const canvas = this.$refs.video
         const ctx = canvas.getContext('2d')
-
         const img = new Image()
         img.onload = () => {
           ctx.drawImage(img, 0, 0, width, height)
@@ -108,7 +107,7 @@ export default {
             this.mergeImageBase64 = res
             resolve(this.mergeImageBase64)
           }
-          img2.src = rawImage
+          img2.src = prefix + rawImage
         }
         img.src = bgtImage
 
@@ -120,7 +119,7 @@ export default {
           const res = canvas2.toDataURL('image/jpeg', 0.5)
           this.rawImageBase64 = res
         }
-        image.src = rawImage
+        image.src = prefix + rawImage
       })
     },
 
@@ -142,24 +141,24 @@ export default {
       const { orderCode, phone, screenState } = this.globalData
       const self = this
 
-      if (screenState == 'right') {
+      if (screenState === 'right') {
         Toast({ message: '请稍后..' })
         // 获取到幕布图片数据
-        this.request({
+        self.request({
           url: `/checkPhone?orderCode=${orderCode}&phone=${phone}`,
           success(res) {
             const { data } = res
-            if (data.code == 'success') {
+            if (data.code === 'success') {
               self.setData({ icp: data.data })
               const images = self.getData()
               if (images.screen && images.screen.id) {
                 // 重拍先删除幕布图片，成功后回退
                 const param = `attachmentOrderIds=${images.screen.id}`
-                this.request({
+                self.request({
                   url: `/deleteAttachment?${param}`,
                   success(res) {
                     Indicator.close()
-                    const { code, data, message } = res.data
+                    const { code, message } = res
                     if (code == 'success') {
                       self.screenState = 'none'
                       self.setData({ screenState: 'none' })
@@ -214,8 +213,6 @@ export default {
       const self = this
       Indicator.open({ text: '请稍后..' })
       this.promise.then((mergeImageBase64) => {
-        console.log(mergeImageBase64)
-        console.log(this.rawImageBase64)
         const checkData = {
           orderCode: self.globalData.orderCode,
           checkAttachment: {

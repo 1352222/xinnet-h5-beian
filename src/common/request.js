@@ -5,7 +5,7 @@ export default function request(params, failCb) {
   const { url, method, success, data, restProps } = params
   const option = {
     url,
-    method: method ? method : 'GET',
+    method: method || 'GET',
     ...restProps
   }
   if (method == 'POST') {
@@ -16,7 +16,6 @@ export default function request(params, failCb) {
     // baseURL: 'https://tiaoshi.xincache.cn/api/miniprogram'
     baseURL: '/api/miniprogram'
   })
-  
   service.interceptors.request.use(function (config) {
     return config
   }, function (error) {
@@ -26,10 +25,16 @@ export default function request(params, failCb) {
   service.interceptors.response.use(function (res) {
     console.log('ajax成功回调！')
     console.log(res)
-    if (res && res.status != 200) {
+    if (res && res.status !== 200) {
       Indicator.close()
       Toast({
         message: '网络异常，请稍后重试',
+        duration: 3000
+      })
+    } else if (res.status === 200 && res.data && res.data.code !== 'success') {
+      Indicator.close()
+      Toast({
+        message: res.data.message,
         duration: 3000
       })
     } else {

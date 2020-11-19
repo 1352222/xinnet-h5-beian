@@ -11,7 +11,7 @@
           2、点击开始拍摄按钮开始录制视频，录制时请用普通话大声朗读核验码，数字间建议略作停顿。
         </div>
         <div class="text">
-          3、点击结束按钮结束录制视频，请确保录制的视频时长在6~10秒。
+          3、点击结束按钮结束录制视频，请确保录制的视频时长在4~8秒。
         </div>
         <div class="text">
           4、必须保证环境安静，将人脸置于视频框中，请勿遮挡面部，且视频中不允许出现多张人脸。
@@ -31,18 +31,18 @@
 </template>
 
 <script>
-import "mint-ui/lib/style.css"
+import 'mint-ui/lib/style.css'
 export default {
-  name: "Video-step1",
+  name: 'Video-step1',
   data() {
-    return {};
+    return {}
   },
   methods: {
     submit() {
-      this.$router.push("/video_verify/step2");
-    },
-  },
-};
+      this.$router.push('/video_verify/step2')
+    }
+  }
+}
 </script>
 <style scoped>
 #video-step1 {

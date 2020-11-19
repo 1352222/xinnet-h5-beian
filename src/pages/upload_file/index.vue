@@ -20,7 +20,7 @@
         <div class="weui-uploader__input" data-type="upload">
           <div v-if="(data.images ? data.images : images)==undefined || JSON.stringify(data.images ? data.images : images)=='[]'">
             <img v-if="type === 'org'" class="uploadbgs" src="~@/assets/hotunit.jpg" mode="aspectFill" />
-            <img v-else-if="num === 2" class="uploadbgs" src="~@/assets/reverse-side.jpg" mode="aspectFill" />
+            <img v-else-if="num == 2" class="uploadbgs" src="~@/assets/reverse-side.jpg" mode="aspectFill" />
             <img v-else class="uploadbgs" src="~@/assets/front.jpg" mode="aspectFill" />
           </div>
         </div>
@@ -42,8 +42,7 @@
 
 <script>
 import { mapMutations, mapState } from 'vuex'
-import { Indicator } from 'mint-ui'
-// import { Indicator, Toast } from 'mint-ui'
+import { Toast } from 'mint-ui'
 import $ from 'jquery'
 export default {
   name: 'Upload_file',
@@ -58,7 +57,7 @@ export default {
       imageBase64: '',
       buttonText: '',
       // 上传完成
-      done: false,
+      done: false
     }
   },
   props: {
@@ -99,18 +98,18 @@ export default {
         if (!buttonText) {
           this.buttonText = '点击拍摄营业执照'
         }
-      } else if (num === 2) {
+      } else if (num == 2) {
         this.buttonText = '点击拍摄国徽面'
       } else {
         this.buttonText = '点击拍摄头像面'
       }
     },
-    afiles() {
-      let file = $('#files')[0].files[0]
-      let reader = new FileReader()
-    },
+    // afiles() {
+    //   let file = $('#files')[0].files[0]
+    //   let reader = new FileReader()
+    // },
     setImage(imagePath, image) {
-      const self = this
+      // const self = this
       this.imagePath = imagePath
       this.images = [imagePath]
       this.image = image
@@ -126,7 +125,7 @@ export default {
         $.ajax({
           url: `/api/miniprogram/deleteAttachment?${param}`,
           success(res) {
-            const { code, data, message } = res.data
+            const { code, message } = res
             if (code === 'success') {
               self.clearImageData()
             } else {
@@ -170,10 +169,10 @@ export default {
     },
     chooseImage(event, num) {
       // let takepicture = $('#takepicture')
-      const self = this
-      const cropperType = this.cropperType
+      // const self = this
+      // const cropperType = this.cropperType
       let file = event.target.files[0]
-      let fd = new FormData()
+      // let fd = new FormData()
       let reader = new FileReader()
       reader.onload = e => {
         let data, datas
@@ -187,9 +186,9 @@ export default {
         }
         this.option.img = data
         this.$parent.cropImagedata(datas, file, this.id, data)
+        event.target.value = ''
       }
       reader.readAsArrayBuffer(file)
-      event.target.value = ''
     },
     ...mapMutations({
       setData: 'SET_DATA'
