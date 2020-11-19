@@ -68,7 +68,7 @@
         </button>
       </div>
     </div>
-    <div v-else>
+    <div :style="!cropper ? '' : 'display:none;'">
       <div class="container-page log-list">
         <div class="error-info" v-if="showErrorInfo">
           <img class="error-icon" src="~@/assets/warn.png" />
@@ -1450,6 +1450,10 @@ export default {
   color: #ff001d;
   padding: 10px 15px;
   background: #ffe9db;
+}
+
+.error-icon {
+  width: 12px;
 }
 
 .image-cropper-wrapper {
