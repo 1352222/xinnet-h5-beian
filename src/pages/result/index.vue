@@ -21,7 +21,7 @@
       </div>
     </div>
 
-    <div wx:else type="warn" size="90" class="beian-result-msg">
+    <div v-else type="warn" size="90" class="beian-result-msg">
 			<div class="icon">
 				<img alt="right" src="~@/assets/wrong.png" />
 			</div>

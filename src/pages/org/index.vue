@@ -24,7 +24,7 @@
         <!-- :style="'width:' + cropperWidth + 'px;height:' + cropperHeight + 'px;display:block;'" -->
       <span class="image-cropper-hint">点击中间裁剪框可查看裁剪后的图片</span>
       <div class="image-cropper-bottoms">
-        <button
+        <!-- <button
           class="image-cropper-button"
           type="primary"
           @click="changeScale(1)"
@@ -39,7 +39,7 @@
           size="mini"
         >
           缩小
-        </button>
+        </button> -->
         <button
           class="image-cropper-button"
           type="primary"
