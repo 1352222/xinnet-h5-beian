@@ -393,8 +393,8 @@ export default {
       // const front = this.selectComponent('#front')
       // const side = this.selectComponent('#side')
       // const merge = this.selectComponent('#merge')
-      const front = this.$refs.front
-      const side = this.$refs.side
+      const front = this.front
+      const side = this.side
       const merge = this.$refs.merge
 
       const { images, serverPath } = this.globalData
@@ -494,14 +494,6 @@ export default {
       this.sideDone = sideDone
       this.mergeDone = mergeDone
 
-      // this.setData({
-      //   websiteOwn,
-      //   websiteOwnPerson,
-      //   websiteOwnCode,
-      //   frontDone,
-      //   sideDone,
-      //   mergeDone
-      // })
       if (frontDone && sideDone && mergeDone) {
         this.setAllowSubmit()
       }
@@ -565,23 +557,17 @@ export default {
 
     setAllowSubmit(allowSubmit = true) {
       this.allowSubmit = allowSubmit
-      // this.setData({ allowSubmit })
     },
     // 修改负责人信息
     updateOwn() {
       this.dialogTitle = "修改证件信息"
       this.dialogShow = true
-      // this.setData({
-      //   dialogTitle: '修改证件信息',
-      //   dialogShow: true
-      // })
     },
     // 修改单条数据触发
     bindinput(e) {
       const key = e.currentTarget.id
-      const value = e.detail.value
+      const value = e.target.value
       this[key] = value
-      // this.setData({ [key]: value })
     },
     // 修改数据
     saveData() {
@@ -598,7 +584,6 @@ export default {
       }
 
       return new Promise((resolve) => {
-        // wx.showLoading({ title: '请稍后..', mask: true })
         Indicator.open("请稍后...")
         $.ajax({
           url: `/api/miniprogram/saveWebsiteInfo`,
@@ -607,49 +592,23 @@ export default {
           dataType: 'json',
           data: JSON.stringify(data),
           success(res) {
-            // wx.hideLoading()
             Indicator.close()
             // 保存成功后同步数据
-            self.websiteOwn = {
-              code: websiteOwnCode,
-              person: websiteOwnPerson,
-            }
-            // self.setData({
-            //   websiteOwn: {
-            //     code: websiteOwnCode,
-            //     person: websiteOwnPerson
-            //   }
-            // })
+            self.websiteOwn.code = websiteOwnCode
+            self.websiteOwn.person = websiteOwnPerson
             resolve()
           },
         })
       })
     },
     saveLocalData() {
-      // const { websiteOwnPerson, websiteOwnCode } = this.data
-      const websiteOwnPerson = this.websiteOwnPerson
-      const websiteOwnCode = this.websiteOwnCode
-      const websiteOwn = {
-        person: websiteOwnPerson,
-        code: websiteOwnCode,
-      }
-      this.websiteOwn = websiteOwn
-      // this.setData({ websiteOwn })
+      this.websiteOwn.person = this.websiteOwnPerson
+      this.websiteOwn.code = this.websiteOwnCode
     },
     // 修改确认
-    dialogButton(e) {
-      const { detail } = e
-      // 确定
-      if (detail.index === 1) {
-        this.saveLocalData()
-        this.dialogShow = false
-        // this.setData({ dialogShow: false })
-      } else {
-        this.dialogShow = false
-        // this.setData({
-        //   dialogShow: false
-        // })
-      }
+    dialogButton() {
+      this.saveLocalData()
+      this.dialogShow = false
     },
     setUploadSuccessData() {
       const self = this
@@ -680,15 +639,8 @@ export default {
       this.frontDone = front.done
       this.sideDone = side.done
       this.mergeDone = merge._data.done
-      // this.setData({
-      //   frontDone: front.data.done,
-      //   sideDone: side.data.done,
-      //   mergeDone: merge.data.done
-      // })
     },
     setUploadFailData(id) {
-      // const front = this.selectComponent('#front')
-      // const side = this.selectComponent('#side')
       const front = this.$refs.front
       const side = this.$refs.side
 
@@ -701,7 +653,6 @@ export default {
     setErrorInfo(showErrorInfo = false, errorInfo = "") {
       this.showErrorInfo = showErrorInfo
       this.errorInfo = errorInfo
-      // this.setData({ showErrorInfo, errorInfo })
     },
     writeimage(url, img) {
       // let org = this.$refs.org._data
@@ -749,14 +700,11 @@ export default {
               Indicator.close()
               const { code, data, message } = res
               if (code === "success" && id === "front") {
-                const websiteOwn = {
-                  person: data.ocrOrgOwnerName,
-                  code: data.ocrOrgOwnerCode,
-                }
                 // 每次OCR后更新修改操作表单
-                const websiteOwnPerson = websiteOwn.person
-                const websiteOwnCode = websiteOwn.code
-                self.websiteOwn = websiteOwn
+                const websiteOwnPerson = data.ocrOrgOwnerName
+                const websiteOwnCode = data.ocrOrgOwnerCode
+                self.websiteOwn.person = data.ocrOrgOwnerName
+                self.websiteOwn.code = data.ocrOrgOwnerCode
                 self.websiteOwnPerson = websiteOwnPerson
                 self.websiteOwnCode = websiteOwnCode
                 self.writeimage(self.baseurl, self.bb)
@@ -838,8 +786,8 @@ export default {
     }, // 删除网站负责人附件也删除幕布照和合成照
     clearImage(id) {
       const { orderType, recordType } = this.globalData
-      const front = this.$refs.front
-      const side = this.$refs.side
+      const front = this.front
+      const side = this.side
       const merge = this.$refs.merge
 
       if (id === "front") {
@@ -857,7 +805,6 @@ export default {
           imageBase64: "",
           buttonText: "",
         }
-        // this.setData({ frontDone: false, mergeDone: false })
       } else if (id === "side") {
         merge.clearImage()
         this.sideDone = false
@@ -873,7 +820,6 @@ export default {
           imageBase64: "",
           buttonText: "",
         }
-        // this.setData({ sideDone: false, mergeDone: false })
       }
       // 非变更主体
       if (orderType != "CHANGE_ORG") {
@@ -1060,9 +1006,6 @@ export default {
       // 使用：先保存数据然后工商校验，校验通过提交所有附件数据
       if (action === 'use') {
         this.tipsDialogShow1 = false
-        // this.setData({
-        //   tipsDialogShow1: false
-        // })
         if (NewCheckIn || ChangeCheckIn || NoOrgNewWebsite) {
           this.saveData().then(this.submitData)
         } else {
@@ -1073,10 +1016,6 @@ export default {
         // 关闭弹窗，显示修改按钮
         this.tipsDialogShow1 = false
         this.allowUpdate = true
-        // this.setData({
-        //   tipsDialogShow1: false,
-        //   allowUpdate: true
-        // })
       }
     },
     ...mapMutations({
@@ -1538,7 +1477,7 @@ export default {
   background-color: white;
   border-radius: 6px;
   width: 80%;
-  height: 50%;
+  height: 300px;
   position: absolute;
   left: 10%;
   top: 17%;

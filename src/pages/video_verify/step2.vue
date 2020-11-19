@@ -1,6 +1,6 @@
 <template>
 <div class="video-step2">
-  <input @change="changeCamera" style="display: none;" type="file" ref="camera" accept="video/*" capture="user">
+  <input @change="changeCamera" style="display: none;" type="file" ref="camera" accept="video/mp4" capture="user" />
   <div v-if="videoStep == 1" class="call-camera" @click="callCamera">
     <p>轻触屏幕继续</P>
   </div>
@@ -21,7 +21,7 @@
     </div>
 
     <div class="foot clearfix">
-      <mt-button class="btn default" @click="restart">重新拍摄</mt-button>
+      <mt-button class="btn default first" @click="restart">重新拍摄</mt-button>
       <mt-button :disabled="disabled" class="btn primary btn-primary-bg" @click="submit">确认使用</mt-button>
     </div>
   </div>
@@ -78,7 +78,9 @@ export default {
     // 调用相机录像
     callCamera() {
       if (this.videoStep == 1) {
-        $(this.$refs.camera).trigger('click')
+        const $camera = $(this.$refs.camera)
+        $camera.attr('capture', 'camcorder')
+        $camera.trigger('click')
       }
     },
 
@@ -89,32 +91,38 @@ export default {
       const reader = new FileReader()
       reader.onload = function() {
         self.videoSrc = this.result
+        console.log(self.videoSrc)
 
         let arr = this.result.split(',')
-        let mime = arr[0].match(/:(.*?);/)[1]
+        // let mime = arr[0].match(/:(.*?);/)[1]
         let bstr = atob(arr[1])
         let n = bstr.length
         let u8arr = new Uint8Array(n)
         while (n--) {
           u8arr[n] = bstr.charCodeAt(n)
         }
-        self.videoBlob = new Blob([u8arr], { type: mime })
-
+        const blob = new Blob([u8arr], { type: 'video/mp4' })
+        self.videoBlob = blob
+        // self.videoSrc = window.URL.createObjectURL(blob)
+        // console.log(self.videoSrc)
         self.videoStep = 2
         self.$nextTick(() => {
           $(self.$refs.video).on('canplay', () => {
-            const duration = self.$refs.video.duration
-            const min = 6
-            const max = 10
-            self.disabled = false
-            if (duration < min) {
-              Toast({ message: '视频录制时长不足规定时长', duration: 3000 })
-              self.disabled = true
-            } else if (duration > max) {
-              Toast({ message: '视频录制时长超过规定时长', duration: 3000 })
-              self.disabled = true
-            } else {
-              Toast({ message: '录制成功！', duration: 3000 })
+            const video = self.$refs.video
+            console.log(video)
+            if (video) {
+              const min = 6
+              const max = 10
+              self.disabled = false
+              if (video.duration < min) {
+                Toast({ message: '视频录制时长不足规定时长', duration: 3000 })
+                self.disabled = true
+              } else if (video.duration > max) {
+                Toast({ message: '视频录制时长超过规定时长', duration: 3000 })
+                self.disabled = true
+              } else {
+                Toast({ message: '录制成功！', duration: 3000 })
+              }
             }
           })
         })
@@ -122,11 +130,22 @@ export default {
       reader.readAsDataURL(video)
     },
 
+    changeCamera2() {
+      const self = this
+      const video = self.$refs.camera.files[0]
+      console.log(video)
+      self.videoSrc = window.URL.createObjectURL(video)
+      console.log(self.videoSrc)
+      self.videoStep = 2
+    },
+
     restart() {
       this.videoStep = 1
       this.showError = false
       this.error = ''
+      this.videoSrc = ''
       this.$nextTick(() => {
+        this.$refs.camera.value = ''
         this.generateCode()
         this.showMessageBox()
       })
@@ -377,7 +396,7 @@ export default {
 }
 
 .foot .btn {
-  width: 165px;
+  width: 160px;
   height: 45px;
   border-radius: 2px;
   font-size: 18px;
@@ -388,7 +407,10 @@ export default {
 .foot .default {
   float: left;
   color: #333;
+}
 
+.foot .first {
+  margin-right: 10px;
 }
 
 .foot .primary {
