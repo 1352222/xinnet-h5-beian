@@ -1,6 +1,6 @@
 <template>
 <div class="video-step2">
-  <input @change="changeCamera" style="display: none;" type="file" ref="camera" accept="video/mp4" capture="user" />
+  <input @change="changeCamera" style="display: none;" type="file" ref="camera" accept="video/*" capture="user" />
   <div v-if="videoStep == 1" class="call-camera" @click="callCamera">
     <p>轻触屏幕继续</P>
   </div>
@@ -34,10 +34,8 @@ import { mapState, mapMutations } from 'vuex'
 import $ from 'jquery'
 import 'mint-ui/lib/style.css'
 
-let mediaRecorder = null
-
 export default {
-  name: "Video-step2",
+  name: 'Video-step2',
   data() {
     return {
       // 录制步骤
@@ -56,8 +54,6 @@ export default {
   mounted() {
     this.generateCode()
     this.showMessageBox()
-  },
-  destroyed() {
   },
   computed: {
     ...mapState({
@@ -150,7 +146,7 @@ export default {
         this.showMessageBox()
       })
       // wx.setNavigationBarTitle({
-        //   title: '拍摄核验视频'
+      //   title: '拍摄核验视频'
       // })
     },
 
@@ -186,7 +182,10 @@ export default {
       formData.append('orderCode', this.globalData.orderCode)
       formData.append('number', this.number)
       formData.append('ext', 'MP4')
-
+      console.log(formData.get('video'))
+      console.log(formData.get('orderCode'))
+      console.log(formData.get('number'))
+      console.log(formData.get('ext'))
       this.request({
         url: '/silentImageVerify',
         method: 'POST',
@@ -197,7 +196,7 @@ export default {
         success: (res) => {
           Indicator.close()
           const self = this
-          const { code, message, data } = JSON.parse(res.data)
+          const { code, message, data } = res.data
           if (res && res.status != 200) {
             Toast({ message: '网络异常，请稍后重试', duration: 3000 })
             return
@@ -209,9 +208,9 @@ export default {
           } else if (data && !data.passed) {
             self.setErrorInfo(true, errorMsg)
           } else if (data && data.passed) {
-            self.setData({ videoVerifyImage: data.base64FaceImage })
             self.setErrorInfo()
-            this.$router.push('/video_verify/step3')
+            self.setData({ videoVerifyImage: data.base64FaceImage })
+            self.$router.push('/video_verify/step3')
           }
         },
         fail(error) {

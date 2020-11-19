@@ -7,8 +7,8 @@ Vue.use(Vuex)
 const debug = true
 
 export default new Vuex.Store({
-    modules: {
-        home
-    },
-    plugins: debug ? [createLogger()] : []
+  modules: {
+    home
+  },
+  plugins: debug ? [createLogger()] : []
 })

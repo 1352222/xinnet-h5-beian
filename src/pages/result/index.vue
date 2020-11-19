@@ -42,12 +42,12 @@ export default {
   name: 'Result',
   data() {
     return {
-      done: true,
+      done: true
     }
   },
   methods: {
-		back() {
-			this.$router.push('/list')
+    back() {
+      this.$router.push('/list')
     },
     onLoad() {
       const { recordType, orgState, websiteState, realityVerifyState, screenState } = this.globalData
@@ -73,10 +73,10 @@ export default {
   },
   computed: {
     ...mapState({
-			globalData: state => state.home.globalData
+      globalData: state => state.home.globalData
     })
-	},
-	mounted() {
+  },
+  mounted() {
     if (this.globalData.orderCode) {
       this.onLoad()
     } else {
@@ -86,7 +86,7 @@ export default {
         }
       })
     }
-	}
+  }
 }
 </script>
 <style scoped>

@@ -38,7 +38,7 @@ export default new Router({
       path: '/video_verify/step2',
       name: 'Video_step2',
       component: (resolve) => require(['@/pages/video_verify/step2'], resolve)
-    } , {
+    }, {
       path: '/video_verify/step3',
       name: 'Video_step3',
       component: (resolve) => require(['@/pages/video_verify/step3'], resolve)

@@ -60,7 +60,8 @@
 </template>
 
 <script>
-import { mapMutations, mapGetters, mapState } from 'vuex'
+import { mapMutations, mapState } from 'vuex'
+import getAttachmentParam from '../../common/getAttachmentParam'
 import { Indicator, Toast } from 'mint-ui'
 
 export default {
@@ -71,7 +72,7 @@ export default {
       loading: true,
       checkFormBase64: '',
       promiseBookBase64: ''
-    };
+    }
   },
   mounted () {
     if (this.globalData.orderCode) {
@@ -88,7 +89,7 @@ export default {
     onLoad() {
       const { images } = this.globalData
       if (images.realityVerify && images.realityVerify.id) {
-        this.agree = images.realityVerify.id ? true : false
+        this.agree = !!images.realityVerify.id
       }
 
       this.toBase64().then((res) => {
@@ -149,30 +150,30 @@ export default {
       const self = this
       if (agree) {
         // 已经上传了核验单和承诺书不重复提交
-        if (realityVerifyState == "right") {
-          self.$router.push("/result")
-          return;
+        if (realityVerifyState == 'right') {
+          self.$router.push('/result')
+          return
         }
 
         // 如果前面步骤全部完成跳提交数据转到成功页面
         // 否则跳转失败页面 => 个人
         if (
-          recordType == "5" &&
-          !(websiteState == "right" && screenState == "right")
+          recordType == '5' &&
+          !(websiteState == 'right' && screenState == 'right')
         ) {
-          self.$router.push("/result")
-          return;
+          self.$router.push('/result')
+          return
         }
         // 否则跳转失败页面 => 企业
         if (
-          recordType != "5" &&
+          recordType != '5' &&
           !(
-            orgState == "right" &&
-            websiteState == "right" &&
-            screenState == "right"
+            orgState == 'right' &&
+            websiteState == 'right' &&
+            screenState == 'right'
           )
         ) {
-          self.$router.push("/result")
+          self.$router.push('/result')
           return
         }
 
@@ -180,28 +181,28 @@ export default {
           orderCode,
           checkFormAttachment: {
             ...getAttachmentParam({
-              isWebsiteChecklist: "1",
+              isWebsiteChecklist: '1',
               filePurpose: 1,
-              picSequenceNum: "1",
-              fileState: "MERGE",
-              type: "WEBSITE",
-              byteFile: checkFormBase64,
-            }, self.globalData),
+              picSequenceNum: '1',
+              fileState: 'MERGE',
+              type: 'WEBSITE',
+              byteFile: checkFormBase64
+            }, self.globalData)
           },
           promiseAttachment: {
             ...getAttachmentParam({
-              isWebsiteChecklist: "2",
+              isWebsiteChecklist: '2',
               filePurpose: 1,
-              picSequenceNum: "1",
-              fileState: "MERGE",
-              type: "WEBSITE",
+              picSequenceNum: '1',
+              fileState: 'MERGE',
+              type: 'WEBSITE',
               byteFile: promiseBookBase64,
-              otherFileType: "1",
-            }, self.globalData),
-          },
-        };
+              otherFileType: '1'
+            }, self.globalData)
+          }
+        }
 
-        Indicator.open("请稍后...")
+        Indicator.open('请稍后...')
         this.request({
           url: '/saveAttachment',
           method: 'POST',
@@ -209,29 +210,29 @@ export default {
           success(res) {
             const { code } = res.data
             Indicator.close()
-            if (code == "success") {
+            if (code == 'success') {
               self.setData({ realityVerifyState: 'right' })
-              self.$router.push("/result");
+              self.$router.push('/result')
             } else {
               Toast({
-                message: "操作失败！",
-                duration: 3000,
-              });
+                message: '操作失败！',
+                duration: 3000
+              })
             }
-          },
-        });
+          }
+        })
       }
     },
     ...mapMutations({
-      setData: "SET_DATA",
-    }),
+      setData: 'SET_DATA'
+    })
   },
   computed: {
     ...mapState({
-      globalData: (state) => state.home.globalData,
-    }),
-  },
-};
+      globalData: (state) => state.home.globalData
+    })
+  }
+}
 </script>
 <style scoped>
 #reality_verify {

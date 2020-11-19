@@ -258,6 +258,7 @@ import mergeFile from '../merge_file'
 import { Indicator, Toast } from 'mint-ui'
 import getAttachmentParam from '../../common/getAttachmentParam'
 import $ from 'jquery'
+
 export default {
   name: 'Orgs',
   components: { uploadFile, mergeFile },
@@ -292,8 +293,8 @@ export default {
       // image cropper
       src: '',
       srcs: '',
-      cropperWidth: 300,//宽度
-      cropperHeight: 220,//高度
+      cropperWidth: 300, // 宽度
+      cropperHeight: 220, // 高度
       // 是否显示错误提示
       showErrorInfo: false,
       errorInfo: '',
@@ -393,7 +394,7 @@ export default {
   },
   methods: {
     onLoad() {
-      //获取到image-cropper实例
+      // 获取到image-cropper实例
       this.cropper = this.$refs.cropper
 
       const org = this.org
@@ -406,11 +407,11 @@ export default {
         orgCertificate,
         ownCertificate1,
         ownCertificate2,
-        ownCertificate3,
+        ownCertificate3
       } = images
-      let orgDone = org.data.done
-      let frontDone = front.data.done
-      let sideDone = side.data.done
+      let orgDone = org.done
+      let frontDone = front.done
+      let sideDone = side.done
       let mergeDone = merge._data.done
 
       const serverPath = this.globalData.serverPath
@@ -420,7 +421,7 @@ export default {
         this.org.images = [serverPath + orgCertificate.filePath]
         this.org.image = orgCertificate
         this.org.done = true
-        org.setImage(serverPath + orgCertificate.filePath, orgCertificate)
+        this.$refs.org.setImage(serverPath + orgCertificate.filePath, orgCertificate)
       }
       if (ownCertificate1 && ownCertificate1.id) {
         frontDone = true
@@ -428,7 +429,7 @@ export default {
         this.front.images = [serverPath + ownCertificate1.filePath]
         this.front.image = ownCertificate1
         this.front.done = true
-        front.setImage(serverPath + ownCertificate1.filePath, ownCertificate1)
+        this.$refs.front.setImage(serverPath + ownCertificate1.filePath, ownCertificate1)
       }
       if (ownCertificate2 && ownCertificate2.id) {
         sideDone = true
@@ -436,7 +437,7 @@ export default {
         this.side.images = [serverPath + ownCertificate2.filePath]
         this.side.image = ownCertificate2
         this.side.done = true
-        side.setImage(serverPath + ownCertificate2.filePath, ownCertificate2)
+        this.$refs.side.setImage(serverPath + ownCertificate2.filePath, ownCertificate2)
       }
       if (ownCertificate3 && ownCertificate3.id) {
         mergeDone = true
@@ -575,9 +576,7 @@ export default {
     },
     // 修改数据
     saveData() {
-      const self = this
       const {
-        dialogType,
         orgName,
         orgCode,
         // orgPerson,
@@ -702,9 +701,9 @@ export default {
     },
     clearImage(id) {
       const { orderType } = this.globalData
-      const org = this.org
-      const front = this.front
-      const side = this.side
+      // const org = this.org
+      // const front = this.front
+      // const side = this.side
       const merge = this.$refs.merge
 
       if (id == 'org') {
@@ -763,13 +762,13 @@ export default {
     checkData() {
       Indicator.open('加载中...')
       const self = this
-      const { orderCode, icp } = this.globalData
+      const { orderCode } = this.globalData
       const { org, own } = this
       const data = {
         orderCode,
         orgAttachment: {
           ocrOrgName: org.name,
-          ocrOrgCode: org.code,
+          ocrOrgCode: org.code
           // ocrOrgOwnerName: org.person
         },
         idCardFrontAttachment: {
@@ -787,7 +786,7 @@ export default {
           data: JSON.stringify(data),
           success(res) {
             Indicator.close()
-            const { code, data, message } = res
+            const { data, message } = res
             if (!data) {
               self.setErrorInfo(true, message)
               return
@@ -896,7 +895,7 @@ export default {
         success(res) {
           // wx.hideLoading()
           Indicator.close()
-          const { code, data, message } = res
+          const { code, message } = res
           if (code == 'success') {
             // wx.showToast({ title: '上传成功！' })
             Toast({
@@ -907,7 +906,7 @@ export default {
             // wx.navigateBack()
           } else {
             Toast({
-              message: 'message',
+              message,
               duration: 3000
             })
           }
@@ -967,9 +966,9 @@ export default {
         this.submitData()
       }
     },
-    realTime() {
-      this.previews = data
-    },
+    // realTime() {
+    //   this.previews = data
+    // },
     cropImagedata(a, file, id, imageBase64) {
       this.srcs = a
       this.option.img = a
@@ -991,7 +990,6 @@ export default {
     },
     // 完成裁剪
     getCropperImage(type) {
-      let _this = this
       let formData = new FormData()
       if (type === 'blob') {
         this.$refs.cropper.getCropBlob((data) => {
@@ -1065,10 +1063,10 @@ export default {
       // console.log(this.$refs, this.id, this.baseurl, this.bb, 'fronttttt')
       // this.writeimage(this.baseurl, this.bb)
       const self = this
-      const org = $('#org1 > div')
-      const front = $('#front1 > div:first-child')
-      const side = $('#front1 > div:last-child')
-      const merge = this.$refs.merge
+      // const org = $('#org1 > div')
+      // const front = $('#front1 > div:first-child')
+      // const side = $('#front1 > div:last-child')
+      // const merge = this.$refs.merge
       const id = this.id
       const data = { orderCode: this.globalData.orderCode }
       const { NewCheckIn, ChangeCheckIn, NewWebsite, NoOrgNewWebsite } = this
@@ -1171,7 +1169,6 @@ export default {
                 self.setErrorInfo()
                 // self.baseurl = ''
                 // self.bb = ''
-
               } else {
                 Toast({
                   message: res.message,
@@ -1229,14 +1226,14 @@ export default {
       this.$router.push('/login')
     },
     ...mapMutations({
-      setData: "SET_DATA",
-    }),
+      setData: 'SET_DATA'
+    })
   },
   computed: {
     ...mapState({
-      globalData: state => state.home.globalData,
-    }),
-  },
+      globalData: state => state.home.globalData
+    })
+  }
 }
 </script>
 <style scoped>

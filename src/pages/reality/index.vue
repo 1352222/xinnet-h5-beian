@@ -5,12 +5,12 @@
 </template>
 
 <script>
-import { mapMutations, mapGetters, mapState } from "vuex"
+import { mapMutations, mapGetters, mapState } from 'vuex'
 export default {
-  name: "Reality",
+  name: 'Reality',
   data() {
     return {
-      num: 0,
+      num: 0
     }
   },
   methods: {
@@ -36,18 +36,18 @@ export default {
       this.$router.push('/login')
     },
     ...mapMutations({
-      setNum: "SET_NUM",
+      setNum: 'SET_NUM'
     }),
     increase() {
       this.num++
       this.setNum(this.num)
-    },
+    }
   },
   computed: {
     ...mapState({
-      number: state => state.home.number,
-    }),
-  },
+      number: state => state.home.number
+    })
+  }
 }
 </script>
 <style>

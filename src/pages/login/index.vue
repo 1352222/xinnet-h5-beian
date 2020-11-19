@@ -8,7 +8,7 @@
         <input v-model="phone" class="input" name="phone" placeholder-class="input-placeholder" type="text" placeholder="请输入网站负责人的手机号" />
       </div>
       <div class="error-area" v-if="showError">
-        <img style="width:14px;vertical-align: middle;" class="error-icon" src="~@/assets/warn.png" />
+        <img style="width:14px; vertical-align: middle;" class="error-icon" src="~@/assets/warn.png" />
         <span>{{error}}</span>
       </div>
 
@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import { mapMutations, mapGetters, mapState } from "vuex"
+import { mapMutations, mapState } from 'vuex'
 import utils from '@/common/utils'
 import $ from 'jquery'
 import { Toast } from 'mint-ui'
@@ -40,7 +40,7 @@ export default {
       const orderCodeUrl = url.slice(start)
       const aOrderCodeUrl = orderCodeUrl.split('&')
       const params = {}
-      for(let i=0; i<aOrderCodeUrl.length; i++) {
+      for (let i = 0; i < aOrderCodeUrl.length; i++) {
         const temp = aOrderCodeUrl[i].split('=')
         const key = temp[0]
         const val = temp[1]
@@ -67,8 +67,8 @@ export default {
       this.loading = true
       this.error = ''
       this.showError = false
-      const { orderCode, orderType } = this.getParams(window.location.search)
-   
+      const { orderCode } = this.getParams(window.location.search)
+
       $.ajax({
         url: `/api/miniprogram/checkPhone?phone=${phone}&orderCode=${orderCode}`,
         success(data) {
@@ -97,13 +97,13 @@ export default {
       }, () => { self.loading = false })
     },
     ...mapMutations({
-      setData: "SET_DATA",
-    }),
+      setData: 'SET_DATA'
+    })
   },
   computed: {
     ...mapState({
-      globalData: state => state.home.globalData,
-    }),
+      globalData: state => state.home.globalData
+    })
   }
 }
 </script>

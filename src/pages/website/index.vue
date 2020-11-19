@@ -131,8 +131,6 @@
       </div>
       <!-- v-if="allowSubmit" -->
       <div v-if="allowSubmit" class="confirm" @click="submit">完成</div>
-
-      
       <div id="dialog" v-show="dialogShow">
         <div class="border" >
           <div>
@@ -160,7 +158,6 @@
           </div>
         </div>
       </div>
-      
       <div id="dialog" v-show="tipsDialogShow1">
         <div class="border" style="height:25%;top:34%;" >
           <div>
@@ -177,7 +174,6 @@
           </div>
         </div>
       </div>
-
       <!-- 修改操作弹框 -->
       <!-- <mp-dialog
           mask-closable="{{false}}"
@@ -226,6 +222,7 @@ import uploadFile from '../upload_file'
 import mergeFile from '../merge_file'
 import getAttachmentParam from '../../common/getAttachmentParam'
 import $ from 'jquery'
+
 export default {
   name: 'Website',
   components: { uploadFile, mergeFile },
@@ -233,15 +230,14 @@ export default {
     return {
       // 开始裁剪状态
       cropper: false,
-      cropperType: "",
+      cropperType: '',
       // image cropper
-      src: "",
-      cropperWidth: 300, //宽度
-      cropperHeight: 220, //高度
-
+      src: '',
+      cropperWidth: 300, // 宽度
+      cropperHeight: 220, // 高度
       // 是否显示错误提示
       showErrorInfo: false,
-      errorInfo: "",
+      errorInfo: '',
       height: 0,
       canvasWidth: 375,
       canvasHight: 667,
@@ -253,44 +249,43 @@ export default {
       allowSubmit: false,
       allowUpdate: false,
       // dialog
-      dialogTitle: "",
+      dialogTitle: '',
       dialogShow: false,
-      buttons: [{ text: "取消" }, { text: "保存" }],
+      buttons: [{ text: '取消' }, { text: '保存' }],
       // tips dialog
       tipsDialogShow1: false,
       tipsDialogShow2: false,
-      tipsButtons1: [{ text: "使用" }, { text: "修改" }],
-      tipsButtons2: [{ text: "去核实" }, { text: "继续" }],
-      tipsText: "",
-
+      tipsButtons1: [{ text: '使用' }, { text: '修改' }],
+      tipsButtons2: [{ text: '去核实' }, { text: '继续' }],
+      tipsText: '',
       // 网站负责人信息
       websiteOwn: {
         // 负责人
-        person: "",
+        person: '',
         // 负责人证件号
-        code: "",
+        code: ''
       },
       front: {
-        name: "",
-        code: "",
+        name: '',
+        code: '',
         done: false,
         option: {},
         images: [],
         image: {},
-        imagePath: "",
-        imageBase64: "",
-        buttonText: "",
+        imagePath: '',
+        imageBase64: '',
+        buttonText: ''
       },
       side: {
-        name: "",
-        code: "",
+        name: '',
+        code: '',
         done: false,
         option: {},
         images: [],
         image: {},
-        imagePath: "",
-        imageBase64: "",
-        buttonText: "",
+        imagePath: '',
+        imageBase64: '',
+        buttonText: ''
       },
       // 开始裁剪状态
       option: {
@@ -314,21 +309,20 @@ export default {
       baseurl: '',
       bb: '',
       // 修改后表单数据
-      websiteOwnPerson: "",
-      websiteOwnCode: "",
-      uploadTips: "",
+      websiteOwnPerson: '',
+      websiteOwnCode: '',
+      uploadTips: '',
       // 子组件参数：own，website
-      compType: "website",
-
+      compType: 'website',
       NewCheckIn: false,
       ChangeCheckIn: false,
       NewWebsite: false,
       NoOrgNewWebsite: false,
       ChangeOrg: false,
-      isPersonal: false,
+      isPersonal: false
     }
   },
-  mounted: function () {
+  mounted() {
     this.height = this.globalData.height * 2 + 100
     if (this.globalData.orderCode) {
       this.onLoad()
@@ -343,12 +337,12 @@ export default {
   methods: {
     onLoad() {
       const { orderType, recordType } = this.globalData
-      const NewCheckIn = orderType === "NEW_CHECK_IN"
-      const ChangeCheckIn = orderType === "CHANGE_CHECK_IN"
-      const NewWebsite = orderType === "NEW_WEBSITE"
-      const NoOrgNewWebsite = orderType === "NO_ORG_NEW_WEBSITE"
-      const ChangeOrg = orderType === "CHANGE_ORG"
-      const isPersonal = recordType === "5"
+      const NewCheckIn = orderType === 'NEW_CHECK_IN'
+      const ChangeCheckIn = orderType === 'CHANGE_CHECK_IN'
+      const NewWebsite = orderType === 'NEW_WEBSITE'
+      const NoOrgNewWebsite = orderType === 'NO_ORG_NEW_WEBSITE'
+      const ChangeOrg = orderType === 'CHANGE_ORG'
+      const isPersonal = recordType == '5'
       this.NewCheckIn = NewCheckIn
       this.ChangeCheckIn = ChangeCheckIn
       this.NewWebsite = NewWebsite
@@ -359,42 +353,42 @@ export default {
 
       // 个人有主体新增网站或变更主体 信息与PC端不一致时只能修改不能使用
       if ((isPersonal && NewWebsite) || (isPersonal && ChangeOrg)) {
-        this.tipsButtons1 = [{ text: "修改" }]
+        this.tipsButtons1 = [{ text: '修改' }]
         // this.setData({ tipsButtons1: [{text: '修改'}] })
       }
 
-      //获取到image-cropper实例
-      // this.cropper = this.selectComponent("#image-cropper")
+      // 获取到image-cropper实例
+      // this.cropper = this.selectComponent('#image-cropper')
       this.cropper = this.$refs.cropper
-      if (orderType === "CHANGE_ORG" && recordType === "5") {
+      if (orderType === 'CHANGE_ORG' && recordType == '5') {
         // wx.setNavigationBarTitle({
         //   title: '主体负责人证件信息'
         // })
-        this.uploadTips = "请上传主体负责人证件信息"
+        this.uploadTips = '请上传主体负责人证件信息'
         // this.setData({ uploadTips: '请上传主体负责人证件信息' })
-      } else if (recordType === "5") {
+      } else if (recordType == '5') {
         // wx.setNavigationBarTitle({
         //   title: '主体/网站负责人证件信息'
         // })
-        this.uploadTips = "请上传主体/网站负责人证件信息"
+        this.uploadTips = '请上传主体/网站负责人证件信息'
         // this.setData({ uploadTips: '请上传主体/网站负责人证件信息' })
       } else {
         // wx.setNavigationBarTitle({
         //   title: '网站负责人证件信息'
         // })
-        this.uploadTips = "请上传网站负责人证件信息"
+        this.uploadTips = '请上传网站负责人证件信息'
         // this.setData({ uploadTips: '请上传网站负责人证件信息' })
       }
 
-      const compType = recordType === "5" ? "own" : "website"
+      const compType = recordType == '5' ? 'own' : 'website'
       this.compType = compType
       // this.setData({ compType })
 
       // const front = this.selectComponent('#front')
       // const side = this.selectComponent('#side')
       // const merge = this.selectComponent('#merge')
-      const front = this.front
-      const side = this.side
+      // const front = this.front
+      // const side = this.side
       const merge = this.$refs.merge
 
       const { images, serverPath } = this.globalData
@@ -404,7 +398,7 @@ export default {
         ownCertificate3,
         websiteCertificate1,
         websiteCertificate2,
-        websiteCertificate3,
+        websiteCertificate3
       } = images
 
       let frontDone = this.front.done
@@ -413,15 +407,19 @@ export default {
       let certificate1
       let certificate2
       let certificate3
-      if (recordType === "5" && orderType != "CHANGE_ORG") {
+      console.log(recordType)
+      console.log(orderType)
+      console.log(images)
+      if (recordType == '5' && orderType != 'CHANGE_ORG') {
         certificate1 = ownCertificate1
         certificate2 = ownCertificate2
         certificate3 = [ownCertificate3, websiteCertificate3]
-      } else if (recordType === "5" && orderType === "CHANGE_ORG") {
+      } else if (recordType == '5' && orderType === 'CHANGE_ORG') {
         certificate1 = ownCertificate1
         certificate2 = ownCertificate2
         certificate3 = [ownCertificate3]
       } else {
+        console.log(websiteCertificate1)
         certificate1 = websiteCertificate1
         certificate2 = websiteCertificate2
         certificate3 = [websiteCertificate3]
@@ -432,7 +430,7 @@ export default {
         this.front.images = [serverPath + certificate1.filePath]
         this.front.image = certificate1
         this.front.done = true
-        front.setImage(serverPath + certificate1.filePath, certificate1)
+        this.$refs.front.setImage(serverPath + certificate1.filePath, certificate1)
       }
       if (certificate2 && certificate2.id) {
         sideDone = true
@@ -440,7 +438,7 @@ export default {
         this.side.images = [serverPath + certificate2.filePath]
         this.side.image = certificate2
         this.side.done = true
-        side.setImage(serverPath + certificate2.filePath, certificate2)
+        this.$refs.side.setImage(serverPath + certificate2.filePath, certificate2)
       }
       if (certificate3[0] && certificate3[0].id) {
         mergeDone = true
@@ -449,11 +447,11 @@ export default {
 
       const { icpOrgOrder, icpWebsiteOrder } = this.globalData.icp
       const websiteOwn = {}
-      let websiteOwnPerson = ""
-      let websiteOwnCode = ""
+      let websiteOwnPerson = ''
+      let websiteOwnCode = ''
 
       // 个人取主体数据，企业取网站数据
-      if (this.globalData.recordType === 5) {
+      if (this.globalData.recordType == 5) {
         // 主办单位信息
         // websiteOwn.orgName = icpOrgOrder.orgName
         // 主办单位证件号
@@ -462,7 +460,7 @@ export default {
         // websiteOwn.orgPerson = icpOrgOrder.orgOwnerCertificateCode
 
         // 有主体新增网站从获取icpWebsiteOrder数据
-        if (orderType === "NEW_WEBSITE") {
+        if (orderType === 'NEW_WEBSITE') {
           if (icpWebsiteOrder) {
             websiteOwn.person = icpWebsiteOrder.websiteOwnerName
             websiteOwnPerson = icpWebsiteOrder.websiteOwnerName
@@ -532,7 +530,7 @@ export default {
     },
     // 完成裁剪
     getCropperImage(type) {
-      let _this = this
+      // let _this = this
       let formData = new FormData()
       if (type === 'blob') {
         this.$refs.cropper.getCropBlob((data) => {
@@ -560,7 +558,7 @@ export default {
     },
     // 修改负责人信息
     updateOwn() {
-      this.dialogTitle = "修改证件信息"
+      this.dialogTitle = '修改证件信息'
       this.dialogShow = true
     },
     // 修改单条数据触发
@@ -572,22 +570,22 @@ export default {
     // 修改数据
     saveData() {
       const self = this
-      const { orderCode, recordType } = this.globalData
+      const { orderCode } = this.globalData
       const websiteOwnPerson = this.websiteOwnPerson
       const websiteOwnCode = this.websiteOwnCode
       const data = {
         orderCode,
         idCardFrontAttachment: {
           ocrOrgOwnerName: websiteOwnPerson,
-          ocrOrgOwnerCode: websiteOwnCode,
-        },
+          ocrOrgOwnerCode: websiteOwnCode
+        }
       }
 
       return new Promise((resolve) => {
-        Indicator.open("请稍后...")
+        Indicator.open('请稍后...')
         $.ajax({
           url: `/api/miniprogram/saveWebsiteInfo`,
-          method: "POST",
+          method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           dataType: 'json',
           data: JSON.stringify(data),
@@ -597,7 +595,7 @@ export default {
             self.websiteOwn.code = websiteOwnCode
             self.websiteOwn.person = websiteOwnPerson
             resolve()
-          },
+          }
         })
       })
     },
@@ -611,7 +609,7 @@ export default {
       this.dialogShow = false
     },
     setUploadSuccessData() {
-      const self = this
+      // const self = this
       // const front = this.selectComponent('#front')
       // const side = this.selectComponent('#side')
       // const merge = this.selectComponent('#merge')
@@ -644,13 +642,13 @@ export default {
       const front = this.$refs.front
       const side = this.$refs.side
 
-      if (id === "side") {
+      if (id === 'side') {
         side.clearImageData()
-      } else if (id === "front") {
+      } else if (id === 'front') {
         front.clearImageData()
       }
     },
-    setErrorInfo(showErrorInfo = false, errorInfo = "") {
+    setErrorInfo(showErrorInfo = false, errorInfo = '') {
       this.showErrorInfo = showErrorInfo
       this.errorInfo = errorInfo
     },
@@ -674,9 +672,9 @@ export default {
     },
     chooseImage(url, img) {
       const self = this
-      // const front = $("#front")
-      // const side = $("#side")
-      const merge = this.$refs.merge
+      // const front = $('#front')
+      // const side = $('#side')
+      // const merge = this.$refs.merge
 
       const id = this.id
       const data = { orderCode: this.globalData.orderCode }
@@ -687,66 +685,65 @@ export default {
       if (!NewCheckIn && !ChangeCheckIn) {
         data.idCardFrontAttachment = {
           byteFile: url,
-          side: id === "side" ? "back" : "front",
+          side: id === 'side' ? 'back' : 'front'
         }
-        Indicator.open("识别中...")
+        Indicator.open('识别中...')
         $.ajax({
-            url: `/api/miniprogram/ocrIdCard`,
-            method: "POST",
-            headers: { 'Content-Type': 'application/json' },
-            dataType: 'json',
-            data: JSON.stringify(data),
-            success(res) {
-              Indicator.close()
-              const { code, data, message } = res
-              if (code === "success" && id === "front") {
-                // 每次OCR后更新修改操作表单
-                const websiteOwnPerson = data.ocrOrgOwnerName
-                const websiteOwnCode = data.ocrOrgOwnerCode
-                self.websiteOwn.person = data.ocrOrgOwnerName
-                self.websiteOwn.code = data.ocrOrgOwnerCode
-                self.websiteOwnPerson = websiteOwnPerson
-                self.websiteOwnCode = websiteOwnCode
-                self.writeimage(self.baseurl, self.bb)
-                self.setUploadSuccessData()
-                self.setErrorInfo()
-                self.allowUpdate = true
-              } else if (code === "success" && id === "side") {
-                self.writeimage(self.baseurl, self.bb)
-                self.setUploadSuccessData()
-                self.setErrorInfo()
-              } else {
-                self.setUploadFailData(self.idCardBackAttachment)
-                self.setErrorInfo(true, message)
-              }
-            },
-          }, () => self.setUploadFailData(self.id)
-        )
+          url: `/api/miniprogram/ocrIdCard`,
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          dataType: 'json',
+          data: JSON.stringify(data),
+          success(res) {
+            Indicator.close()
+            const { code, data, message } = res
+            if (code === 'success' && id === 'front') {
+              // 每次OCR后更新修改操作表单
+              const websiteOwnPerson = data.ocrOrgOwnerName
+              const websiteOwnCode = data.ocrOrgOwnerCode
+              self.websiteOwn.person = data.ocrOrgOwnerName
+              self.websiteOwn.code = data.ocrOrgOwnerCode
+              self.websiteOwnPerson = websiteOwnPerson
+              self.websiteOwnCode = websiteOwnCode
+              self.writeimage(self.baseurl, self.bb)
+              self.setUploadSuccessData()
+              self.setErrorInfo()
+              self.allowUpdate = true
+            } else if (code === 'success' && id === 'side') {
+              self.writeimage(self.baseurl, self.bb)
+              self.setUploadSuccessData()
+              self.setErrorInfo()
+            } else {
+              self.setUploadFailData(self.idCardBackAttachment)
+              self.setErrorInfo(true, message)
+            }
+          }
+        }, () => self.setUploadFailData(self.id))
       } else {
         self.setUploadSuccessData()
       }
     },
     clearScreenAndVerifyImage() {
       const { screen, realityVerify, promiseBook } = this.globalData.images
-      let param = ""
+      let param = ''
       const self = this
       if (screen && screen.id) {
         param += `attachmentOrderIds=${screen.id}`
       }
       if (realityVerify && realityVerify.id) {
         const url = `attachmentOrderIds=${realityVerify.id}`
-        param = param ? param + "&" + url : url
+        param = param ? param + '&' + url : url
       }
       if (promiseBook && promiseBook.id) {
         const url = `attachmentOrderIds=${promiseBook.id}`
-        param = param ? param + "&" + url : url
+        param = param ? param + '&' + url : url
       }
       if (param) {
         $.ajax({
           url: `/api/miniprogram/deleteAttachment?${param}`,
           success(res) {
             const { code, message } = res.data
-            if (code === "success") {
+            if (code === 'success') {
               let globalDatas = self.globalData
               globalDatas.images.screen = {}
               self.setData(globalDatas)
@@ -754,10 +751,10 @@ export default {
             } else {
               Toast({
                 message: message,
-                duration: 3000,
+                duration: 3000
               })
             }
-          },
+          }
         })
       }
     },
@@ -766,66 +763,68 @@ export default {
       const image = this.globalData.images.orgCertificate
       if (image && image.id) {
         const param = `attachmentOrderIds=${image.id}`
-        request({
+        this.request({
           url: `/api/miniprogram/deleteAttachment?${param}`,
           success(res) {
             const { code, message } = res.data
-            if (code === "success") {
+            if (code === 'success') {
               let globalDatas = self.globalData
               globalDatas.images.orgCertificate = {}
               self.setData(globalDatas)
             } else {
               Toast({
                 message: message,
-                duration: 3000,
+                duration: 3000
               })
             }
-          },
+          }
         })
       }
     }, // 删除网站负责人附件也删除幕布照和合成照
     clearImage(id) {
       const { orderType, recordType } = this.globalData
-      const front = this.front
-      const side = this.side
+      // const front = this.front
+      // const side = this.side
       const merge = this.$refs.merge
 
-      if (id === "front") {
+      if (id === 'front') {
         merge.clearImage()
         this.frontDone = false
         this.mergeDone = false
         this.front = {
-          name: "",
-          code: "",
+          name: '',
+          code: '',
           done: false,
           option: {},
           images: [],
           image: {},
-          imagePath: "",
-          imageBase64: "",
-          buttonText: "",
+          imagePath: '',
+          imageBase64: '',
+          buttonText: ''
         }
-      } else if (id === "side") {
+      } else if (id === 'side') {
         merge.clearImage()
         this.sideDone = false
         this.mergeDone = false
         this.side = {
-          name: "",
-          code: "",
+          name: '',
+          code: '',
           done: false,
           option: {},
           images: [],
           image: {},
-          imagePath: "",
-          imageBase64: "",
-          buttonText: "",
+          imagePath: '',
+          imageBase64: '',
+          buttonText: ''
         }
       }
       // 非变更主体
-      if (orderType != "CHANGE_ORG") {
+      if (orderType != 'CHANGE_ORG') {
         this.clearScreenAndVerifyImage()
         // 个人备案需要删除营业执照证件
-        if (recordType === 5) [this.delOrgImage()]
+        if (recordType == 5) {
+          this.delOrgImage()
+        }
       }
       this.setAllowSubmit(false)
       this.delImageLock()
@@ -847,7 +846,7 @@ export default {
           if (code != 'success') {
             Toast({
               message: message,
-              duration: 3000,
+              duration: 3000
             })
           }
         }
@@ -855,21 +854,21 @@ export default {
     },
     // 调用对局比对、检验工商接口
     checkData() {
-      Indicator.open("请稍后...")
+      Indicator.open('请稍后...')
       const self = this
-      const { orderCode, icp } = this.globalData
+      const { orderCode } = this.globalData
       const websiteOwn = this.websiteOwn
       const data = {
         orderCode,
         idCardFrontAttachment: {
           ocrOrgOwnerName: websiteOwn.person,
-          ocrOrgOwnerCode: websiteOwn.code,
-        },
+          ocrOrgOwnerCode: websiteOwn.code
+        }
       }
       return new Promise((resolve) => {
         $.ajax({
           url: `/api/miniprogram/idCardAttachment`,
-          method: "POST",
+          method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           dataType: 'json',
           data: JSON.stringify(data),
@@ -887,7 +886,7 @@ export default {
                 idCardFrontAttachment.ocrOrgOwnerNameResult &&
                 idCardFrontAttachment.ocrOrgOwnerCodeResult
               ) ||
-              code != "success"
+              code != 'success'
             ) {
               self.tipsDialogShow1 = true
               // self.setData({ tipsDialogShow1: true })
@@ -895,7 +894,7 @@ export default {
             }
 
             resolve()
-          },
+          }
         })
       })
     },
@@ -906,44 +905,44 @@ export default {
       const merge = this.$refs.merge
       const { orderCode, recordType } = this.globalData
       const data = { orderCode: orderCode }
-      const type = recordType === 5 ? "ORG" : "WEBSITE"
-      const filePurpose = recordType === 5 ? 3 : 4
+      const type = recordType == '5' ? 'ORG' : 'WEBSITE'
+      const filePurpose = recordType == '5' ? 3 : 4
       const self = this
       if (!front.image.id) {
         data.idCardFrontAttachment = {
           ...getAttachmentParam({
-            isWebsiteChecklist: "0",
+            isWebsiteChecklist: '0',
             picSequenceNum: 1,
-            fileState: "SINGLE",
+            fileState: 'SINGLE',
             filePurpose,
             type,
-            byteFile: front.imageBase64,
-          }, this.globalData),
+            byteFile: front.imageBase64
+          }, this.globalData)
         }
       }
       if (!side.image.id) {
         data.idCardBackAttachment = {
           ...getAttachmentParam({
-            isWebsiteChecklist: "0",
+            isWebsiteChecklist: '0',
             picSequenceNum: 2,
-            fileState: "SINGLE",
+            fileState: 'SINGLE',
             filePurpose,
             type,
-            byteFile: side.imageBase64,
-          }, this.globalData),
+            byteFile: side.imageBase64
+          }, this.globalData)
         }
       }
       const mergeImage = merge._data.image
       if (!(mergeImage.length && mergeImage[0].id)) {
         data.idCardMergeAttachment = {
           ...getAttachmentParam({
-            isWebsiteChecklist: "0",
+            isWebsiteChecklist: '0',
             picSequenceNum: 3,
-            fileState: "MERGE",
+            fileState: 'MERGE',
             filePurpose,
             type,
-            byteFile: merge._data.imageBase64.slice(23),
-          }, this.globalData),
+            byteFile: merge._data.imageBase64.slice(23)
+          }, this.globalData)
         }
       }
       // 3张附件未修改不用提交
@@ -955,37 +954,37 @@ export default {
       ) {
         // wx.showToast({ title: '上传成功！' })
         Toast({
-          message: "上传成功！",
-          duration: 3000,
+          message: '上传成功！',
+          duration: 3000
         })
         self.$router.push('/list')
         // wx.navigateBack()
         return
       }
 
-      Indicator.open("请稍后...")
+      Indicator.open('请稍后...')
       $.ajax({
         url: `/api/miniprogram/saveAttachment`,
-        method: "POST",
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         dataType: 'json',
         data: JSON.stringify(data),
         success(res) {
           Indicator.close()
-          const { code, data, message } = res
-          if (code === "success") {
+          const { code, message } = res
+          if (code === 'success') {
             Toast({
-              message: "上传成功！",
-              duration: 3000,
+              message: '上传成功！',
+              duration: 3000
             })
             self.$router.push('/list')
           } else {
             Toast({
               message: message,
-              duration: 3000,
+              duration: 3000
             })
           }
-        },
+        }
       })
     },
     // 完成
@@ -1019,14 +1018,14 @@ export default {
       }
     },
     ...mapMutations({
-      setData: "SET_DATA",
-    }),
+      setData: 'SET_DATA'
+    })
   },
   computed: {
     ...mapState({
-      globalData: (state) => state.home.globalData,
-    }),
-  },
+      globalData: (state) => state.home.globalData
+    })
+  }
 }
 </script>
 <style scoped>
@@ -1393,7 +1392,6 @@ export default {
 .beian-dialog .weui-dialog__ft .weui-dialog__btn:after {
   border-left: none;
 }
-
 
 #dialog {
   position: fixed;

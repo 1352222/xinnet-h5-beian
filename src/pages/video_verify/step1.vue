@@ -31,18 +31,18 @@
 </template>
 
 <script>
-import "mint-ui/lib/style.css"
+import 'mint-ui/lib/style.css'
 export default {
-  name: "Video-step1",
+  name: 'Video-step1',
   data() {
-    return {};
+    return {}
   },
   methods: {
     submit() {
-      this.$router.push("/video_verify/step2");
-    },
-  },
-};
+      this.$router.push('/video_verify/step2')
+    }
+  }
+}
 </script>
 <style scoped>
 #video-step1 {
