@@ -232,7 +232,7 @@
         <div id="dialog" v-show="tipsDialogShow2">
           <div class="border" style="height:25%;top:34%;">
             <div>
-                <p class="titleXStyle">提示</p>
+              <p class="titleXStyle">提示</p>
             </div>
             <div class="tips">{{tipsText}}</div>
             <div class="button-align-bottom">
@@ -455,11 +455,11 @@ export default {
       // 组织机构代码弹窗不同提示
       // 组织机构代码orgTitle不同
       if (icpOrder) {
-        if (icpOrder.certificateTypeId == 12) {
+        const certificateTypeId = icpOrder.certificateTypeId || icpOrgOrder.certificateTypeId
+        if (certificateTypeId == 12) {
           this.tipsText = '组织机构代码证信息不正确，请核实'
           this.orgTitle = '请上传组织机构代码'
           this.org.buttonText = '点击拍摄组织机构代码'
-          // org._data.buttonText = '点击拍摄组织机构代码'
           // this.setData({ tipsText: '组织机构代码证信息不正确，请核实', orgTitle: '请上传组织机构代码' })
           // org.setData({ buttonText: '点击拍摄组织机构代码' })
         } else {
