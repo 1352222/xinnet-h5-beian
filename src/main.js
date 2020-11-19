@@ -28,6 +28,21 @@ Vue.use(Viewer, {
   }
 })
 
+router.beforeEach((to, from, next) => {
+  const phone = window.sessionStorage.getItem('phone')
+  const orderCode = window.sessionStorage.getItem('orderCode')
+  const loginPage = to.path.indexOf('login') > -1
+  if (!loginPage) {
+    if (!phone || !orderCode) {
+      next('/login')
+    } else {
+      next()
+    }
+  } else {
+    next()
+  }
+})
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

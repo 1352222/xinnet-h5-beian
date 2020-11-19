@@ -142,7 +142,7 @@ export default {
       const self = this
 
       if (screenState === 'right') {
-        Toast({ message: '请稍后..' })
+        // Toast({ message: '请稍后..' })
         // 获取到幕布图片数据
         self.request({
           url: `/checkPhone?orderCode=${orderCode}&phone=${phone}`,
@@ -158,7 +158,7 @@ export default {
                   url: `/deleteAttachment?${param}`,
                   success(res) {
                     Indicator.close()
-                    const { code, message } = res
+                    const { code, message } = res.data
                     if (code == 'success') {
                       self.screenState = 'none'
                       self.setData({ screenState: 'none' })

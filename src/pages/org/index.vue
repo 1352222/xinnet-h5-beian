@@ -445,7 +445,6 @@ export default {
       }
 
       const { icpOrgOrder, icpOrder } = this.globalData.icp
-      const _org = {}
       const _own = {}
       let orgName = ''
       let orgCode = ''
@@ -470,16 +469,16 @@ export default {
 
       if (icpOrgOrder) {
         if (icpOrgOrder && icpOrgOrder.orgName) {
-          _org.name = icpOrgOrder.orgName
+          this.org.name = icpOrgOrder.orgName
           // 修改操作表单的数据
           orgName = icpOrgOrder.orgName
         }
         if (icpOrgOrder && icpOrgOrder.certificateCode) {
-          _org.code = icpOrgOrder.certificateCode
+          this.org.code = icpOrgOrder.certificateCode
           orgCode = icpOrgOrder.certificateCode
         }
         if (icpOrgOrder && icpOrgOrder.orgOwnerName) {
-          _org.person = icpOrgOrder.orgOwnerName
+          this.org.person = icpOrgOrder.orgOwnerName
           _own.person = icpOrgOrder.orgOwnerName
           // orgPerson = icpOrgOrder.orgOwnerName
           ownPerson = icpOrgOrder.orgOwnerName
@@ -508,7 +507,6 @@ export default {
       this.NewWebsite = NewWebsite
       this.NoOrgNewWebsite = NoOrgNewWebsite
       this.ChangeOrg = ChangeOrg
-      this.org = _org
       this.own = _own
       this.orgName = orgName
       this.orgCode = orgCode
@@ -1116,10 +1114,11 @@ export default {
                 self.setErrorInfo(true, message)
               }
             }
-          }, () => {
-            self.setUploadFailData(this.id)
+          // }, () => {
+          //   self.setUploadFailData(this.id)
           })
         } else {
+          self.writeimage(self.baseurl, self.bb)
           self.setUploadSuccessData('org')
         }
       } else if (id == 'front' || id == 'side') {
@@ -1178,8 +1177,10 @@ export default {
                 self.setErrorInfo(true, message)
               }
             }
-          }, () => self.setUploadFailData(this.id))
+          // }, () => self.setUploadFailData(this.id)
+          })
         } else {
+          self.writeimage(self.baseurl, self.bb)
           self.setUploadSuccessData()
         }
       }
@@ -1204,7 +1205,7 @@ export default {
           this.setAllowSubmit
         )
       }
-
+      console.log(this.org)
       // 设置各附件上传状态
       if (front.done && side.done && merge._data.done && org.done) {
         this.setAllowSubmit(true)

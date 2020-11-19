@@ -710,6 +710,7 @@ export default {
           }
         }, () => self.setUploadFailData(self.id))
       } else {
+        self.writeimage(self.baseurl, self.bb)
         self.setUploadSuccessData()
       }
     },
