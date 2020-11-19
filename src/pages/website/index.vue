@@ -65,7 +65,7 @@
         </button>
       </div>
     </div>
-    <div style="padding: 0 15px 15px">
+    <div v-else style="padding: 0 15px 15px">
       <div class="container-page log-list">
         <div class="error-info" v-if="showErrorInfo">
           <img class="error-icon" src="~@/assets/warn.png" />
@@ -170,9 +170,9 @@
           <div class="button-align-bottom">
             <div class="horizontal-line-style"></div>
             <div class="button-align-bottom-style">
-              <div class="punch-button" @click="tipsDialogButton1('use')">使用</div>
+              <div class="punch-button" v-if="use" @click="tipsDialogButton1('use')">使用</div>
               <div class="vertical-line-style"></div>
-              <div class="cancel-button" @click="tipsDialogButton1('modify')">修改</div>
+              <div class="cancel-button" :style="!use ? 'width:100%' : ''" @click="tipsDialogButton1('modify')">修改</div>
             </div>
           </div>
         </div>
@@ -231,6 +231,7 @@ export default {
   components: { uploadFile, mergeFile },
   data() {
     return {
+      use: true,
       // 开始裁剪状态
       cropper: false,
       cropperType: "",
@@ -359,7 +360,8 @@ export default {
 
       // 个人有主体新增网站或变更主体 信息与PC端不一致时只能修改不能使用
       if ((isPersonal && NewWebsite) || (isPersonal && ChangeOrg)) {
-        this.tipsButtons1 = [{ text: "修改" }]
+        this.use = false
+        // this.tipsButtons1 = [{ text: "修改" }]
         // this.setData({ tipsButtons1: [{text: '修改'}] })
       }
 
@@ -1294,6 +1296,10 @@ export default {
   padding: 10px 15px;
   background: #ffe9db;
   margin-bottom: 15px;
+}
+
+.error-icon {
+  width: 12px;
 }
 
 .image-cropper-wrapper {

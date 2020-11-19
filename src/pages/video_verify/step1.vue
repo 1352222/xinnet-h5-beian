@@ -92,7 +92,7 @@ export default {
 }
 
 .banner {
-  width: 375px;
+  /* width: 375px; */
   height: 192px;
   background-size: 100% 100%;
   background-repeat: no-repeat;

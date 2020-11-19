@@ -4,7 +4,7 @@
       <div class="loading" v-if="loading">
         <mt-spinner></mt-spinner>
       </div>
-      <div v-else>
+      <div v-else style="background: #e4eaf6;">
         <div class="body">
           <div class="title">网站备案真实性核验单</div>
           <div class="photo-area">
@@ -40,16 +40,15 @@
               >
             </label>
           </div>
-        </div>
-
-        <div class="btn_done">
-          <mt-button
-            class="btn btn_submit"
-            size="large"
-            :disabled="!agree || loading"
-            @click="submit"
-            >完成</mt-button
-          >
+          <div class="btn_done">
+            <mt-button
+              class="btn btn_submit"
+              size="large"
+              :disabled="!agree || loading"
+              @click="submit"
+              >完成</mt-button
+            >
+          </div>
         </div>
       </div>
     </div>
@@ -329,7 +328,7 @@ export default {
 }
 
 .btn_done {
-  width: 80%;
+  width: 100%;
   margin: auto;
 }
 

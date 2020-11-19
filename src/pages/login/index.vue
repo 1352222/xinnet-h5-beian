@@ -87,6 +87,9 @@ export default {
               self.loading = false
             }, 5000)
           } else {
+            if(data.message === '备案信息已提交审核') {
+              self.$router.push('/login')
+            }
             Toast({
               message: data.message,
               duration: 3000
