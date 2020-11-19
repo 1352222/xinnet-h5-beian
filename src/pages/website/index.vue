@@ -382,13 +382,6 @@ export default {
 
       const compType = recordType == '5' ? 'own' : 'website'
       this.compType = compType
-      // this.setData({ compType })
-
-      // const front = this.selectComponent('#front')
-      // const side = this.selectComponent('#side')
-      // const merge = this.selectComponent('#merge')
-      // const front = this.front
-      // const side = this.side
       const merge = this.$refs.merge
 
       const { images, serverPath } = this.globalData
