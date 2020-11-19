@@ -208,7 +208,7 @@
       <canvas
         class="canvas-hidden"
         ref="canvasimage"
-        style="width: 104px; height: 137px;"
+        style="width: 580px; height: 360px;"
         canvas-id="Canvas"
       />
     </div>
@@ -400,9 +400,7 @@ export default {
       let certificate1
       let certificate2
       let certificate3
-      console.log(recordType)
-      console.log(orderType)
-      console.log(images)
+
       if (recordType == '5' && orderType != 'CHANGE_ORG') {
         certificate1 = ownCertificate1
         certificate2 = ownCertificate2
@@ -412,7 +410,6 @@ export default {
         certificate2 = ownCertificate2
         certificate3 = [ownCertificate3]
       } else {
-        console.log(websiteCertificate1)
         certificate1 = websiteCertificate1
         certificate2 = websiteCertificate2
         certificate3 = [websiteCertificate3]
@@ -735,7 +732,7 @@ export default {
         $.ajax({
           url: `/api/miniprogram/deleteAttachment?${param}`,
           success(res) {
-            const { code, message } = res.data
+            const { code, message } = res
             if (code === 'success') {
               let globalDatas = self.globalData
               globalDatas.images.screen = {}

@@ -125,7 +125,7 @@ export default {
         $.ajax({
           url: `/api/miniprogram/deleteAttachment?${param}`,
           success(res) {
-            const { code, message } = res.data
+            const { code, message } = res
             if (code === 'success') {
               self.clearImageData()
             } else {
@@ -186,9 +186,9 @@ export default {
         }
         this.option.img = data
         this.$parent.cropImagedata(datas, file, this.id, data)
+        event.target.value = ''
       }
       reader.readAsArrayBuffer(file)
-      event.target.value = ''
     },
     ...mapMutations({
       setData: 'SET_DATA'

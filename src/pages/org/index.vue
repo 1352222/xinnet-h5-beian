@@ -245,7 +245,7 @@
             </div>
           </div>
         </div>
-        <canvas class="canvas-hidden" ref="canvasimage" style="width: 290px; height: 360px;" canvas-id="Canvas"/>
+        <canvas class="canvas-hidden" ref="canvasimage" style="width: 580px; height: 360px;" canvas-id="Canvas"/>
       </div>
     </div>
   </div>

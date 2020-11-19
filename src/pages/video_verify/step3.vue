@@ -144,7 +144,7 @@ export default {
       if (screenState === 'right') {
         Toast({ message: '请稍后..' })
         // 获取到幕布图片数据
-        this.request({
+        self.request({
           url: `/checkPhone?orderCode=${orderCode}&phone=${phone}`,
           success(res) {
             const { data } = res
@@ -154,11 +154,11 @@ export default {
               if (images.screen && images.screen.id) {
                 // 重拍先删除幕布图片，成功后回退
                 const param = `attachmentOrderIds=${images.screen.id}`
-                this.request({
+                self.request({
                   url: `/deleteAttachment?${param}`,
                   success(res) {
                     Indicator.close()
-                    const { code, message } = res.data
+                    const { code, message } = res
                     if (code == 'success') {
                       self.screenState = 'none'
                       self.setData({ screenState: 'none' })

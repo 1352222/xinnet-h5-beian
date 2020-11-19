@@ -107,8 +107,8 @@ export default {
             const video = self.$refs.video
             console.log(video)
             if (video) {
-              const min = 6
-              const max = 10
+              const min = 4
+              const max = 8
               self.disabled = false
               if (video.duration < min) {
                 Toast({ message: '视频录制时长不足规定时长', duration: 3000 })
@@ -213,7 +213,7 @@ export default {
             self.$router.push('/video_verify/step3')
           }
         },
-        fail(error) {
+        catch(error) {
           Indicator.close()
           const errorMsg = self.uploadFileTimeoutErrorMsg(error.errMsg)
           self.setErrorInfo(true, errorMsg)
