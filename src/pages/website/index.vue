@@ -175,37 +175,6 @@
             </div>
           </div>
         </div>
-        <!-- 修改操作弹框 -->
-        <!-- <mp-dialog
-            mask-closable="{{false}}"
-            title="{{dialogTitle}}"
-            show="{{dialogShow}}"
-            buttons="{{buttons}}"
-            bindbuttontap="dialogButton"
-            ext-class="beian-dialog"
-          > -->
-        <!-- 网站负责人form -->
-          <!-- <div class="form">
-            <label class="fields">
-              <div class="label">网站负责人：</div>
-              <input class="weui-input" id="websiteOwnPerson" bindinput="bindinput" :value="websiteOwn.person" />
-            </label>
-            <label class="fields">
-              <div class="label">网站负责人证件号：</div>
-              <input class="weui-input" id="websiteOwnCode" bindinput="bindinput" :value="websiteOwn.code" />
-            </label>
-            </div>
-          </mp-dialog> -->
-        <!-- 数据不一致提示 -->
-        <!-- <mp-dialog
-            mask-closable="{{false}}"
-            title="提示"
-            show="{{tipsDialogShow1}}"
-            buttons="{{tipsButtons1}}"
-            bindbuttontap="tipsDialogButton1"
-          >
-            <div class="tips">与PC端填写信息不一致，是否使用手机端信息</div>
-          </mp-dialog> -->
         <canvas
           class="canvas-hidden"
           ref="canvasimage"
@@ -1276,6 +1245,11 @@ export default {
 .weui-dialog .weui-input {
   text-align: left;
   color: #333;
+}
+
+.weui-input:focus {
+  outline: none;
+  border: solid 1px #0069ff;
 }
 
 .weui-dialog .tips {
