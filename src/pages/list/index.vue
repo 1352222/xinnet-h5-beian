@@ -88,7 +88,7 @@ export default {
           if (data.code === 'success') {
             self.getData(res, phone)
           } else {
-            if(data.message === '备案信息已提交审核') {
+            if (data.message === '备案信息已提交审核') {
               self.$router.push('/login')
             }
             Toast({
