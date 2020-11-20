@@ -65,152 +65,154 @@
         </button>
       </div>
     </div>
-    <div v-else style="padding: 0 15px 15px">
+    <div v-else>
       <div class="container-page log-list">
         <div class="error-info" v-if="showErrorInfo">
           <img class="error-icon" src="~@/assets/warn.png" />
           {{ errorInfo }}
         </div>
       </div>
-      <div class="bottom">
-        <span class="tit">{{ uploadTips }}</span>
-        <div class="bgtop">
-          <div class="weui-cell" style="padding: 0">
-            <div>
-              <div class="clearfix">
-                <upload-file
-                  class="box-left"
-                  :type="compType"
-                  :num="1"
-                  id="front"
-                  ref="front"
-                  :data="front"
-                  bind:cropperimage="cropperImage"
-                  bind:chooseimage="chooseImage"
-                  bind:clearimage="clearImage"
-                />
-                <upload-file
-                  class="box-right"
-                  :type="compType"
-                  :num="2"
-                  ref="side"
-                  id="side"
-                  :data="side"
-                  bind:cropperimage="cropperImage"
-                  bind:chooseimage="chooseImage"
-                  bind:clearimage="clearImage"
-                />
+      <div style="padding: 0px 15px 15px;">
+        <div class="bottom">
+          <span class="tit">{{ uploadTips }}</span>
+          <div class="bgtop">
+            <div class="weui-cell" style="padding: 0">
+              <div>
+                <div class="clearfix">
+                  <upload-file
+                    class="box-left"
+                    :type="compType"
+                    :num="1"
+                    id="front"
+                    ref="front"
+                    :data="front"
+                    bind:cropperimage="cropperImage"
+                    bind:chooseimage="chooseImage"
+                    bind:clearimage="clearImage"
+                  />
+                  <upload-file
+                    class="box-right"
+                    :type="compType"
+                    :num="2"
+                    ref="side"
+                    id="side"
+                    :data="side"
+                    bind:cropperimage="cropperImage"
+                    bind:chooseimage="chooseImage"
+                    bind:clearimage="clearImage"
+                  />
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      <span class="tit">合成照</span>
-      <merge-file ref="merge" id="merge" :type="compType" />
-      <div
-        class="image-info"
-        v-if="frontDone && (websiteOwn.person || websiteOwn.code)"
-      >
-        <div>
-          <span class="label">网站负责人：</span>
-          <span class="value">{{ websiteOwn.person }}</span>
-        </div>
-        <div>
-          <span class="label">网站负责人证件号：</span>
-          <span class="value">{{ websiteOwn.code }}</span>
-        </div>
-        <span v-if="allowUpdate" class="update-button" @click="updateOwn"
-          >修改</span
+        <span class="tit">合成照</span>
+        <merge-file ref="merge" id="merge" :type="compType" />
+        <div
+          class="image-info"
+          v-if="frontDone && (websiteOwn.person || websiteOwn.code)"
         >
-      </div>
-      <div class="image-desc" v-else>
-        <div>拍照须知：</div>
-        <div>1、请拍摄证件原件并确保证件干净、无折痕</div>
-        <div>2、请确保照片完整清晰、无遮挡物以及杂物等</div>
-        <div>3、请将证件照片方向调整为正向</div>
-      </div>
-      <!-- v-if="allowSubmit" -->
-      <div v-if="allowSubmit" class="confirm" @click="submit">完成</div>
-      <div id="dialog" v-show="dialogShow">
-        <div class="border" >
           <div>
-              <p class="titleXStyle">{{dialogTitle}}</p>
+            <span class="label">网站负责人：</span>
+            <span class="value">{{ websiteOwn.person }}</span>
           </div>
-          <div class="table-style">
-            <div class="table-describe-style">网站负责人：</div>
-            <div class="table-content-style">
-              <input class="weui-input" id="websiteOwnPerson" @input="bindinput" :value="websiteOwn.person" />
+          <div>
+            <span class="label">网站负责人证件号：</span>
+            <span class="value">{{ websiteOwn.code }}</span>
+          </div>
+          <span v-if="allowUpdate" class="update-button" @click="updateOwn"
+            >修改</span
+          >
+        </div>
+        <div class="image-desc" v-else>
+          <div>拍照须知：</div>
+          <div>1、请拍摄证件原件并确保证件干净、无折痕</div>
+          <div>2、请确保照片完整清晰、无遮挡物以及杂物等</div>
+          <div>3、请将证件照片方向调整为正向</div>
+        </div>
+        <!-- v-if="allowSubmit" -->
+        <div v-if="allowSubmit" class="confirm" @click="submit">完成</div>
+        <div id="dialog" v-show="dialogShow">
+          <div class="border" >
+            <div>
+                <p class="titleXStyle">{{dialogTitle}}</p>
             </div>
-          </div>
-          <div class="table-style">
-            <div class="table-describe-style">网站负责人证件号：</div>
-            <div class="table-content-style">
-              <input class="weui-input" id="websiteOwnCode" @input="bindinput" :value="websiteOwn.code" />
+            <div class="table-style">
+              <div class="table-describe-style">网站负责人：</div>
+              <div class="table-content-style">
+                <input class="weui-input" id="websiteOwnPerson" @input="bindinput" :value="websiteOwn.person" />
+              </div>
             </div>
-          </div>
-          <div class="button-align-bottom">
-            <div class="horizontal-line-style"></div>
-            <div class="button-align-bottom-style">
-              <div class="cancel-button" @click="() => {this.dialogShow = false}">取消</div>
-              <div class="vertical-line-style"></div>
-              <div class="punch-button" @click="dialogButton">确定</div>
+            <div class="table-style">
+              <div class="table-describe-style">网站负责人证件号：</div>
+              <div class="table-content-style">
+                <input class="weui-input" id="websiteOwnCode" @input="bindinput" :value="websiteOwn.code" />
+              </div>
+            </div>
+            <div class="button-align-bottom">
+              <div class="horizontal-line-style"></div>
+              <div class="button-align-bottom-style">
+                <div class="cancel-button" @click="() => {this.dialogShow = false}">取消</div>
+                <div class="vertical-line-style"></div>
+                <div class="punch-button" @click="dialogButton">确定</div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <div id="dialog" v-show="tipsDialogShow1">
-        <div class="border" style="height:25%;top:34%;" >
-          <div>
-              <p class="titleXStyle">提示</p>
-          </div>
-          <div class="tips">与PC端填写信息不一致，是否使用手机端信息</div>
-          <div class="button-align-bottom">
-            <div class="horizontal-line-style"></div>
-            <div class="button-align-bottom-style">
-              <div class="punch-button" v-if="use" @click="tipsDialogButton1('use')">使用</div>
-              <div class="vertical-line-style"></div>
-              <div class="cancel-button" :style="!use ? 'width:100%' : ''" @click="tipsDialogButton1('modify')">修改</div>
+        <div id="dialog" v-show="tipsDialogShow1">
+          <div class="border" style="height:25%;top:34%;" >
+            <div>
+                <p class="titleXStyle">提示</p>
+            </div>
+            <div class="tips">与PC端填写信息不一致，是否使用手机端信息</div>
+            <div class="button-align-bottom">
+              <div class="horizontal-line-style"></div>
+              <div class="button-align-bottom-style">
+                <div class="punch-button" v-if="use" @click="tipsDialogButton1('use')">使用</div>
+                <div class="vertical-line-style"></div>
+                <div class="cancel-button" :style="!use ? 'width:100%' : ''" @click="tipsDialogButton1('modify')">修改</div>
+              </div>
             </div>
           </div>
         </div>
+        <!-- 修改操作弹框 -->
+        <!-- <mp-dialog
+            mask-closable="{{false}}"
+            title="{{dialogTitle}}"
+            show="{{dialogShow}}"
+            buttons="{{buttons}}"
+            bindbuttontap="dialogButton"
+            ext-class="beian-dialog"
+          > -->
+        <!-- 网站负责人form -->
+          <!-- <div class="form">
+            <label class="fields">
+              <div class="label">网站负责人：</div>
+              <input class="weui-input" id="websiteOwnPerson" bindinput="bindinput" :value="websiteOwn.person" />
+            </label>
+            <label class="fields">
+              <div class="label">网站负责人证件号：</div>
+              <input class="weui-input" id="websiteOwnCode" bindinput="bindinput" :value="websiteOwn.code" />
+            </label>
+            </div>
+          </mp-dialog> -->
+        <!-- 数据不一致提示 -->
+        <!-- <mp-dialog
+            mask-closable="{{false}}"
+            title="提示"
+            show="{{tipsDialogShow1}}"
+            buttons="{{tipsButtons1}}"
+            bindbuttontap="tipsDialogButton1"
+          >
+            <div class="tips">与PC端填写信息不一致，是否使用手机端信息</div>
+          </mp-dialog> -->
+        <canvas
+          class="canvas-hidden"
+          ref="canvasimage"
+          style="width: 580px; height: 360px;"
+          canvas-id="Canvas"
+        />
       </div>
-      <!-- 修改操作弹框 -->
-      <!-- <mp-dialog
-          mask-closable="{{false}}"
-          title="{{dialogTitle}}"
-          show="{{dialogShow}}"
-          buttons="{{buttons}}"
-          bindbuttontap="dialogButton"
-          ext-class="beian-dialog"
-        > -->
-      <!-- 网站负责人form -->
-        <!-- <div class="form">
-          <label class="fields">
-            <div class="label">网站负责人：</div>
-            <input class="weui-input" id="websiteOwnPerson" bindinput="bindinput" :value="websiteOwn.person" />
-          </label>
-          <label class="fields">
-            <div class="label">网站负责人证件号：</div>
-            <input class="weui-input" id="websiteOwnCode" bindinput="bindinput" :value="websiteOwn.code" />
-          </label>
-          </div>
-        </mp-dialog> -->
-      <!-- 数据不一致提示 -->
-      <!-- <mp-dialog
-          mask-closable="{{false}}"
-          title="提示"
-          show="{{tipsDialogShow1}}"
-          buttons="{{tipsButtons1}}"
-          bindbuttontap="tipsDialogButton1"
-        >
-          <div class="tips">与PC端填写信息不一致，是否使用手机端信息</div>
-        </mp-dialog> -->
-      <canvas
-        class="canvas-hidden"
-        ref="canvasimage"
-        style="width: 580px; height: 360px;"
-        canvas-id="Canvas"
-      />
     </div>
   </div>
 </template>

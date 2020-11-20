@@ -136,12 +136,14 @@ export default {
         canvas.width = 580
         canvas.height = 720
 
+        console.log(frontPath)
+        console.log(sidePath)
         const img = new Image()
-        img.src = frontPath
+        img.crossOrigin = ''
         img.onload = () => {
           ctx.drawImage(img, 0, 0, width, height)
           const img2 = new Image()
-          img2.src = sidePath
+          img2.crossOrigin = ''
           img2.onload = () => {
             ctx.drawImage(img2, 0, height, width, height)
             const res = canvas.toDataURL('image/jpeg')
@@ -149,7 +151,9 @@ export default {
             self.setImageData(this.imagePath, orgDone, cb)
             resolve(this.imagePath)
           }
+          img2.src = sidePath
         }
+        img.src = frontPath
       })
     },
     ...mapMutations({

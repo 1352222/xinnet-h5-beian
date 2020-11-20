@@ -121,21 +121,50 @@ export default {
       const { id } = this.image
       // // 服务器获取图片调用接口删除
       if (id) {
-        const param = `attachmentOrderIds=${id}`
-        $.ajax({
-          url: `/api/miniprogram/deleteAttachment?${param}`,
-          success(res) {
-            const { code, message } = res
-            if (code === 'success') {
-              self.clearImageData()
-            } else {
-              Toast({
-                message: message,
-                duration: 3000
-              })
+        const phone = window.sessionStorage.getItem('phone')
+        const orderCode = window.sessionStorage.getItem('orderCode')
+        const self = this
+        if (phone && orderCode) {
+          let globalDatas = this.globalData
+          globalDatas.loading = true
+          self.setData(globalDatas)
+          $.ajax({
+            url: `/api/miniprogram/checkPhone?orderCode=${orderCode}&phone=${phone}`,
+            success(data) {
+              const res = data.data
+              if (data.code === 'success') {
+                const param = `attachmentOrderIds=${id}`
+                $.ajax({
+                  url: `/api/miniprogram/deleteAttachment?${param}`,
+                  success(res) {
+                    const { code, message } = res
+                    if (code === 'success') {
+                      self.clearImageData()
+                    } else {
+                      Toast({
+                        message: message,
+                        duration: 3000
+                      })
+                    }
+                  }
+                })
+              } else {
+                if(data.message === '备案信息已提交审核') {
+                  self.$router.push('/login')
+                }
+                Toast({
+                  message: data.message,
+                  duration: 3000
+                })
+              }
+            },
+            error() {
+              let globalDatas = this.globalData
+              globalDatas.loading = false
+              self.setData(globalDatas)
             }
-          }
-        })
+          })
+        }
       } else {
         this.clearImageData()
       }
