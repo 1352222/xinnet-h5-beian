@@ -123,15 +123,18 @@ export default {
       if (id) {
         const phone = window.sessionStorage.getItem('phone')
         const orderCode = window.sessionStorage.getItem('orderCode')
-        const self = this
-        if (phone && orderCode) {
+        if (orderCode) {
           let globalDatas = this.globalData
           globalDatas.loading = true
           self.setData(globalDatas)
+          let url = `/api/miniprogram/checkPhone?orderCode=${orderCode}&phone=${phone}`
+          if (!phone) {
+            url = `/api/miniprogram/checkPhone?orderCode=${orderCode}`
+          }
           $.ajax({
-            url: `/api/miniprogram/checkPhone?orderCode=${orderCode}&phone=${phone}`,
+            url,
             success(data) {
-              const res = data.data
+              // const res = data.data
               if (data.code === 'success') {
                 const param = `attachmentOrderIds=${id}`
                 $.ajax({
@@ -149,7 +152,7 @@ export default {
                   }
                 })
               } else {
-                if(data.message === '备案信息已提交审核') {
+                if (data.message === '备案信息已提交审核') {
                   self.$router.push('/login')
                 }
                 Toast({

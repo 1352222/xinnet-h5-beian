@@ -79,10 +79,14 @@ export default {
     const phone = window.sessionStorage.getItem('phone')
     const orderCode = window.sessionStorage.getItem('orderCode')
     const self = this
-    if (phone && orderCode) {
+    if (orderCode) {
       self.setData({ loading: true })
+      let url = `/api/miniprogram/checkPhone?orderCode=${orderCode}&phone=${phone}`
+      if (!phone) {
+        url = `/api/miniprogram/checkPhone?orderCode=${orderCode}`
+      }
       $.ajax({
-        url: `/api/miniprogram/checkPhone?orderCode=${orderCode}&phone=${phone}`,
+        url,
         success(data) {
           const res = data.data
           if (data.code === 'success') {

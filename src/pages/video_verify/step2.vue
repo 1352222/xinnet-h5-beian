@@ -135,7 +135,7 @@ export default {
       // } else {
       // console.log('android')
       reader.onload = function() {
-        androidLoadData(video, this.result)
+        this.androidLoadData(video, this.result)
       }
       reader.readAsDataURL(video)
       // }

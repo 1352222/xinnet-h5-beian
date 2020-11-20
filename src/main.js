@@ -13,6 +13,7 @@ import 'viewerjs/dist/viewer.css'
 import utils from './common/utils'
 import VueCropper from 'vue-cropper'
 import request from './common/request'
+import $ from 'jquery'
 // import FastClick from 'fastclick'
 
 // FastClick.attch(document.body)
@@ -28,26 +29,54 @@ Vue.use(Viewer, {
   }
 })
 
-router.beforeEach((to, from, next) => {
-  const phone = window.sessionStorage.getItem('phone')
-  const orderCode = window.sessionStorage.getItem('orderCode')
-  const loginPage = to.path.indexOf('login') > -1
-  if (!loginPage) {
-    if (!phone || !orderCode) {
-      next('/login')
-    } else {
-      next()
-    }
-  } else {
-    next()
-  }
-})
-
 /* eslint-disable no-new */
-new Vue({
+const vm = new Vue({
   el: '#app',
   router,
   store,
   components: { App },
   template: '<App/>'
+})
+
+function getParams(url) {
+  const start = url.indexOf('?') + 1
+  const orderCodeUrl = url.slice(start)
+  const aOrderCodeUrl = orderCodeUrl.split('&')
+  const params = {}
+  for (let i = 0; i < aOrderCodeUrl.length; i++) {
+    const temp = aOrderCodeUrl[i].split('=')
+    const key = temp[0]
+    const val = temp[1]
+    params[key] = val
+  }
+  return params
+}
+
+router.beforeEach((to, from, next) => {
+  const storeOrderCode = window.sessionStorage.getItem('orderCode')
+  const { orderType, orderCode } = getParams(window.location.search)
+  const loginPage = to.path.indexOf('login') > -1
+  if (!loginPage && !storeOrderCode) {
+    if (orderType === 'NEW_CHECK_IN' || orderType === 'CHANGE_CHECK_IN' || orderType === 'CHANGE_ORG' || orderType === 'NO_ORG_NEW_CHECK_IN') {
+      $.ajax({
+        url: `/api/miniprogram/checkPhone?orderCode=${orderCode}`,
+        success(data) {
+          const globalDatas = {}
+          if (data.code === 'success') {
+            window.sessionStorage.setItem('orderCode', orderCode)
+            globalDatas.icp = data.data
+            globalDatas.orderCode = data.data.icpOrder.orderCode
+            globalDatas.recordType = data.data.icpOrder.orgPropertyId
+            globalDatas.orderType = data.data.icpOrder.orderType
+            vm.$store.commit('setData', globalDatas)
+            next()
+          }
+        }
+      })
+    } else {
+      next('/login')
+    }
+  } else {
+    next()
+  }
 })

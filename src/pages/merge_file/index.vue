@@ -139,11 +139,11 @@ export default {
         console.log(frontPath)
         console.log(sidePath)
         const img = new Image()
-        img.crossOrigin = ''
+        img.crossOrigin = ''
         img.onload = () => {
           ctx.drawImage(img, 0, 0, width, height)
           const img2 = new Image()
-          img2.crossOrigin = ''
+          img2.crossOrigin = ''
           img2.onload = () => {
             ctx.drawImage(img2, 0, height, width, height)
             const res = canvas.toDataURL('image/jpeg')
