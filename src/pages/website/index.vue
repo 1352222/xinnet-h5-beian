@@ -759,7 +759,7 @@ export default {
       if (image && image.id) {
         const param = `attachmentOrderIds=${image.id}`
         this.request({
-          url: `/api/miniprogram/deleteAttachment?${param}`,
+          url: `/deleteAttachment?${param}`,
           success(res) {
             const { code, message } = res.data
             if (code === 'success') {
