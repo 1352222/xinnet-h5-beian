@@ -80,59 +80,65 @@ export default {
       }
     },
 
+    androidLoadData(video, result) {
+      const self = this
+      self.videoSrc = result
+      console.log(self.videoSrc)
+
+      let arr = result.split(',')
+      let bstr = atob(arr[1])
+      let n = bstr.length
+      let u8arr = new Uint8Array(n)
+      while (n--) {
+        u8arr[n] = bstr.charCodeAt(n)
+      }
+      const blob = new Blob([u8arr], { type: 'video/mp4' })
+      self.videoBlob = blob
+      self.videoStep = 2
+      self.$nextTick(() => {
+        $(self.$refs.video).on('canplay', () => {
+          const video = self.$refs.video
+          console.log(video)
+          if (video) {
+            const min = 4
+            const max = 8
+            self.disabled = false
+            console.log(video.duration)
+            if (video.duration < min) {
+              Toast({ message: '视频录制时长不足规定时长', duration: 3000 })
+              self.disabled = true
+            } else if (video.duration > max) {
+              Toast({ message: '视频录制时长超过规定时长', duration: 3000 })
+              self.disabled = true
+            } else {
+              Toast({ message: '录制成功！', duration: 3000 })
+            }
+          }
+        })
+      })
+    },
+
     // 录像完成
     changeCamera() {
       const self = this
       const video = self.$refs.camera.files[0]
       const reader = new FileReader()
+      // console.log(reader)
+      // if (!reader) {
+      //   console.log('ios')
+      //   this.videoSrc = window.URL.createObjectURL(video)
+      //   this.videoBlob = new Blob([video], { type: 'video/mp4' })
+      //   console.log(this.videoSrc)
+      //   console.log(this.videoBlob)
+      //   console.log(video)
+      //   console.log(video.duration)
+      // } else {
+      // console.log('android')
       reader.onload = function() {
-        self.videoSrc = this.result
-        console.log(self.videoSrc)
-
-        let arr = this.result.split(',')
-        // let mime = arr[0].match(/:(.*?);/)[1]
-        let bstr = atob(arr[1])
-        let n = bstr.length
-        let u8arr = new Uint8Array(n)
-        while (n--) {
-          u8arr[n] = bstr.charCodeAt(n)
-        }
-        const blob = new Blob([u8arr], { type: 'video/mp4' })
-        self.videoBlob = blob
-        // self.videoSrc = window.URL.createObjectURL(blob)
-        // console.log(self.videoSrc)
-        self.videoStep = 2
-        self.$nextTick(() => {
-          $(self.$refs.video).on('canplay', () => {
-            const video = self.$refs.video
-            console.log(video)
-            if (video) {
-              const min = 4
-              const max = 8
-              self.disabled = false
-              if (video.duration < min) {
-                Toast({ message: '视频录制时长不足规定时长', duration: 3000 })
-                self.disabled = true
-              } else if (video.duration > max) {
-                Toast({ message: '视频录制时长超过规定时长', duration: 3000 })
-                self.disabled = true
-              } else {
-                Toast({ message: '录制成功！', duration: 3000 })
-              }
-            }
-          })
-        })
+        this.androidLoadData(video, this.result)
       }
       reader.readAsDataURL(video)
-    },
-
-    changeCamera2() {
-      const self = this
-      const video = self.$refs.camera.files[0]
-      console.log(video)
-      self.videoSrc = window.URL.createObjectURL(video)
-      console.log(self.videoSrc)
-      self.videoStep = 2
+      // }
     },
 
     restart() {
@@ -140,6 +146,7 @@ export default {
       this.showError = false
       this.error = ''
       this.videoSrc = ''
+      this.disabled = false
       this.$nextTick(() => {
         this.$refs.camera.value = ''
         this.generateCode()

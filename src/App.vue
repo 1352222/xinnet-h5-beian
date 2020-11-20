@@ -16,10 +16,14 @@ export default {
     const orderCode = window.sessionStorage.getItem('orderCode')
     const listPage = window.location.hash.indexOf('list') > -1
     const self = this
-    if (phone && orderCode && !listPage) {
+    if (orderCode && !listPage) {
       self.setData({ loading: true })
+      let url = `/api/miniprogram/checkPhone?orderCode=${orderCode}&phone=${phone}`
+      if (!phone) {
+        url = `/api/miniprogram/checkPhone?orderCode=${orderCode}`
+      }
       $.ajax({
-        url: `/api/miniprogram/checkPhone?orderCode=${orderCode}&phone=${phone}`,
+        url,
         success(data) {
           const res = data.data
           if (data.code === 'success') {
@@ -143,7 +147,7 @@ export default {
             globalDatas.uploadOrgWebsiteTitle = uploadOrgWebsiteTitle
             self.setData(globalDatas)
           } else {
-            if(data.message === '备案信息已提交审核') {
+            if (data.message === '备案信息已提交审核') {
               self.$router.push('/login')
             }
             Toast({

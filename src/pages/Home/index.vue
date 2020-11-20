@@ -27,26 +27,33 @@ export default {
     // this.$router.push('/login')
   },
   methods: {
+    getParams(url) {
+      const start = url.indexOf('?') + 1
+      const orderCodeUrl = url.slice(start)
+      const aOrderCodeUrl = orderCodeUrl.split('&')
+      const params = {}
+      for (let i = 0; i < aOrderCodeUrl.length; i++) {
+        const temp = aOrderCodeUrl[i].split('=')
+        const key = temp[0]
+        const val = temp[1]
+        params[key] = val
+      }
+      return params
+    },
     onload(query) {
-      this.toLoginPage()
-      // const scene = decodeURIComponent(query.scene)
-      // // 微信扫一扫扫码二维码
-      // const q = decodeURIComponent(query.q)
-      // const url = query.scene ? scene : q
-      // const { orderCode, orderType } = getParams(url)
-
-      // this.setData({ orderCode, orderType }, () => {
-      //   app.globalData.orderCode = orderCode
-      //   // 备案类型为新增接入、变更接入和变更主体时，无网站信息，跳过输入手机号步骤
-      //   if (orderType === 'NEW_CHECK_IN' || orderType === 'CHANGE_CHECK_IN' || orderType === 'CHANGE_ORG' || orderType === 'NO_ORG_NEW_CHECK_IN') {
-      //     this.getUserData()
-      //   } else {
-      //     this.toLoginPage()
-      //   }
-      // })
+      const { orderType } = this.getParams(window.location.search)
+      // 备案类型为新增接入、变更接入和变更主体时，无网站信息，跳过输入手机号步骤
+      if (orderType === 'NEW_CHECK_IN' || orderType === 'CHANGE_CHECK_IN' || orderType === 'CHANGE_ORG' || orderType === 'NO_ORG_NEW_CHECK_IN') {
+        this.toListPage()
+      } else {
+        this.toLoginPage()
+      }
     },
     toLoginPage() {
       this.$router.push('/login')
+    },
+    toListPage() {
+      this.$router.push('/list')
     },
     ...mapMutations({
       setNum: 'SET_NUM'
