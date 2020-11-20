@@ -1438,6 +1438,11 @@ export default {
   color: #333;
 }
 
+.weui-input:focus {
+  outline: none;
+  border: solid 1px #0069ff;
+}
+
 .weui-dialog .tips {
   padding-top: 15px;
   font-size: 13px;
