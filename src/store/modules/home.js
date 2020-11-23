@@ -15,8 +15,8 @@ const home = {
       // 个人
       // orderCode: 'ICP4522313971377992',
       orderCode: '',
-      apiPath: 'https://tiaoshi.xincache.cn/api/miniprogram',
-      serverPath: 'https://tiaoshi.xincache.cn/group1/',
+      apiPath: 'http://tiaoshi.xincache.cn/api/miniprogram',
+      serverPath: 'http://tiaoshi.xincache.cn/group1/',
       // phone: 13717616202,
       // phone: 18536595047,
       phone: '',

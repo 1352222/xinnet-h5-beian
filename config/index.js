@@ -12,14 +12,14 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/api': {
-        target: 'https://tiaoshi.xincache.cn/api',
-        secure: false,
+        target: 'http://tiaoshi.xincache.cn/api',
+        // secure: false,
         changOrigin: true,
         pathRewrite: {
           '^/api': ''
         }
       },
-      'serverPath': {target: 'https://tiaoshi.xincache.cn/group1/'}
+      'serverPath': {target: 'http://tiaoshi.xincache.cn/group1/'}
     },
 
     // Various Dev Server settings
