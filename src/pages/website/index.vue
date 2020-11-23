@@ -465,7 +465,8 @@ export default {
       this.$refs.cropper.changeScale(num)
     },
     // 裁剪图片旋转
-    rotate() {
+    rotate(e) {
+      e.preventDefault()
       this.$refs.cropper.rotateRight()
     },
     // 丢弃图片数据
