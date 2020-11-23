@@ -132,7 +132,7 @@ export default {
         const self = this
         const width = 580
         const height = 720 / 2
-        const canvas = this.$parent.$refs.canvasimage
+        const canvas = self.$parent.$refs.canvasimage
         const ctx = canvas.getContext('2d')
         canvas.width = 580
         canvas.height = 720
@@ -140,17 +140,17 @@ export default {
         console.log(frontPath)
         console.log(sidePath)
         const img = new Image()
-        img.crossOrigin = ''
+        img.crossOrigin = '*'
         img.onload = () => {
           ctx.drawImage(img, 0, 0, width, height)
           const img2 = new Image()
-          img2.crossOrigin = ''
+          img2.crossOrigin = '*'
           img2.onload = () => {
             ctx.drawImage(img2, 0, height, width, height)
             const res = canvas.toDataURL('image/jpeg')
-            this.imagePath = res
-            self.setImageData(this.imagePath, orgDone, cb)
-            resolve(this.imagePath)
+            self.imagePath = res
+            self.setImageData(self.imagePath, orgDone, cb)
+            resolve(self.imagePath)
           }
           img2.src = sidePath
         }

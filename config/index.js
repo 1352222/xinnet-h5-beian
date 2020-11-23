@@ -19,7 +19,7 @@ module.exports = {
           '^/api': ''
         }
       },
-      'serverPath': {target: 'http://tiaoshi.xincache.cn/group1/'}
+      'serverPath': {target: 'https://tiaoshi.xincache.cn/group1/'}
     },
 
     // Various Dev Server settings
