@@ -164,13 +164,13 @@ export default {
                       self.setData({ screenState: 'none' })
                       self.$router.push('/video_verify/step1')
                     } else {
-                      Toast({ message: message, duration: 3000 })
+                      Toast({ message: message, duration: 3000, className: 'noticeError' })
                     }
                   }
                 }, () => Indicator.close())
               }
             } else {
-              Toast({ message: data.message, duration: 3000 })
+              Toast({ message: data.message, duration: 3000, className: 'noticeError' })
             }
           }
         })
@@ -197,7 +197,7 @@ export default {
             self.setErrorInfo()
             self.$router.push('/list')
           } else {
-            Toast({ message: message, duration: 3000 })
+            Toast({ message: message, duration: 3000, className: 'noticeError' })
           }
         }
       })

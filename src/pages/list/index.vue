@@ -97,7 +97,8 @@ export default {
             }
             Toast({
               message: data.message,
-              duration: 3000
+              duration: 3000,
+              className: 'noticeError'
             })
           }
         },

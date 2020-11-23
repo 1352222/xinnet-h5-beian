@@ -715,7 +715,8 @@ export default {
             } else {
               Toast({
                 message: message,
-                duration: 3000
+                duration: 3000,
+                className: 'noticeError'
               })
             }
           }
@@ -738,7 +739,8 @@ export default {
             } else {
               Toast({
                 message: message,
-                duration: 3000
+                duration: 3000,
+                className: 'noticeError'
               })
             }
           }
@@ -810,7 +812,8 @@ export default {
           if (code != 'success') {
             Toast({
               message: message,
-              duration: 3000
+              duration: 3000,
+              className: 'noticeError'
             })
           }
         }
@@ -919,7 +922,8 @@ export default {
         // wx.showToast({ title: '上传成功！' })
         Toast({
           message: '上传成功！',
-          duration: 3000
+          duration: 3000,
+          className: 'noticeError'
         })
         self.$router.push('/list')
         // wx.navigateBack()
@@ -939,13 +943,15 @@ export default {
           if (code === 'success') {
             Toast({
               message: '上传成功！',
-              duration: 3000
+              duration: 3000,
+              className: 'noticeError'
             })
             self.$router.push('/list')
           } else {
             Toast({
               message: message,
-              duration: 3000
+              duration: 3000,
+              className: 'noticeError'
             })
           }
         }

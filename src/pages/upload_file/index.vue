@@ -25,7 +25,7 @@
           </div>
         </div>
       </div>
-      <input type="file" style="z-index:99;opacity:0;" class="uploadbgsbot" @change="chooseImage" id="files" accept="image/*" multiple="multiple" capture="camera">
+      <input type="file" style="z-index:99;opacity:0;" class="uploadbgsbot" @change="chooseImage" id="files" accept="image/*" multiple="multiple" v-if="(data.images ? data.images : images)==undefined || JSON.stringify(data.images ? data.images : images)=='[]'" capture="camera">
       <!-- <input type="file" id="takepicture" accept="image/*" class="uploadbgsbot" placeholder="" v-if="!images.length" @click="chooseImage" /> -->
       <span data-type="upload" @click="chooseImage" v-if="(data.images ? data.images : images)==undefined || JSON.stringify(data.images ? data.images : images)=='[]'" class="uploadbgsbot">{{buttonText}}</span>
 
@@ -146,7 +146,8 @@ export default {
                     } else {
                       Toast({
                         message: message,
-                        duration: 3000
+                        duration: 3000,
+                        className: 'noticeError'
                       })
                     }
                   }
@@ -157,7 +158,8 @@ export default {
                 }
                 Toast({
                   message: data.message,
-                  duration: 3000
+                  duration: 3000,
+                  className: 'noticeError'
                 })
               }
             },

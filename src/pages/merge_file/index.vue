@@ -71,7 +71,8 @@ export default {
             } else {
               Toast({
                 message: message,
-                duration: 3000
+                duration: 3000,
+              className: 'noticeError'
               })
             }
           }
