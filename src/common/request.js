@@ -14,7 +14,8 @@ export default function request(params, failCb) {
 
   const service = axios.create({
     // baseURL: 'https://tiaoshi.xincache.cn/api/miniprogram'
-    baseURL: '/api/miniprogram'
+    baseURL: '/api/miniprogram',
+    timeout: 1000 * 45
   })
   service.interceptors.request.use(function (config) {
     return config
@@ -24,7 +25,8 @@ export default function request(params, failCb) {
 
   service.interceptors.response.use(function (res) {
     console.log('ajax成功回调！')
-    console.log(res)
+    // console.log(res)
+    const whitelists = ['/orgAttachment', '/idCardAttachment']
     if (res && res.status !== 200) {
       Indicator.close()
       Toast({
@@ -32,7 +34,7 @@ export default function request(params, failCb) {
         duration: 3000,
         className: 'noticeError'
       })
-    } else if (res.status === 200 && res.data && res.data.code !== 'success') {
+    } else if (res.status === 200 && res.data && res.data.code !== 'success' && whitelists.indexOf(res.config.url) == -1) {
       Indicator.close()
       Toast({
         message: res.data.message,

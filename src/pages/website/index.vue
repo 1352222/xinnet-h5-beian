@@ -192,7 +192,7 @@ import { Indicator, Toast } from 'mint-ui'
 import uploadFile from '../upload_file'
 import mergeFile from '../merge_file'
 import getAttachmentParam from '../../common/getAttachmentParam'
-import $ from 'jquery'
+// import $ from 'jquery'
 
 export default {
   name: 'Website',
@@ -546,12 +546,13 @@ export default {
 
       return new Promise((resolve) => {
         Indicator.open('请稍后...')
-        $.ajax({
-          url: `/api/miniprogram/saveWebsiteInfo`,
+        self.request({
+          url: `/saveWebsiteInfo`,
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          dataType: 'json',
-          data: JSON.stringify(data),
+          // headers: { 'Content-Type': 'application/json' },
+          // dataType: 'json',
+          // data: JSON.stringify(data),
+          data,
           success(res) {
             Indicator.close()
             // 保存成功后同步数据
@@ -651,15 +652,16 @@ export default {
           side: id === 'side' ? 'back' : 'front'
         }
         Indicator.open('识别中...')
-        $.ajax({
-          url: `/api/miniprogram/ocrIdCard`,
+        self.request({
+          url: `/ocrIdCard`,
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          dataType: 'json',
-          data: JSON.stringify(data),
+          // headers: { 'Content-Type': 'application/json' },
+          // dataType: 'json',
+          // data: JSON.stringify(data),
+          data,
           success(res) {
             Indicator.close()
-            const { code, data, message } = res
+            const { code, data, message } = res.data
             if (code === 'success' && id === 'front') {
               // 每次OCR后更新修改操作表单
               const websiteOwnPerson = data.ocrOrgOwnerName
@@ -703,10 +705,10 @@ export default {
         param = param ? param + '&' + url : url
       }
       if (param) {
-        $.ajax({
-          url: `/api/miniprogram/deleteAttachment?${param}`,
+        self.request({
+          url: `/deleteAttachment?${param}`,
           success(res) {
-            const { code, message } = res
+            const { code, message } = res.data
             if (code === 'success') {
               let globalDatas = self.globalData
               globalDatas.images.screen = {}
@@ -805,10 +807,10 @@ export default {
       } else if (recordType != 5) {
         type = 'types=WEBSITE'
       }
-      $.ajax({
-        url: `/api/miniprogram/unlock?orderCode=${orderCode}&${type}`,
+      this.request({
+        url: `/unlock?orderCode=${orderCode}&${type}`,
         success(res) {
-          const { code, message } = res
+          const { code, message } = res.data
           if (code != 'success') {
             Toast({
               message: message,
@@ -833,15 +835,16 @@ export default {
         }
       }
       return new Promise((resolve) => {
-        $.ajax({
-          url: `/api/miniprogram/idCardAttachment`,
+        self.request({
+          url: `/idCardAttachment`,
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          dataType: 'json',
-          data: JSON.stringify(data),
+          // headers: { 'Content-Type': 'application/json' },
+          // dataType: 'json',
+          // data: JSON.stringify(data),
+          data,
           success(res) {
             Indicator.close()
-            const { code, data, message } = res
+            const { code, data, message } = res.data
             if (!data) {
               self.setErrorInfo(true, message)
               return
@@ -931,15 +934,16 @@ export default {
       }
 
       Indicator.open('请稍后...')
-      $.ajax({
-        url: `/api/miniprogram/saveAttachment`,
+      self.request({
+        url: `/saveAttachment`,
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        dataType: 'json',
-        data: JSON.stringify(data),
+        // headers: { 'Content-Type': 'application/json' },
+        // dataType: 'json',
+        // data: JSON.stringify(data),
+        data,
         success(res) {
           Indicator.close()
-          const { code, message } = res
+          const { code, message } = res.data
           if (code === 'success') {
             Toast({
               message: '上传成功！',

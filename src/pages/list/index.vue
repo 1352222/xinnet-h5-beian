@@ -60,7 +60,6 @@
 <script>
 import { mapMutations, mapState } from 'vuex'
 import { Toast } from 'mint-ui'
-import $ from 'jquery'
 export default {
   name: 'List',
   data() {
@@ -81,22 +80,22 @@ export default {
     const self = this
     if (orderCode) {
       self.setData({ loading: true })
-      let url = `/api/miniprogram/checkPhone?orderCode=${orderCode}&phone=${phone}`
+      let url = `/checkPhone?orderCode=${orderCode}&phone=${phone}`
       if (!phone) {
-        url = `/api/miniprogram/checkPhone?orderCode=${orderCode}`
+        url = `/checkPhone?orderCode=${orderCode}`
       }
-      $.ajax({
+      self.request({
         url,
         success(data) {
           const res = data.data
-          if (data.code === 'success') {
-            self.getData(res, phone)
+          if (res.code === 'success') {
+            self.getData(res.data, phone)
           } else {
-            if (data.message === '备案信息已提交审核') {
+            if (res.message === '备案信息已提交审核') {
               self.$router.push('/login')
             }
             Toast({
-              message: data.message,
+              message: res.message,
               duration: 3000,
               className: 'noticeError'
             })

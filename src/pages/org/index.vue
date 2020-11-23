@@ -257,7 +257,7 @@ import uploadFile from '../upload_file'
 import mergeFile from '../merge_file'
 import { Indicator, Toast } from 'mint-ui'
 import getAttachmentParam from '../../common/getAttachmentParam'
-import $ from 'jquery'
+// import $ from 'jquery'
 
 export default {
   name: 'Orgs',
@@ -597,22 +597,24 @@ export default {
       }
       return new Promise(resolve => {
         Indicator.open('请稍后..')
+        const self = this
         // wx.showLoading({ title: '请稍后..', mask: true })
-        $.ajax({
-          url: `/api/miniprogram/saveOrgInfo`,
+        self.request({
+          url: `/saveOrgInfo`,
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          dataType: 'json',
-          data: JSON.stringify(data),
+          // headers: { 'Content-Type': 'application/json' },
+          // dataType: 'json',
+          // data: JSON.stringify(data),
+          data,
           success(res) {
             Indicator.close()
             // 保存成功后同步数据
-            this.org = {
+            self.org = {
               name: orgName,
               code: orgCode
               // person: orgPerson
             }
-            this.own = {
+            self.own = {
               code: ownCode,
               person: ownPerson
             }
@@ -659,10 +661,10 @@ export default {
     },
     delImageLock() {
       const { orderCode } = this.globalData
-      $.ajax({
-        url: `/api/miniprogram/unlock?orderCode=${orderCode}&types=ORG`,
+      this.request({
+        url: `/unlock?orderCode=${orderCode}&types=ORG`,
         success(res) {
-          const { code, message } = res
+          const { code, message } = res.data
           if (code != 'success') {
             Toast({
               message: message,
@@ -675,6 +677,7 @@ export default {
     },
     clearVerifyImage() {
       const { realityVerify, promiseBook } = this.globalData.images
+      const self = this
       let param = ''
       if (realityVerify && realityVerify.id) {
         param = `attachmentOrderIds=${realityVerify.id}`
@@ -684,12 +687,12 @@ export default {
         param = param ? param + '&' + url : url
       }
       if (param) {
-        $.ajax({
-          url: `/api/miniprogram/deleteAttachment?${param}`,
+        self.request({
+          url: `/deleteAttachment?${param}`,
           success(res) {
-            const { code, message } = res
+            const { code, message } = res.data
             if (code == 'success') {
-              this.globalData.images.screen = {}
+              self.globalData.images.screen = {}
             } else {
               Toast({
                 message: message,
@@ -780,15 +783,16 @@ export default {
       }
 
       return new Promise(resolve => {
-        $.ajax({
-          url: `/api/miniprogram/orgAttachment`,
+        self.request({
+          url: `/orgAttachment`,
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          dataType: 'json',
-          data: JSON.stringify(data),
+          // headers: { 'Content-Type': 'application/json' },
+          // dataType: 'json',
+          // data: JSON.stringify(data),
+          data,
           success(res) {
             Indicator.close()
-            const { data, message } = res
+            const { data, message } = res.data
             if (!data) {
               self.setErrorInfo(true, message)
               return
@@ -823,7 +827,6 @@ export default {
       const merge = this.$refs.merge
       const self = this
       const data = { orderCode: this.globalData.orderCode }
-
       if (!org.image.id) {
         data.orgAttachment = {
           ...getAttachmentParam({
@@ -889,16 +892,17 @@ export default {
 
       Indicator.open('请稍后...')
       // wx.showLoading({ title: '请稍后..', mask: true })
-      $.ajax({
-        url: `/api/miniprogram/saveAttachment`,
+      self.request({
+        url: `/saveAttachment`,
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        dataType: 'json',
-        data: JSON.stringify(data),
+        // headers: { 'Content-Type': 'application/json' },
+        // dataType: 'json',
+        // data: JSON.stringify(data),
+        data,
         success(res) {
           // wx.hideLoading()
           Indicator.close()
-          const { code, message } = res
+          const { code, message } = res.data
           if (code == 'success') {
             // wx.showToast({ title: '上传成功！' })
             Toast({
@@ -1083,15 +1087,16 @@ export default {
             byteFile: url
           }
           Indicator.open('识别中..')
-          $.ajax({
-            url: `/api/miniprogram/ocrOrg`,
+          self.request({
+            url: `/ocrOrg`,
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            dataType: 'json',
-            data: JSON.stringify(data),
+            // headers: { 'Content-Type': 'application/json' },
+            // dataType: 'json',
+            // data: JSON.stringify(data),
+            data,
             success(res) {
               Indicator.close()
-              const { code, data, message } = res
+              const { code, data, message } = res.data
               if (code === 'success') {
                 const org = {
                   name: data.ocrOrgName,
@@ -1118,7 +1123,7 @@ export default {
                   duration: 3000,
                   className: 'noticeError'
                 })
-                self.setUploadFailData(this.id)
+                self.setUploadFailData(id)
                 self.setErrorInfo(true, message)
               }
             }
@@ -1136,15 +1141,16 @@ export default {
             side: id == 'side' ? 'back' : 'front'
           }
           Indicator.open('识别中..')
-          $.ajax({
-            url: `/api/miniprogram/ocrIdCard`,
+          self.request({
+            url: `/ocrIdCard`,
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            dataType: 'json',
-            data: JSON.stringify(data),
+            // headers: { 'Content-Type': 'application/json' },
+            // dataType: 'json',
+            // data: JSON.stringify(data),
+            data,
             success(res) {
               Indicator.close()
-              const { code, data, message } = res
+              const { code, data, message } = res.data
               if (code === 'success' && id === 'front') {
                 const own = {
                   person: data.ocrOrgOwnerName,
@@ -1160,7 +1166,7 @@ export default {
                 self.writeimage(self.baseurl, self.bb)
                 self.setUploadSuccessData('front')
                 self.setErrorInfo()
-                this.allowUpdate = true
+                self.allowUpdate = true
                 // self.setData({
                 //   allowUpdate: true
                 // })
@@ -1182,7 +1188,7 @@ export default {
                   duration: 3000,
                   className: 'noticeError'
                 })
-                self.setUploadFailData(this.id)
+                self.setUploadFailData(id)
                 self.setErrorInfo(true, message)
               }
             }
@@ -1214,7 +1220,6 @@ export default {
           this.setAllowSubmit
         )
       }
-      console.log(this.org)
       // 设置各附件上传状态
       if (front.done && side.done && merge._data.done && org.done) {
         this.setAllowSubmit(true)

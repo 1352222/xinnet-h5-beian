@@ -43,7 +43,7 @@
 <script>
 import { mapMutations, mapState } from 'vuex'
 import { Toast } from 'mint-ui'
-import $ from 'jquery'
+// import $ from 'jquery'
 export default {
   name: 'Upload_file',
   data() {
@@ -127,19 +127,20 @@ export default {
           let globalDatas = this.globalData
           globalDatas.loading = true
           self.setData(globalDatas)
-          let url = `/api/miniprogram/checkPhone?orderCode=${orderCode}&phone=${phone}`
+          let url = `/checkPhone?orderCode=${orderCode}&phone=${phone}`
           if (!phone) {
-            url = `/api/miniprogram/checkPhone?orderCode=${orderCode}`
+            url = `/checkPhone?orderCode=${orderCode}`
           }
-          $.ajax({
+          self.request({
             url,
             success(data) {
-              // const res = data.data
-              if (data.code === 'success') {
+              const res = data.data
+              if (res.code === 'success') {
                 const param = `attachmentOrderIds=${id}`
-                $.ajax({
-                  url: `/api/miniprogram/deleteAttachment?${param}`,
-                  success(res) {
+                self.request({
+                  url: `/deleteAttachment?${param}`,
+                  success(data) {
+                    const res = data.data
                     const { code, message } = res
                     if (code === 'success') {
                       self.clearImageData()
@@ -153,25 +154,25 @@ export default {
                   }
                 })
               } else {
-                if (data.message === '备案信息已提交审核') {
+                if (res.message === '备案信息已提交审核') {
                   self.$router.push('/login')
                 }
                 Toast({
-                  message: data.message,
+                  message: res.message,
                   duration: 3000,
                   className: 'noticeError'
                 })
               }
             },
             error() {
-              let globalDatas = this.globalData
+              let globalDatas = self.globalData
               globalDatas.loading = false
               self.setData(globalDatas)
             }
           })
         }
       } else {
-        this.clearImageData()
+        self.clearImageData()
       }
     },
     clearImageData() {

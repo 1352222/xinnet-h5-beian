@@ -29,6 +29,10 @@ Vue.use(Viewer, {
   }
 })
 
+// $.ajaxSetup({
+//   timeout: 1000 * 45
+// })
+
 /* eslint-disable no-new */
 const vm = new Vue({
   el: '#app',
@@ -40,7 +44,6 @@ const vm = new Vue({
 
 function orient() {
   // 竖屏
-  console.log(window.orientation)
   if (window.orientation == 0 || window.orientation == 180) {
     $('body').css('overflow', 'auto')
     $('#layer').css('display', 'none')
@@ -79,17 +82,18 @@ router.beforeEach((to, from, next) => {
   const loginPage = to.path.indexOf('login') > -1
   if (!loginPage && !storeOrderCode) {
     if (orderType === 'NEW_CHECK_IN' || orderType === 'CHANGE_CHECK_IN' || orderType === 'CHANGE_ORG' || orderType === 'NO_ORG_NEW_CHECK_IN') {
-      $.ajax({
-        url: `/api/miniprogram/checkPhone?orderCode=${orderCode}`,
+      vm.request({
+        url: `/checkPhone?orderCode=${orderCode}`,
         success(data) {
+          const res = data.data
           const globalDatas = {}
-          if (data.code === 'success') {
+          if (res.code === 'success') {
             window.sessionStorage.setItem('orderCode', orderCode)
-            globalDatas.icp = data.data
-            globalDatas.orderCode = data.data.icpOrder.orderCode
-            globalDatas.recordType = data.data.icpOrder.orgPropertyId
-            globalDatas.orderType = data.data.icpOrder.orderType
-            vm.$store.commit('setData', globalDatas)
+            globalDatas.icp = res.data
+            globalDatas.orderCode = res.data.icpOrder.orderCode
+            globalDatas.recordType = res.data.icpOrder.orgPropertyId
+            globalDatas.orderType = res.data.icpOrder.orderType
+            vm.$store.commit('SET_DATA', globalDatas)
             next()
           }
         }

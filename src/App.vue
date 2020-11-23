@@ -7,7 +7,7 @@
 <script>
 import { mapMutations, mapState } from 'vuex'
 import { Toast } from 'mint-ui'
-import $ from 'jquery'
+// import $ from 'jquery'
 
 export default {
   name: 'App',
@@ -18,16 +18,16 @@ export default {
     const self = this
     if (orderCode && !listPage) {
       self.setData({ loading: true })
-      let url = `/api/miniprogram/checkPhone?orderCode=${orderCode}&phone=${phone}`
+      let url = `/checkPhone?orderCode=${orderCode}&phone=${phone}`
       if (!phone) {
-        url = `/api/miniprogram/checkPhone?orderCode=${orderCode}`
+        url = `/checkPhone?orderCode=${orderCode}`
       }
-      $.ajax({
+      self.request({
         url,
         success(data) {
           const res = data.data
-          if (data.code === 'success') {
-            const { icpAttachmentOrders, icpOrder } = res
+          if (res.code === 'success') {
+            const { icpAttachmentOrders, icpOrder } = res.data
             let step
             let uploadOrgWebsiteTitle = '上传网站负责人证件'
             // 变更主体
@@ -132,10 +132,10 @@ export default {
             }
 
             const globalDatas = {}
-            globalDatas.icp = res
-            globalDatas.orderCode = res.icpOrder.orderCode
-            globalDatas.recordType = res.icpOrder.orgPropertyId
-            globalDatas.orderType = res.icpOrder.orderType
+            globalDatas.icp = res.data
+            globalDatas.orderCode = res.data.icpOrder.orderCode
+            globalDatas.recordType = res.data.icpOrder.orgPropertyId
+            globalDatas.orderType = res.data.icpOrder.orderType
             globalDatas.phone = phone
             globalDatas.loading = false
             globalDatas.orgState = state.orgState
@@ -147,11 +147,11 @@ export default {
             globalDatas.uploadOrgWebsiteTitle = uploadOrgWebsiteTitle
             self.setData(globalDatas)
           } else {
-            if (data.message === '备案信息已提交审核') {
+            if (res.message === '备案信息已提交审核') {
               self.$router.push('/login')
             }
             Toast({
-              message: data.message,
+              message: res.message,
               duration: 3000,
               className: 'noticeError'
             })

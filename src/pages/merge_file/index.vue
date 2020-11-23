@@ -14,7 +14,7 @@
 <script>
 import { mapMutations, mapState } from 'vuex'
 import { Toast } from 'mint-ui'
-import $ from 'jquery'
+// import $ from 'jquery'
 
 export default {
   name: 'Merge_file',
@@ -62,10 +62,10 @@ export default {
       }
       // 服务器获取图片调用接口删除
       if (param) {
-        $.ajax({
-          url: `/api/miniprogram/deleteAttachment?${param}`,
+        self.request({
+          url: `/deleteAttachment?${param}`,
           success(res) {
-            const { code, message } = res
+            const { code, message } = res.data
             if (code === 'success') {
               self.clearImageData()
             } else {

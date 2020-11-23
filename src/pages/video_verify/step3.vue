@@ -146,10 +146,10 @@ export default {
         // 获取到幕布图片数据
         self.request({
           url: `/checkPhone?orderCode=${orderCode}&phone=${phone}`,
-          success(res) {
-            const { data } = res
-            if (data.code === 'success') {
-              self.setData({ icp: data.data })
+          success(data) {
+            const res = data.data
+            if (res.code === 'success') {
+              self.setData({ icp: res.data })
               const images = self.getData()
               if (images.screen && images.screen.id) {
                 // 重拍先删除幕布图片，成功后回退

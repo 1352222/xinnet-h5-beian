@@ -22,7 +22,7 @@
 <script>
 import { mapMutations, mapState } from 'vuex'
 import utils from '@/common/utils'
-import $ from 'jquery'
+// import $ from 'jquery'
 import { Toast } from 'mint-ui'
 export default {
   name: 'Login',
@@ -69,17 +69,18 @@ export default {
       this.showError = false
       const { orderCode } = this.getParams(window.location.search)
 
-      $.ajax({
-        url: `/api/miniprogram/checkPhone?phone=${phone}&orderCode=${orderCode}`,
+      self.request({
+        url: `/checkPhone?phone=${phone}&orderCode=${orderCode}`,
         success(data) {
+          const res = data.data
           let globalDatas = globalData
-          if (data.code === 'success') {
+          if (res.code === 'success') {
             window.sessionStorage.setItem('orderCode', orderCode)
             window.sessionStorage.setItem('phone', phone)
-            globalDatas.icp = data.data
-            globalDatas.orderCode = data.data.icpOrder.orderCode
-            globalDatas.recordType = data.data.icpOrder.orgPropertyId
-            globalDatas.orderType = data.data.icpOrder.orderType
+            globalDatas.icp = res.data
+            globalDatas.orderCode = res.data.icpOrder.orderCode
+            globalDatas.recordType = res.data.icpOrder.orgPropertyId
+            globalDatas.orderType = res.data.icpOrder.orderType
             globalDatas.phone = phone
             self.setData(globalDatas)
             self.$router.push('/list')
@@ -87,11 +88,11 @@ export default {
               self.loading = false
             }, 5000)
           } else {
-            if (data.message === '备案信息已提交审核') {
+            if (res.message === '备案信息已提交审核') {
               self.$router.push('/login')
             }
             Toast({
-              message: data.message,
+              message: res.message,
               duration: 3000,
               className: 'noticeError'
             })
