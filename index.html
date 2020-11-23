@@ -12,6 +12,22 @@
         margin: 0;
         padding: 0;
       }
+      .layer {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        line-height: 100%;
+        background: gray;
+      }
+      .layer p {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        font-size: 18px;
+        transform: translate(-50%, -50%);
+      }
     </style>
     <script src="//cdn.bootcdn.net/ajax/libs/eruda/2.3.3/eruda.js"></script>
     <script>eruda.init();</script>
@@ -30,6 +46,9 @@
   </head>
   <body>
     <div id="app"></div>
+    <div id="layer">
+      <p>请使用竖屏操作</p>
+    </div>
     <!-- built files will be auto injected -->
   </body>
 </html>

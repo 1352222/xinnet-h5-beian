@@ -38,6 +38,24 @@ const vm = new Vue({
   template: '<App/>'
 })
 
+function orient() {
+  // 竖屏
+  if (window.orientation == 0 || window.orientation == 180) {
+    $('body').attr('overflow', 'auto')
+    $('#layer').removeClass('layer')
+    // 横屏
+  } else if (window.orientation == 90 || window.orientation == -90) {
+    $('body').attr('overflow', 'hidden')
+    $('#layer').addClass('layer')
+  }
+}
+$(function(){
+  orient()
+})
+$(window).on( 'orientationchange', function(e){
+  orient()
+})
+
 function getParams(url) {
   const start = url.indexOf('?') + 1
   const orderCodeUrl = url.slice(start)
