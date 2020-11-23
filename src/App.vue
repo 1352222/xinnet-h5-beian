@@ -152,7 +152,8 @@ export default {
             }
             Toast({
               message: data.message,
-              duration: 3000
+              duration: 3000,
+              className: 'noticeError'
             })
           }
         },
@@ -178,6 +179,9 @@ export default {
 <style>
 #app {
   -webkit-tap-highlight-color:rgba(0,0,0,0);
+}
+.noticeError > .mint-toast-text {
+  font-size: 15px!important;
 }
 /* #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;

@@ -666,7 +666,8 @@ export default {
           if (code != 'success') {
             Toast({
               message: message,
-              duration: 3000
+              duration: 3000,
+              className: 'noticeError'
             })
           }
         }
@@ -692,7 +693,8 @@ export default {
             } else {
               Toast({
                 message: message,
-                duration: 3000
+                duration: 3000,
+                className: 'noticeError'
               })
             }
           }
@@ -877,7 +879,8 @@ export default {
         // wx.showToast({ title: '上传成功！' })
         Toast({
           message: '上传成功！',
-          duration: 3000
+          duration: 3000,
+          className: 'noticeError'
         })
         self.$router.push('/list')
         // wx.navigateBack()
@@ -900,14 +903,16 @@ export default {
             // wx.showToast({ title: '上传成功！' })
             Toast({
               message: '上传成功！',
-              duration: 3000
+              duration: 3000,
+              className: 'noticeError'
             })
             self.$router.push('/list')
             // wx.navigateBack()
           } else {
             Toast({
               message,
-              duration: 3000
+              duration: 3000,
+              className: 'noticeError'
             })
           }
         }
@@ -1110,7 +1115,8 @@ export default {
               } else {
                 Toast({
                   message: res.message,
-                  duration: 3000
+                  duration: 3000,
+                  className: 'noticeError'
                 })
                 self.setUploadFailData(this.id)
                 self.setErrorInfo(true, message)
@@ -1173,7 +1179,8 @@ export default {
               } else {
                 Toast({
                   message: res.message,
-                  duration: 3000
+                  duration: 3000,
+                  className: 'noticeError'
                 })
                 self.setUploadFailData(this.id)
                 self.setErrorInfo(true, message)

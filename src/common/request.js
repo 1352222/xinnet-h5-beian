@@ -29,13 +29,15 @@ export default function request(params, failCb) {
       Indicator.close()
       Toast({
         message: '网络异常，请稍后重试',
-        duration: 3000
+        duration: 3000,
+        className: 'noticeError'
       })
     } else if (res.status === 200 && res.data && res.data.code !== 'success') {
       Indicator.close()
       Toast({
         message: res.data.message,
-        duration: 3000
+        duration: 3000,
+        className: 'noticeError'
       })
     } else {
       success(res)
@@ -57,7 +59,8 @@ export default function request(params, failCb) {
     Indicator.close()
     Toast({
       message: msg,
-      duration: 3000
+      duration: 3000,
+      className: 'noticeError'
     })
     if (failCb) {
       failCb()

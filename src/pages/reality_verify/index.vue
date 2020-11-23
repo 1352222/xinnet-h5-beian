@@ -215,7 +215,8 @@ export default {
             } else {
               Toast({
                 message: '操作失败！',
-                duration: 3000
+                duration: 3000,
+                className: 'noticeError'
               })
             }
           }
