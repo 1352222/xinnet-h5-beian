@@ -609,15 +609,10 @@ export default {
           success(res) {
             Indicator.close()
             // 保存成功后同步数据
-            self.org = {
-              name: orgName,
-              code: orgCode
-              // person: orgPerson
-            }
-            self.own = {
-              code: ownCode,
-              person: ownPerson
-            }
+            self.org.name = orgName
+            self.org.code = orgCode
+            self.own.code = ownCode
+            self.own.person = ownPerson
 
             resolve()
           }
