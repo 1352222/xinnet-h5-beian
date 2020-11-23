@@ -200,6 +200,11 @@ export default {
       return window.btoa(binary)
     },
     chooseImage(event, num) {
+      const isChoose = (data.images ? data.images : images)==undefined || JSON.stringify(data.images ? data.images : images)=='[]'
+      console.log(isChoose)
+      if (!isChoose) {
+        return false
+      }
       // let takepicture = $('#takepicture')
       // const self = this
       // const cropperType = this.cropperType

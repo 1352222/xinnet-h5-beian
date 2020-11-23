@@ -40,19 +40,22 @@ const vm = new Vue({
 
 function orient() {
   // 竖屏
+  console.log(window.orientation)
   if (window.orientation == 0 || window.orientation == 180) {
-    $('body').attr('overflow', 'auto')
+    $('body').css('overflow', 'auto')
+    $('#layer').css('display', 'none')
     $('#layer').removeClass('layer')
     // 横屏
   } else if (window.orientation == 90 || window.orientation == -90) {
-    $('body').attr('overflow', 'hidden')
+    $('body').css('overflow', 'hidden')
+    $('#layer').css('display', 'block')
     $('#layer').addClass('layer')
   }
 }
-$(function(){
+$(function() {
   orient()
 })
-$(window).on( 'orientationchange', function(e){
+$(window).on('orientationchange', function(e) {
   orient()
 })
 
