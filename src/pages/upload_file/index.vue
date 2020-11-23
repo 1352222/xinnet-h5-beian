@@ -202,7 +202,7 @@ export default {
       return window.btoa(binary)
     },
     chooseImage(event, num) {
-      const isChoose = (data.images ? data.images : images)==undefined || JSON.stringify(data.images ? data.images : images)=='[]'
+      const isChoose = (this.data.images ? this.data.images : this.images) == undefined || JSON.stringify(this.data.images ? this.data.images : this.images) == '[]'
       console.log(isChoose)
       if (!isChoose) {
         return false
