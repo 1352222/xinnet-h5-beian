@@ -1,7 +1,8 @@
 <template>
-  <div id="orgs">
+  <div id="orgs" :style="cropper ? 'padding: 0 10px;box-sizing:border-box;background: #000;' : ''">
     <div v-if="cropper" class="croppers">
       <VueCropper
+        style="padding: 0 10px;box-sizing:border-box;"
         ref="cropper"
         :img="option.img"
         :outputSize="option.size"
