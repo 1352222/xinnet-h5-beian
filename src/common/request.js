@@ -24,8 +24,8 @@ export default function request(params, failCb) {
   })
 
   service.interceptors.response.use(function (res) {
-    console.log('ajax成功回调！')
-    console.log(res)
+    // console.log('ajax成功回调！')
+    // console.log(res)
     const whitelists = ['/orgAttachment', '/idCardAttachment', '/checkPhone']
     if (res && res.status !== 200) {
       Indicator.close()

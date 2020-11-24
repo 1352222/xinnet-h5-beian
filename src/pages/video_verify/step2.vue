@@ -8,7 +8,10 @@
     <div class="body">
       <div>
         <div class="video-wrap">
-          <video ref="video" class="video" controls="controls">
+          <video v-if="deviceSystem == 'android'" ref="video" class="video" controls="controls">
+            <source :src="videoSrc" type="video/mp4" />
+          </video>
+          <video v-else ref="video" class="video" controls="controls" muted autoplay>
             <source :src="videoSrc" type="video/mp4" />
           </video>
         </div>
@@ -48,7 +51,8 @@ export default {
       warnImage: '../../../static/image/warn.png',
       videoBlob: null,
       // 确定使用按钮状态
-      disabled: false
+      disabled: false,
+      deviceSystem: this.getDeviceSystem()
     }
   },
   mounted() {
@@ -80,11 +84,9 @@ export default {
       }
     },
 
-    androidLoadData(video, result) {
+    loadData(result) {
       const self = this
       self.videoSrc = result
-      console.log(self.videoSrc)
-
       let arr = result.split(',')
       let bstr = atob(arr[1])
       let n = bstr.length
@@ -100,6 +102,9 @@ export default {
           const video = self.$refs.video
           console.log(video)
           if (video) {
+            Indicator.close()
+
+            // 控制时长
             const min = 4
             const max = 8
             self.disabled = false
@@ -121,24 +126,13 @@ export default {
     // 录像完成
     changeCamera() {
       const self = this
-      const video = self.$refs.camera.files[0]
+      const camera = self.$refs.camera.files[0]
       const reader = new FileReader()
-      // console.log(reader)
-      // if (!reader) {
-      //   console.log('ios')
-      //   this.videoSrc = window.URL.createObjectURL(video)
-      //   this.videoBlob = new Blob([video], { type: 'video/mp4' })
-      //   console.log(this.videoSrc)
-      //   console.log(this.videoBlob)
-      //   console.log(video)
-      //   console.log(video.duration)
-      // } else {
-      // console.log('android')
+      Indicator.open('请稍后..')
       reader.onload = function() {
-        self.androidLoadData(video, this.result)
+        self.loadData(this.result)
       }
-      reader.readAsDataURL(video)
-      // }
+      reader.readAsDataURL(camera)
     },
 
     restart() {
@@ -181,7 +175,7 @@ export default {
     },
 
     submit() {
-      Indicator.open({ text: '请稍后..' })
+      Indicator.open('请稍后..')
 
       const formData = new FormData()
       formData.append('video', this.videoBlob, 'video')
@@ -189,10 +183,7 @@ export default {
       formData.append('orderCode', this.globalData.orderCode)
       formData.append('number', this.number)
       formData.append('ext', 'MP4')
-      console.log(formData.get('video'))
       console.log(formData.get('orderCode'))
-      console.log(formData.get('number'))
-      console.log(formData.get('ext'))
       this.request({
         url: '/silentImageVerify',
         method: 'POST',
@@ -200,6 +191,7 @@ export default {
         headers: {
           'Content-Type': 'multipart/form-data'
         },
+        timeout: 1000 * 60 * 60,
         success: (res) => {
           Indicator.close()
           const self = this

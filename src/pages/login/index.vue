@@ -84,9 +84,7 @@ export default {
             globalDatas.phone = phone
             self.setData(globalDatas)
             self.$router.push('/list')
-            setTimeout(() => {
-              self.loading = false
-            }, 5000)
+            self.loading = false
           } else {
             if (res.message === '备案信息已提交审核') {
               self.$router.push('/login')

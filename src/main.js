@@ -28,6 +28,20 @@ Vue.use(Viewer, {
     zIndex: 9999
   }
 })
+Vue.prototype.getDeviceSystem = () => {
+  let equipmentType = ''
+  const agent = navigator.userAgent.toLowerCase()
+  const android = agent.indexOf('android')
+  const iphone = agent.indexOf('iphone')
+  const ipad = agent.indexOf('ipad')
+  if (android != -1) {
+    equipmentType = 'android'
+  }
+  if (iphone != -1 || ipad != -1) {
+    equipmentType = 'ios'
+  }
+  return equipmentType
+}
 
 // $.ajaxSetup({
 //   timeout: 1000 * 45
