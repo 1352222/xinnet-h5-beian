@@ -43,16 +43,31 @@ const vm = new Vue({
 })
 
 function orient() {
+  const $org = $('#orgs')
+  const $website = $('#website')
+
   // 竖屏
   if (window.orientation == 0 || window.orientation == 180) {
     $('body').css('overflow', 'auto')
     $('#layer').css('display', 'none')
     $('#layer').removeClass('layer')
+    if ($org && $org.length) {
+      $org.show()
+    }
+    if ($website && $website.length) {
+      $website.show()
+    }
     // 横屏
   } else if (window.orientation == 90 || window.orientation == -90) {
     $('body').css('overflow', 'hidden')
     $('#layer').css('display', 'block')
     $('#layer').addClass('layer')
+    if ($org && $org.length) {
+      $org.hide()
+    }
+    if ($website && $website.length) {
+      $website.hide()
+    }
   }
 }
 $(function() {
