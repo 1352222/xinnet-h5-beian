@@ -134,3 +134,13 @@ router.beforeEach((to, from, next) => {
     next()
   }
 })
+
+// 解决Loading chunk 1 failed的BUG
+router.onError((error) => {
+  const pattern = /Loading chunk (\d)+ failed/g
+  const isChunkLoadFailed = error.message.match(pattern)
+  const targetPath = router.history.pending.fullPath
+  if (isChunkLoadFailed) {
+    router.replace(targetPath)
+  }
+})

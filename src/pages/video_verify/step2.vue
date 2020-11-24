@@ -100,13 +100,12 @@ export default {
       self.$nextTick(() => {
         $(self.$refs.video).on('canplay', () => {
           const video = self.$refs.video
-          console.log(video)
           if (video) {
             Indicator.close()
 
             // 控制时长
             const min = 4
-            const max = 8
+            const max = 6
             self.disabled = false
             console.log(video.duration)
             if (video.duration < min) {
@@ -127,6 +126,15 @@ export default {
     changeCamera() {
       const self = this
       const camera = self.$refs.camera.files[0]
+      console.log(camera.size)
+      if (camera.size / 1024 > 1024 * 15) {
+        Toast({ message: '视频大小请小于15M', duration: 3000, className: 'noticeError' })
+        setTimeout(() => {
+          self.generateCode()
+          self.showMessageBox()
+        }, 2000)
+        return
+      }
       const reader = new FileReader()
       Indicator.open('请稍后..')
       reader.onload = function() {
