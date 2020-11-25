@@ -35,6 +35,13 @@
       <span class="borders bottom-right-border"></span>
       <!-- <input type="file" accept="image/*" capture="camera">
       <input type="file" accept="video/*" capture="camcorder"> -->
+      
+      <canvas
+        class="canvas-hidden"
+        ref="canvas"
+        style="width: 580px; height: 360px;"
+        canvas-id="Canvas"
+      />
     </div>
 
   </div>
@@ -218,8 +225,27 @@ export default {
           data = e.target.result
         }
         this.option.img = data
-        this.$parent.cropImagedata(datas, file, this.id, data)
+        // this.$parent.cropImagedata(datas, file, this.id, data)
         event.target.value = ''
+        
+        let canvas = this.$refs.canvas
+        let ctx = canvas.getContext('2d')
+        const img = new Image()
+        img.src = datas
+        img.onload = () => {
+          canvas.width = img.height
+          canvas.height = img.width
+          console.log(img.width > img.height ? '不换' : '换')
+          if (img.width > img.height) {
+            this.$parent.cropImagedata(datas, file, this.id, data)
+          } else {
+            ctx.translate(canvas.width / 2, canvas.height / 2)
+            ctx.rotate(270 * Math.PI / 180)
+            ctx.drawImage(img, -canvas.height / 2, -canvas.width / 2)
+            const res = canvas.toDataURL('image/jpeg')
+            this.$parent.cropImagedata(res, file, this.id, data)
+          }
+        }
       }
       reader.readAsArrayBuffer(file)
     },
@@ -334,5 +360,10 @@ export default {
   border-radius: 25%;
   text-align: center;
   line-height: 19px;
+}
+.canvas-hidden {
+  position: absolute;
+  top: -10000px;
+  left: 0;
 }
 </style>
