@@ -1,6 +1,6 @@
 <template>
   <div id="upload_file">
-    <div class="weui-uploader__bd upload-bg upload-file">
+    <div  class="weui-uploader__bd upload-bg upload-file">
       <div class="weui-uploader__files" id="uploaderFiles">
         <!-- {{data.images ? data.images : ''}} -->
         <div v-for="(user, i) in (data.images ? data.images : images)" :key="i">
@@ -235,7 +235,6 @@ export default {
         img.onload = () => {
           canvas.width = img.height
           canvas.height = img.width
-          console.log(img.width > img.height ? '不换' : '换')
           if (img.width > img.height) {
             this.$parent.cropImagedata(datas, file, this.id, data)
           } else {
@@ -362,6 +361,7 @@ export default {
   line-height: 19px;
 }
 .canvas-hidden {
+  display: none;
   position: absolute;
   top: -10000px;
   left: 0;
