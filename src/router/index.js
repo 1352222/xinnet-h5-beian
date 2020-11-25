@@ -1,5 +1,17 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import Home from '@/pages/Home'
+import Login from '@/pages/login'
+import List from '@/pages/list'
+import Org from '@/pages/org'
+import Website from '@/pages/website'
+import RealityVerify from '@/pages/reality_verify'
+import Step1 from '@/pages/video_verify/step1'
+import Step2 from '@/pages/video_verify/step2'
+import Step3 from '@/pages/video_verify/step3'
+import UploadFile from '@/pages/upload_file'
+import MergeFile from '@/pages/merge_file'
+import Result from '@/pages/result'
 
 Vue.use(Router)
 
@@ -9,51 +21,51 @@ export default new Router({
     {
       path: '/',
       name: 'Home',
-      component: (resolve) => require(['@/pages/Home'], resolve)
+      component: Home
     }, {
       path: '/login',
       name: 'Login',
-      component: (resolve) => require(['@/pages/login'], resolve)
+      component: Login
     }, {
       path: '/list',
       name: 'List',
-      component: (resolve) => require(['@/pages/list'], resolve)
+      component: List
     }, {
       path: '/org',
       name: 'Org',
-      component: (resolve) => require(['@/pages/org'], resolve)
+      component: Org
     }, {
       path: '/website',
       name: 'Website',
-      component: (resolve) => require(['@/pages/website'], resolve)
+      component: Website
     }, {
       path: '/reality_verify',
       name: 'Reality_verify',
-      component: (resolve) => require(['@/pages/reality_verify'], resolve)
+      component: RealityVerify
     }, {
       path: '/video_verify/step1',
       name: 'Video_step1',
-      component: (resolve) => require(['@/pages/video_verify/step1'], resolve)
+      component: Step1
     }, {
       path: '/video_verify/step2',
       name: 'Video_step2',
-      component: (resolve) => require(['@/pages/video_verify/step2'], resolve)
+      component: Step2
     }, {
       path: '/video_verify/step3',
       name: 'Video_step3',
-      component: (resolve) => require(['@/pages/video_verify/step3'], resolve)
+      component: Step3
     }, {
       path: '/upload_file',
       name: 'Upload_file',
-      component: (resolve) => require(['@/pages/upload_file'], resolve)
+      component: UploadFile
     }, {
       path: '/merge_file',
       name: 'Merge_file',
-      component: (resolve) => require(['@/pages/merge_file'], resolve)
+      component: MergeFile
     }, {
       path: '/result',
       name: 'Result',
-      component: (resolve) => require(['@/pages/result'], resolve)
+      component: Result
     }
   ]
 })

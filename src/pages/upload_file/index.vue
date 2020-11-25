@@ -35,7 +35,7 @@
       <span class="borders bottom-right-border"></span>
       <!-- <input type="file" accept="image/*" capture="camera">
       <input type="file" accept="video/*" capture="camcorder"> -->
-      
+
       <canvas
         class="canvas-hidden"
         ref="canvas"
@@ -227,7 +227,7 @@ export default {
         this.option.img = data
         // this.$parent.cropImagedata(datas, file, this.id, data)
         event.target.value = ''
-        
+
         let canvas = this.$refs.canvas
         let ctx = canvas.getContext('2d')
         const img = new Image()
