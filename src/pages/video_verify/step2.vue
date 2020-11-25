@@ -56,6 +56,7 @@ export default {
     }
   },
   mounted() {
+    this.setDocumentTitle('拍摄核验视频')
     this.generateCode()
     this.showMessageBox()
   },
@@ -87,6 +88,7 @@ export default {
     loadData(result) {
       const self = this
       self.videoSrc = result
+      self.setDocumentTitle('核验视频确认')
       let arr = result.split(',')
       let bstr = atob(arr[1])
       let n = bstr.length
@@ -154,9 +156,7 @@ export default {
         this.generateCode()
         this.showMessageBox()
       })
-      // wx.setNavigationBarTitle({
-      //   title: '拍摄核验视频'
-      // })
+      this.setDocumentTitle('拍摄核验视频')
     },
 
     generateCode() {

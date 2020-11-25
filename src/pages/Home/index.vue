@@ -14,6 +14,7 @@ export default {
     }
   },
   mounted(query) {
+    this.setDocumentTitle('ICP备案核验')
     // let a = 0
     const b = setInterval(() => {
       // a += 1

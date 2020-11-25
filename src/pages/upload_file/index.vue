@@ -35,7 +35,7 @@
       <span class="borders bottom-right-border"></span>
       <!-- <input type="file" accept="image/*" capture="camera">
       <input type="file" accept="video/*" capture="camcorder"> -->
-      
+
       <canvas
         class="canvas-hidden"
         ref="canvas"
@@ -88,15 +88,9 @@ export default {
   },
   mounted: function () {
     this.ready()
-  },
-  watch: {
-    buttonText: {
-      handler(newVal) {
-        if (this.buttonText != newVal) {
-          this.buttonText = newVal
-        }
-      }
-    }
+    this.$watch('data.buttonText', newVal => {
+      this.buttonText = newVal
+    })
   },
   methods: {
     ready() {
@@ -211,7 +205,6 @@ export default {
     },
     chooseImage(event, num) {
       const isChoose = (this.data.images ? this.data.images : this.images) == undefined || JSON.stringify(this.data.images ? this.data.images : this.images) == '[]'
-      console.log(isChoose)
       if (!isChoose) {
         return false
       }
@@ -234,7 +227,7 @@ export default {
         this.option.img = data
         // this.$parent.cropImagedata(datas, file, this.id, data)
         event.target.value = ''
-        
+
         let canvas = this.$refs.canvas
         let ctx = canvas.getContext('2d')
         const img = new Image()

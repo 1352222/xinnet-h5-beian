@@ -107,6 +107,9 @@ export default {
     ...mapState({
       globalData: state => state.home.globalData
     })
+  },
+  mounted() {
+    this.setDocumentTitle('手机认证')
   }
 }
 </script>

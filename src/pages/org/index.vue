@@ -383,6 +383,7 @@ export default {
     }
   },
   mounted: function () {
+    this.setDocumentTitle('主体证件信息')
     this.height = this.globalData.height * 2 + 100
     if (this.globalData.orderCode) {
       this.onLoad()

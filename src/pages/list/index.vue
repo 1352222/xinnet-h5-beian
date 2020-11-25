@@ -75,6 +75,7 @@ export default {
     }
   },
   mounted () {
+    this.setDocumentTitle('ICP备案身份核验')
     const phone = window.sessionStorage.getItem('phone')
     const orderCode = window.sessionStorage.getItem('orderCode')
     const self = this

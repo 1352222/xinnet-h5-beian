@@ -42,6 +42,9 @@ Vue.prototype.getDeviceSystem = () => {
   }
   return equipmentType
 }
+Vue.prototype.setDocumentTitle = title => {
+  document.title = title
+}
 
 // $.ajaxSetup({
 //   timeout: 1000 * 45
