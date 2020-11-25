@@ -7,9 +7,9 @@
           <div class="weui-uploader__file" :id="user.item" style="position:absolute;z-index:99;">
             <span  @click.capture="clearImage" data-type="dele" class="delete">×</span>
             <img src="~@/assets/close.png" @click="clearImage" data-type="dele" class="delete" />
-            <!-- <viewer> -->
+            <viewer>
               <img class="weui-uploader__img" :src="user" mode="aspectFill" />
-            <!-- </viewer> -->
+            </viewer>
           </div>
         </div>
       </div>
