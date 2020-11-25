@@ -81,15 +81,9 @@ export default {
   },
   mounted: function () {
     this.ready()
-  },
-  watch: {
-    buttonText: {
-      handler(newVal) {
-        if (this.buttonText != newVal) {
-          this.buttonText = newVal
-        }
-      }
-    }
+    this.$watch('data.buttonText', newVal => {
+      this.buttonText = newVal
+    })
   },
   methods: {
     ready() {
@@ -204,7 +198,6 @@ export default {
     },
     chooseImage(event, num) {
       const isChoose = (this.data.images ? this.data.images : this.images) == undefined || JSON.stringify(this.data.images ? this.data.images : this.images) == '[]'
-      console.log(isChoose)
       if (!isChoose) {
         return false
       }
