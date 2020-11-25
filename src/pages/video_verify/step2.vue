@@ -186,7 +186,7 @@ export default {
       Indicator.open('请稍后..')
       let orderCode = this.globalData.orderCode
       if (!orderCode) {
-        orderCode = getParams(window.location.search).orderCode
+        orderCode = this.getParams(window.location.search).orderCode
       }
       const formData = new FormData()
       formData.append('video', this.videoBlob, 'video')
