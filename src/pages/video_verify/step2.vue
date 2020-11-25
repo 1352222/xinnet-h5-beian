@@ -184,14 +184,17 @@ export default {
 
     submit() {
       Indicator.open('请稍后..')
-
+      let orderCode = this.globalData.orderCode
+      if (!orderCode) {
+        orderCode = getParams(window.location.search).orderCode
+      }
       const formData = new FormData()
       formData.append('video', this.videoBlob, 'video')
-      // formData.append('orderCode', 'ICP4022671241036226')
-      formData.append('orderCode', this.globalData.orderCode)
+      formData.append('orderCode', orderCode)
       formData.append('number', this.number)
       formData.append('ext', 'MP4')
-      console.log(formData.get('orderCode'))
+      console.log(this.number)
+      console.log(orderCode)
       this.request({
         url: '/silentImageVerify',
         method: 'POST',
