@@ -447,3 +447,12 @@ export default {
   font-size: 14px !important;
 }
 </style>
+<style>
+.mint-msgbox-btns {
+  line-height: 40px;
+  height: 40px;
+}
+.mint-msgbox-confirm {
+  font-size: 16px;
+}
+</style>
