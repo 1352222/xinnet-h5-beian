@@ -107,13 +107,13 @@ export default {
 
             // 控制时长
             const min = 4
-            const max = 6
+            const max = 7
             self.disabled = false
             console.log(video.duration)
             if (video.duration < min) {
               Toast({ message: '视频录制时长不足规定时长', duration: 3000, className: 'noticeError' })
               self.disabled = true
-            } else if (video.duration > max) {
+            } else if (video.duration >= max) {
               Toast({ message: '视频录制时长超过规定时长', duration: 3000, className: 'noticeError' })
               self.disabled = true
             } else {
