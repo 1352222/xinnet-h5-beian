@@ -107,13 +107,13 @@ export default {
 
             // 控制时长
             const min = 4
-            const max = 6
+            const max = 7
             self.disabled = false
             console.log(video.duration)
             if (video.duration < min) {
               Toast({ message: '视频录制时长不足规定时长', duration: 3000, className: 'noticeError' })
               self.disabled = true
-            } else if (video.duration > max) {
+            } else if (video.duration >= max) {
               Toast({ message: '视频录制时长超过规定时长', duration: 3000, className: 'noticeError' })
               self.disabled = true
             } else {
@@ -184,14 +184,17 @@ export default {
 
     submit() {
       Indicator.open('请稍后..')
-
+      let orderCode = this.globalData.orderCode
+      if (!orderCode) {
+        orderCode = this.getParams(window.location.search).orderCode
+      }
       const formData = new FormData()
       formData.append('video', this.videoBlob, 'video')
-      // formData.append('orderCode', 'ICP4022671241036226')
-      formData.append('orderCode', this.globalData.orderCode)
+      formData.append('orderCode', orderCode)
       formData.append('number', this.number)
       formData.append('ext', 'MP4')
-      console.log(formData.get('orderCode'))
+      console.log(this.number)
+      console.log(orderCode)
       this.request({
         url: '/silentImageVerify',
         method: 'POST',

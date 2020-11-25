@@ -43,15 +43,12 @@ Vue.prototype.getDeviceSystem = () => {
   if (iphone != -1 || ipad != -1) {
     equipmentType = 'ios'
   }
+  console.log(equipmentType)
   return equipmentType
 }
 Vue.prototype.setDocumentTitle = title => {
   document.title = title
 }
-
-// $.ajaxSetup({
-//   timeout: 1000 * 45
-// })
 
 /* eslint-disable no-new */
 const vm = new Vue({
@@ -110,6 +107,8 @@ function getParams(url) {
   }
   return params
 }
+
+Vue.prototype.getParams = getParams
 
 router.beforeEach((to, from, next) => {
   const storeOrderCode = window.sessionStorage.getItem('orderCode')
