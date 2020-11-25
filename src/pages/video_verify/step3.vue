@@ -53,6 +53,7 @@ export default {
     }
   },
   mounted() {
+    this.setDocumentTitle('备案核验照片')
     if (this.globalData.orderCode) {
       this.onLoad()
     } else {

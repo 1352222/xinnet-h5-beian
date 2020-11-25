@@ -54,20 +54,14 @@ export default {
       // 个人
       if (recordType == '5' && websiteState == 'right' && screenState == 'right' && realityVerifyState == 'right') {
         this.done = true
-        // wx.setNavigationBarTitle({
-        //   title: '提交成功'
-        // })
+        this.setDocumentTitle('提交成功')
       // 企业
       } else if (recordType != '5' && orgState == 'right' && websiteState == 'right' && screenState == 'right' && realityVerifyState == 'right') {
         this.done = true
-        // wx.setNavigationBarTitle({
-        //   title: '提交成功'
-        // })
+        this.setDocumentTitle('提交成功')
       } else {
         this.done = false
-        // wx.setNavigationBarTitle({
-        //   title: '提交失败'
-        // })
+        this.setDocumentTitle('提交失败')
       }
     }
   },

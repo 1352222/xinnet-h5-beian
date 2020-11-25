@@ -74,6 +74,7 @@ export default {
     }
   },
   mounted () {
+    this.setDocumentTitle('核验单')
     if (this.globalData.orderCode) {
       this.onLoad()
     } else {

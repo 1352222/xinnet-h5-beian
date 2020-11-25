@@ -335,21 +335,15 @@ export default {
       // this.cropper = this.selectComponent('#image-cropper')
       this.cropper = this.$refs.cropper
       if (orderType === 'CHANGE_ORG' && recordType == '5') {
-        // wx.setNavigationBarTitle({
-        //   title: '主体负责人证件信息'
-        // })
+        this.setDocumentTitle('主体负责人证件信息')
         this.uploadTips = '请上传主体负责人证件信息'
         // this.setData({ uploadTips: '请上传主体负责人证件信息' })
       } else if (recordType == '5') {
-        // wx.setNavigationBarTitle({
-        //   title: '主体/网站负责人证件信息'
-        // })
+        this.setDocumentTitle('主体/网站负责人证件信息')
         this.uploadTips = '请上传主体/网站负责人证件信息'
         // this.setData({ uploadTips: '请上传主体/网站负责人证件信息' })
       } else {
-        // wx.setNavigationBarTitle({
-        //   title: '网站负责人证件信息'
-        // })
+        this.setDocumentTitle('网站负责人证件信息')
         this.uploadTips = '请上传网站负责人证件信息'
         // this.setData({ uploadTips: '请上传网站负责人证件信息' })
       }

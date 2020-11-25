@@ -41,6 +41,9 @@ export default {
     submit() {
       this.$router.push('/video_verify/step2')
     }
+  },
+  mounted() {
+    this.setDocumentTitle('拍摄说明')
   }
 }
 </script>
