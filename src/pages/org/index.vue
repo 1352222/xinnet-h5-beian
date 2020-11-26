@@ -412,20 +412,21 @@ export default {
       //   }
       // }
       if (window.orientation == 0 || window.orientation == 180) {
-        console.log(this.cropperflag, this.cropper, this.croppernum, 'oo11')
+        // console.log(this.cropperflag, this.cropper, this.croppernum, 'oo11')
         if (this.cropperflag && this.croppernum === 1 && this.cropper === false) {
           this.cropper = true
-          console.log(this.option, this.croppernum, 'oo')
+          // console.log(this.option, this.croppernum, 'oo')
         }
         // console.log(this.cropperflag , '11')
       } else if (window.orientation == 90 || window.orientation == -90) {
         // this.cropper = false
-        console.log(this.cropperflag, this.cropper, this.croppernum, this.cropperflag && this.croppernum === 0, 'ff11')
+        // console.log(this.cropperflag, this.cropper, this.croppernum, this.cropperflag && this.croppernum === 0, 'ff11')
         if (this.croppernum === 0) {
-          console.log(this.cropperflag, this.cropper, 'cccc')
-          this.croppernum += 1
-          this.cropper = false
-          console.log(this.croppernum, 'ff')
+          if (this.cropperflag) {
+            this.croppernum += 1
+            this.cropper = false
+            // console.log(this.croppernum, 'ff')
+          }
         }
         // console.log($('#org'),'22')
       }
