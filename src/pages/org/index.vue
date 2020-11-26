@@ -258,7 +258,7 @@ import uploadFile from '../upload_file'
 import mergeFile from '../merge_file'
 import { Indicator, Toast } from 'mint-ui'
 import getAttachmentParam from '../../common/getAttachmentParam'
-// import $ from 'jquery'
+import $ from 'jquery'
 
 export default {
   name: 'Orgs',
@@ -292,6 +292,8 @@ export default {
       fileName: '',
       cropper: false,
       cropperType: '',
+      cropperflag: false,
+      croppernum: 0,
       // image cropper
       src: '',
       srcs: '',
@@ -394,8 +396,42 @@ export default {
         }
       })
     }
+    window.addEventListener('resize', this.onOrientationchange, false)
   },
   methods: {
+    onOrientationchange() {
+      // let width = document.documentElement.clientWidth
+      // let height = document.documentElement.clientHeight
+      // console.log($('.croppers')[0], 'orgs11')
+      // if(width > height) {
+      //   console.log($('.croppers')[0], this.cropperflag, this.croppernum, this.cropper, '1122')
+      //   if (this.cropperflag && this.croppernum === 0) {
+      //     this.croppernum += 1
+      //     this.cropper = false
+      //     console.log(this.croppernum, 'ff')
+      //   }
+      // }
+      if (window.orientation == 0 || window.orientation == 180) {
+        console.log(this.cropperflag, this.cropper, this.croppernum, 'oo11')
+        if (this.cropperflag && this.croppernum === 1 && this.cropper === false) {
+          this.cropper = true
+          console.log(this.option, this.croppernum, 'oo')
+        }
+        // console.log(this.cropperflag , '11')
+      } else if (window.orientation == 90 || window.orientation == -90) {
+        // this.cropper = false
+        console.log(this.cropperflag, this.cropper, this.croppernum, this.cropperflag && this.croppernum === 0, 'ff11')
+        if (this.croppernum === 0) {
+          console.log(this.cropperflag, this.cropper, 'cccc')
+          this.croppernum += 1
+          this.cropper = false
+          console.log(this.croppernum, 'ff')
+        }
+        // console.log($('#org'),'22')
+      }
+      // console.log(window.orientation, 'ooori')
+      // console.log('ooorient11')
+    },
     onLoad() {
       // 获取到image-cropper实例
       this.cropper = this.$refs.cropper
@@ -558,6 +594,7 @@ export default {
       this.srcs = ''
       this.option.img = ''
       this.cropper = false
+      this.cropperflag = false
       this.cropperType = ''
     },
     updateOrg() {
@@ -979,6 +1016,8 @@ export default {
       this.srcs = a
       this.option.img = a
       this.cropper = true
+      this.cropperflag = true
+      this.croppernum = 0
       this.fileName = file.name
       this.id = id
     },
@@ -991,6 +1030,8 @@ export default {
       const { id } = e.currentTarget
       this.src = src
       this.cropper = true
+      this.croppernum = 0
+      this.cropperflag = true
       this.cropperType = id
       Indicator.close()
     },
@@ -1004,6 +1045,7 @@ export default {
           this.modelSrc = img
           formData.append('file', data, this.fileName)
           this.cropper = false
+          this.cropperflag = false
           this.bb = img
           this.$refs.cropper.getCropData(data => {
             let url = data.substring(data.indexOf(',') + 1, data.length)
