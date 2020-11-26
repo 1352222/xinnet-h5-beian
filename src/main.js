@@ -28,7 +28,7 @@ Vue.use(Viewer, {
     zIndex: 9999,
     title: false,
     toolbar: false,
-    tooltip: false,
+    tooltip: false
   }
 })
 Vue.prototype.getDeviceSystem = () => {

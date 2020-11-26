@@ -11,7 +11,7 @@
           2、点击开始拍摄按钮开始录制视频，录制时请用普通话大声朗读核验码，数字间建议略作停顿。
         </div>
         <div class="text">
-          3、点击结束按钮结束录制视频，请确保录制的视频时长在4~6秒。
+          3、点击结束按钮结束录制视频，请确保录制的视频时长在<span class="min">3~6秒</span>。
         </div>
         <div class="text">
           4、必须保证环境安静，将人脸置于视频框中，请勿遮挡面部，且视频中不允许出现多张人脸。
@@ -107,5 +107,9 @@ export default {
   font-size: 18px !important;
   border-radius: 4px !important;
   background: linear-gradient(to right, #388de7, #2c6fd2) !important;
+}
+.min {
+  color: red;
+  font-weight: bold;
 }
 </style>
