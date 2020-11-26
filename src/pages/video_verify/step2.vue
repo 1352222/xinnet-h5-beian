@@ -183,8 +183,10 @@ export default {
     },
 
     submit() {
+      console.log(new Date().getTime())
       Indicator.open('请稍后..')
       let orderCode = this.globalData.orderCode
+      console.log(orderCode)
       if (!orderCode) {
         orderCode = this.getParams(window.location.search).orderCode
       }
@@ -193,6 +195,7 @@ export default {
       formData.append('orderCode', orderCode)
       formData.append('number', this.number)
       formData.append('ext', 'MP4')
+      formData.append('requestTime', new Date().getTime())
       console.log(this.number)
       console.log(orderCode)
       this.request({

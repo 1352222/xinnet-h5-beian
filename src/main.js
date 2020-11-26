@@ -25,7 +25,9 @@ Vue.prototype.request = request
 Vue.config.productionTip = false
 Vue.use(Viewer, {
   defaultOptions: {
-    zIndex: 9999
+    zIndex: 9999,
+    toolbar: false,
+    navbar: false
   }
 })
 Vue.prototype.getDeviceSystem = () => {
