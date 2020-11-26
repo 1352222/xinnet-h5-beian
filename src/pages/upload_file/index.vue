@@ -89,7 +89,9 @@ export default {
   mounted: function () {
     this.ready()
     this.$watch('data.buttonText', newVal => {
-      this.buttonText = newVal
+      if (newVal) {
+        this.buttonText = newVal
+      }
     })
   },
   methods: {

@@ -4,8 +4,8 @@
       <div class="title">网站核验照片</div>
       <div>
         <div class="video">
-          <viewer>
-            <img class="image" :src="mergeImageBase64" />
+          <viewer :src="mergeImageBase64">
+            <img class="image" :src="mergeImageBase64" mode="aspectFill" />
           </viewer>
         </div>
         <div class="video-desc">点击查看核验照片</div>

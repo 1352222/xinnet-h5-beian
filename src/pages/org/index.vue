@@ -718,8 +718,8 @@ export default {
           images: [],
           image: {},
           imagePath: '',
-          imageBase64: '',
-          buttonText: ''
+          imageBase64: ''
+          // buttonText: ''
         }
       } else if (id == 'front') {
         merge.clearImage()
@@ -733,8 +733,8 @@ export default {
           images: [],
           image: {},
           imagePath: '',
-          imageBase64: '',
-          buttonText: ''
+          imageBase64: ''
+          // buttonText: ''
         }
       } else if (id == 'side') {
         merge.clearImage()
@@ -748,8 +748,8 @@ export default {
           images: [],
           image: {},
           imagePath: '',
-          imageBase64: '',
-          buttonText: ''
+          imageBase64: ''
+          // buttonText: ''
         }
       }
 

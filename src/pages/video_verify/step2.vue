@@ -37,6 +37,22 @@ import { mapState, mapMutations } from 'vuex'
 import $ from 'jquery'
 import 'mint-ui/lib/style.css'
 
+const deviceSystem = (() => {
+  let equipmentType = ''
+  const agent = navigator.userAgent.toLowerCase()
+  const android = agent.indexOf('android')
+  const iphone = agent.indexOf('iphone')
+  const ipad = agent.indexOf('ipad')
+  if (android != -1) {
+    equipmentType = 'android'
+  }
+  if (iphone != -1 || ipad != -1) {
+    equipmentType = 'ios'
+  }
+  console.log(equipmentType)
+  return equipmentType
+})()
+
 export default {
   name: 'Video-step2',
   data() {
@@ -52,7 +68,7 @@ export default {
       videoBlob: null,
       // 确定使用按钮状态
       disabled: false,
-      deviceSystem: this.getDeviceSystem()
+      deviceSystem
     }
   },
   mounted() {
@@ -99,28 +115,39 @@ export default {
       const blob = new Blob([u8arr], { type: 'video/mp4' })
       self.videoBlob = blob
       self.videoStep = 2
+      console.log('loadData')
       self.$nextTick(() => {
+        console.log('nextTick')
+        Indicator.close()
+        self.disabled = false
+        Toast({ message: '录制成功！', duration: 3000, className: 'noticeError' })
         $(self.$refs.video).on('canplay', () => {
-          const video = self.$refs.video
-          if (video) {
-            Indicator.close()
-
-            // 控制时长
-            const min = 4
-            const max = 7
-            self.disabled = false
-            console.log(video.duration)
-            if (video.duration < min) {
-              Toast({ message: '视频录制时长不足规定时长', duration: 3000, className: 'noticeError' })
-              self.disabled = true
-            } else if (video.duration >= max) {
-              Toast({ message: '视频录制时长超过规定时长', duration: 3000, className: 'noticeError' })
-              self.disabled = true
-            } else {
-              Toast({ message: '录制成功！', duration: 3000, className: 'noticeError' })
-            }
-          }
+          console.log('canplay')
         })
+        $(self.$refs.video).on('loadedmetadata', () => {
+          console.log('loadedmetadata')
+        })
+        // $(self.$refs.video).on('canplay', () => {
+        // const video = self.$refs.video
+        // if (video) {
+        //   Indicator.close()
+
+        //   // 控制时长
+        //   const min = 4
+        //   const max = 7
+        //   self.disabled = false
+        //   console.log(video.duration)
+        //   if (video.duration < min) {
+        //     Toast({ message: '视频录制时长不足规定时长', duration: 3000, className: 'noticeError' })
+        //     self.disabled = true
+        //   } else if (video.duration >= max) {
+        //     Toast({ message: '视频录制时长超过规定时长', duration: 3000, className: 'noticeError' })
+        //     self.disabled = true
+        //   } else {
+        //     Toast({ message: '录制成功！', duration: 3000, className: 'noticeError' })
+        //   }
+        // }
+        // })
       })
     },
 
@@ -138,10 +165,14 @@ export default {
         return
       }
       const reader = new FileReader()
-      Indicator.open('请稍后..')
-      reader.onload = function() {
-        self.loadData(this.result)
-      }
+      // Indicator.open('请稍后..')
+      console.log(camera)
+      this.videoBlob = camera
+      self.videoStep = 2
+      // reader.onload = function() {
+      //   console.log(reader)
+      //   self.loadData(this.result)
+      // }
       reader.readAsDataURL(camera)
     },
 

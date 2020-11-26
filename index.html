@@ -12,7 +12,7 @@
         margin: 0;
         padding: 0;
       }
-      .layer {
+      #layer {
         position: fixed;
         top: 0;
         left: 0;
@@ -21,7 +21,7 @@
         z-index: 99991;
         background: gray;
       }
-      .layer p {
+      #layer p {
         position: absolute;
         top: 50%;
         left: 50%;
@@ -29,8 +29,8 @@
         transform: translate(-50%, -50%);
       }
     </style>
-    <script src="//cdn.bootcdn.net/ajax/libs/eruda/2.3.3/eruda.js"></script>
-    <script>eruda.init();</script>
+    <!-- <script src="//cdn.bootcdn.net/ajax/libs/eruda/2.3.3/eruda.js"></script>
+    <script>eruda.init();</script> -->
     <script>
       window.onload = function() {
         document.addEventListener('touchstart', function(event) {
