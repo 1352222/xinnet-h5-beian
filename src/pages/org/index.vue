@@ -258,7 +258,7 @@ import uploadFile from '../upload_file'
 import mergeFile from '../merge_file'
 import { Indicator, Toast } from 'mint-ui'
 import getAttachmentParam from '../../common/getAttachmentParam'
-import $ from 'jquery'
+// import $ from 'jquery'
 
 export default {
   name: 'Orgs',

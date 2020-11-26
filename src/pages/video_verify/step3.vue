@@ -3,8 +3,8 @@
     <div class="body">
       <div class="title">网站核验照片</div>
       <div>
-        <div class="video">
-          <viewer :src="mergeImageBase64">
+        <div class="video" v-if="mergeImageBase64">
+          <viewer>
             <img class="image" :src="mergeImageBase64" mode="aspectFill" />
           </viewer>
         </div>
