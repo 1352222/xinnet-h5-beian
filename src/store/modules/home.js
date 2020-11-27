@@ -58,6 +58,11 @@ const home = {
         code: '',
         images: [],
         done: false
+      },
+      cropper: {
+        cropper: false,
+        cropperflag: true,
+        croppernum: 0
       }
     }
   },

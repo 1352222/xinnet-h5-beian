@@ -306,8 +306,30 @@ export default {
         }
       })
     }
+    window.addEventListener('resize', this.onOrientationchange, false)
   },
   methods: {
+    onOrientationchange() {
+      const { cropper } = this.globalData
+      let width = document.documentElement.clientWidth
+      let height = document.documentElement.clientHeight
+      if(width > height) {
+        if (cropper.cropperflag && cropper.croppernum === 0) {
+          this.cropper = false
+          const croppers = this.globalData.cropper
+          croppers.croppernum += 1
+          croppers.cropper = false
+          this.setData({cropper:croppers})
+        }
+      } else {
+        if (cropper.cropperflag && cropper.croppernum === 1 && cropper.cropper === false) {
+          this.cropper = true
+          const croppers = this.globalData.cropper
+          croppers.cropper = true
+          this.setData({cropper:croppers})
+        }
+      }
+    },
     onLoad() {
       const { orderType, recordType } = this.globalData
       const NewCheckIn = orderType === 'NEW_CHECK_IN'
@@ -469,12 +491,21 @@ export default {
       this.srcs = ''
       this.option.img = ''
       this.cropper = false
+      const croppers = this.globalData.cropper
+      croppers.cropper = false
+      croppers.cropperflag = true
+      croppers.croppernum = 0
+      this.setData({cropper: croppers})
       this.cropperType = ''
     },
     cropImagedata(a, file, id, imageBase64) {
       this.srcs = a
       this.option.img = a
-      this.cropper = true
+      let width = document.documentElement.clientWidth
+      let height = document.documentElement.clientHeight
+      if(width < height) {
+        this.cropper = true
+      }
       this.fileName = file.name
       this.id = id
     },
@@ -498,6 +529,11 @@ export default {
           this.modelSrc = img
           formData.append('file', data, this.fileName)
           this.cropper = false
+          const croppers = this.globalData.cropper
+          croppers.cropper = false
+          croppers.cropperflag = true
+          croppers.croppernum = 0
+          this.setData({cropper: croppers})
           this.bb = img
           this.$refs.cropper.getCropData(data => {
             let url = data.substring(data.indexOf(',') + 1, data.length)

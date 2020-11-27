@@ -88,9 +88,6 @@
                   id="org"
                   ref="org"
                   :data="org"
-                  bind:cropperimage="cropperImage"
-                  bind:chooseimage="chooseImage"
-                  bind:clearimage="clearImage"
                 />
               </div>
             </div>
@@ -128,9 +125,6 @@
                   id="front"
                   ref="front"
                   :data="front"
-                  bind:cropperimage="cropperImage"
-                  bind:chooseimage="chooseImage"
-                  bind:clearimage="clearImage"
                 />
                 <upload-file
                   class="box-right"
@@ -139,9 +133,6 @@
                   id="side"
                   ref="side"
                   :data="side"
-                  bind:cropperimage="cropperImage"
-                  bind:chooseimage="chooseImage"
-                  bind:clearimage="clearImage"
                 />
               </div>
             </div>
@@ -292,8 +283,6 @@ export default {
       fileName: '',
       cropper: false,
       cropperType: '',
-      cropperflag: false,
-      croppernum: 0,
       // image cropper
       src: '',
       srcs: '',
@@ -400,38 +389,25 @@ export default {
   },
   methods: {
     onOrientationchange() {
-      // let width = document.documentElement.clientWidth
-      // let height = document.documentElement.clientHeight
-      // console.log($('.croppers')[0], 'orgs11')
-      // if(width > height) {
-      //   console.log($('.croppers')[0], this.cropperflag, this.croppernum, this.cropper, '1122')
-      //   if (this.cropperflag && this.croppernum === 0) {
-      //     this.croppernum += 1
-      //     this.cropper = false
-      //     console.log(this.croppernum, 'ff')
-      //   }
-      // }
-      if (window.orientation == 0 || window.orientation == 180) {
-        // console.log(this.cropperflag, this.cropper, this.croppernum, 'oo11')
-        if (this.cropperflag && this.croppernum === 1 && this.cropper === false) {
+      const { cropper } = this.globalData
+      let width = document.documentElement.clientWidth
+      let height = document.documentElement.clientHeight
+      if(width > height) {
+        if (cropper.cropperflag && cropper.croppernum === 0) {
+          this.cropper = false
+          const croppers = this.globalData.cropper
+          croppers.croppernum += 1
+          croppers.cropper = false
+          this.setData({cropper:croppers})
+        }
+      } else {
+        if (cropper.cropperflag && cropper.croppernum === 1 && cropper.cropper === false) {
           this.cropper = true
-          // console.log(this.option, this.croppernum, 'oo')
+          const croppers = this.globalData.cropper
+          croppers.cropper = true
+          this.setData({cropper:croppers})
         }
-        // console.log(this.cropperflag , '11')
-      } else if (window.orientation == 90 || window.orientation == -90) {
-        // this.cropper = false
-        // console.log(this.cropperflag, this.cropper, this.croppernum, this.cropperflag && this.croppernum === 0, 'ff11')
-        if (this.croppernum === 0) {
-          if (this.cropperflag) {
-            this.croppernum += 1
-            this.cropper = false
-            // console.log(this.croppernum, 'ff')
-          }
-        }
-        // console.log($('#org'),'22')
       }
-      // console.log(window.orientation, 'ooori')
-      // console.log('ooorient11')
     },
     onLoad() {
       // 获取到image-cropper实例
@@ -595,7 +571,11 @@ export default {
       this.srcs = ''
       this.option.img = ''
       this.cropper = false
-      this.cropperflag = false
+      const croppers = this.globalData.cropper
+      croppers.cropper = false
+      croppers.cropperflag = true
+      croppers.croppernum = 0
+      this.setData({cropper: croppers})
       this.cropperType = ''
     },
     updateOrg() {
@@ -1013,28 +993,21 @@ export default {
     // realTime() {
     //   this.previews = data
     // },
+    
+    // 调用裁剪工具
     cropImagedata(a, file, id, imageBase64) {
       this.srcs = a
       this.option.img = a
-      this.cropper = true
-      this.cropperflag = true
-      this.croppernum = 0
+      let width = document.documentElement.clientWidth
+      let height = document.documentElement.clientHeight
+      if(width < height) {
+        this.cropper = true
+      }
       this.fileName = file.name
       this.id = id
     },
     cropImage() {
       console.log(this.$refs.cropper, 'cropimage1')
-    },
-    // 调用裁剪工具
-    cropperImage(e) {
-      const { src } = e.detail
-      const { id } = e.currentTarget
-      this.src = src
-      this.cropper = true
-      this.croppernum = 0
-      this.cropperflag = true
-      this.cropperType = id
-      Indicator.close()
     },
     // 完成裁剪
     getCropperImage(type) {
@@ -1046,7 +1019,11 @@ export default {
           this.modelSrc = img
           formData.append('file', data, this.fileName)
           this.cropper = false
-          this.cropperflag = false
+          const croppers = this.globalData.cropper
+          croppers.cropper = false
+          croppers.cropperflag = true
+          croppers.croppernum = 0
+          this.setData({cropper: croppers})
           this.bb = img
           this.$refs.cropper.getCropData(data => {
             let url = data.substring(data.indexOf(',') + 1, data.length)
@@ -1109,12 +1086,8 @@ export default {
       }
     },
     chooseImage(url, img) {
-      // console.log(this.$refs, this.id, this.baseurl, this.bb, 'fronttttt')
       // this.writeimage(this.baseurl, this.bb)
       const self = this
-      // const org = $('#org1 > div')
-      // const front = $('#front1 > div:first-child')
-      // const side = $('#front1 > div:last-child')
       // const merge = this.$refs.merge
       const id = this.id
       const data = { orderCode: this.globalData.orderCode }
@@ -1207,15 +1180,11 @@ export default {
                 self.setUploadSuccessData('front')
                 self.setErrorInfo()
                 self.allowUpdate = true
-                // self.setData({
-                //   allowUpdate: true
-                // })
 
                 // self.baseurl = ''
                 // self.bb = ''
                 // self.$refs.mergeFile.setImages(self.bb)
                 // self.$refs.merge.setImages(self.baseurl, self.bb)
-                // console.log(self.front, self.side, 'fffff')
               } else if (code === 'success' && id === 'side') {
                 self.writeimage(self.baseurl, self.bb)
                 self.setUploadSuccessData('side')
