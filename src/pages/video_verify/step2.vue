@@ -40,6 +40,8 @@
 import { Toast, Indicator, MessageBox } from 'mint-ui'
 import { mapState, mapMutations } from 'vuex'
 import $ from 'jquery'
+import warnImage from '../../../static/image/warn.png'
+import videoImage from '../../../static/image/video.png'
 import 'mint-ui/lib/style.css'
 
 const deviceSystem = (() => {
@@ -69,8 +71,8 @@ export default {
       num: '9 3 7 0',
       number: '',
       videoSrc: '',
-      warnImage: '../../../static/image/warn.png',
-      videoImage: '../../../static/image/video.png',
+      warnImage,
+      videoImage,
       videoBlob: null,
       // 确定使用按钮状态
       disabled: false,
@@ -157,11 +159,33 @@ export default {
       })
     },
 
+    /* eslint-disable */
+    async compressVideo(video) {
+      const { createFFmpeg, fetchFile } = FFmpeg
+      const ffmpeg = createFFmpeg({ log: true })
+      console.log('ready load')
+      await ffmpeg.load()
+      console.log('ready write')
+      // ajax文件后写入
+      ffmpeg.FS('writeFile', '1.mp4', await fetchFile(video))
+      console.log('ready run')
+      // 压缩
+      await ffmpeg.run('-i', '1.mp4', '-s', '480x272', '2.mp4')
+      console.log('ready read')
+      // 读取文件
+      const data = ffmpeg.FS('readFile', '2.mp4')
+      const res = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }))
+      console.log('压缩后大小：' + data.length)
+      Indicator.close()
+
+      return res
+    },
+
     // 录像完成
     changeCamera() {
       const self = this
       const camera = self.$refs.camera.files[0]
-      console.log(camera.size)
+      console.log('压缩前大小：' + camera.size)
       if (camera.size / 1024 > 1024 * 15) {
         Toast({ message: '视频大小请小于15M', duration: 3000, className: 'noticeError' })
         setTimeout(() => {
@@ -170,16 +194,22 @@ export default {
         }, 2000)
         return
       }
-      const reader = new FileReader()
-      // Indicator.open('请稍后..')
-      console.log(camera)
+      // const reader = new FileReader()
+      /* eslint-disable */
+      // if (FFmpeg && FFmpeg.createFFmpeg) {
+      //   console.log('兼容FFmpeg')
+      //   Indicator.open('压缩中..')
+      //   this.videoBlob = self.compressVideo(camera)
+      // } else {
+      //   this.videoBlob = camera
+      // }
       this.videoBlob = camera
       self.videoStep = 2
       // reader.onload = function() {
       //   console.log(reader)
       //   self.loadData(this.result)
       // }
-      reader.readAsDataURL(camera)
+      // reader.readAsDataURL(camera)
     },
 
     restart() {

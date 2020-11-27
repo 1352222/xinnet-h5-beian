@@ -313,20 +313,20 @@ export default {
       const { cropper } = this.globalData
       let width = document.documentElement.clientWidth
       let height = document.documentElement.clientHeight
-      if(width > height) {
+      if (width > height) {
         if (cropper.cropperflag && cropper.croppernum === 0) {
           this.cropper = false
           const croppers = this.globalData.cropper
           croppers.croppernum += 1
           croppers.cropper = false
-          this.setData({cropper:croppers})
+          this.setData({ cropper: croppers })
         }
       } else {
         if (cropper.cropperflag && cropper.croppernum === 1 && cropper.cropper === false) {
           this.cropper = true
           const croppers = this.globalData.cropper
           croppers.cropper = true
-          this.setData({cropper:croppers})
+          this.setData({ cropper: croppers })
         }
       }
     },
@@ -503,7 +503,7 @@ export default {
       this.option.img = a
       let width = document.documentElement.clientWidth
       let height = document.documentElement.clientHeight
-      if(width < height) {
+      if (width < height) {
         this.cropper = true
       }
       this.fileName = file.name

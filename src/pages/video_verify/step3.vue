@@ -34,6 +34,7 @@ import getAttachmentParam from '../../common/getAttachmentParam'
 import { mapState, mapMutations } from 'vuex'
 import { Toast, Indicator } from 'mint-ui'
 import bgtImage from '../../../static/image/verify_bg.jpg'
+import warnImage from '../../../static/image/warn.png'
 
 export default {
   data() {
@@ -49,7 +50,7 @@ export default {
       errorInfo: '',
       // 合成背景图
       bgtImage,
-      warnImage: '../../../static/image/warn.png'
+      warnImage
     }
   },
   mounted() {
