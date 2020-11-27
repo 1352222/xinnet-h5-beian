@@ -20,7 +20,7 @@
             <source :src="videoSrc" type="video/mp4" />
           </video> -->
         </div>
-        <div class="video-desc">点击查看视频</div>
+        <div class="video-desc">视频拍摄完毕，请点击确认使用上次</div>
         <div class="video-error" v-if="showError">
           <img class="error-icon" :src="warnImage" />
           <text>{{error}}</text>
