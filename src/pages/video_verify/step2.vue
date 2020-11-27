@@ -2,18 +2,23 @@
 <div class="video-step2">
   <input @change="changeCamera" style="display: none;" type="file" ref="camera" accept="video/*" capture="user" />
   <div v-if="videoStep == 1" class="call-camera" @click="callCamera">
-    <p>轻触屏幕继续</P>
+    <p>
+      请返回上一页重新获取核验码
+      <br><br>
+      轻触屏幕继续拍摄
+    </P>
   </div>
   <div v-if="videoStep == 2">
     <div class="body">
       <div>
         <div class="video-wrap">
-          <video v-if="deviceSystem == 'android'" ref="video" class="video" controls="controls">
+          <img :src="videoImage" class="video" alt="video" width="200" height="200" />
+          <!-- <video v-if="deviceSystem == 'android'" ref="video" class="video" controls="controls">
             <source :src="videoSrc" type="video/mp4" />
           </video>
           <video v-else ref="video" class="video" controls="controls" muted autoplay>
             <source :src="videoSrc" type="video/mp4" />
-          </video>
+          </video> -->
         </div>
         <div class="video-desc">点击查看视频</div>
         <div class="video-error" v-if="showError">
@@ -65,6 +70,7 @@ export default {
       number: '',
       videoSrc: '',
       warnImage: '../../../static/image/warn.png',
+      videoImage: '../../../static/image/video.png',
       videoBlob: null,
       // 确定使用按钮状态
       disabled: false,
@@ -401,17 +407,17 @@ export default {
 }
 
 .video-wrap {
-  width: 221px;
-  height: 170px;
+  width: 200px;
+  height: 200px;
   background: #f4f8fe;
   border-radius: 2px;
   margin: 20px auto;
 }
 
 .video {
-  width: 201px;
-  height: 150px;
-  margin: 10px;
+  width: 200px;
+  height: 200px;
+  /* margin: 10px; */
 }
 
 .video-desc {
@@ -474,6 +480,7 @@ export default {
   position: absolute;
   top: 50%;
   left: 50%;
+  text-align: center;
   transform: translate(-50%, -50%);
 }
 

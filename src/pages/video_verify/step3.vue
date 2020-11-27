@@ -8,7 +8,7 @@
             <img class="image" :src="mergeImageBase64" mode="aspectFill" />
           </viewer>
         </div>
-        <div class="video-desc">点击查看核验照片</div>
+        <div class="video-desc">点击图片查看核验照片</div>
         <div class="video-error">
           <text>温馨提示：如出现闭眼、歪头等不清晰的情况请重新拍摄</text>
         </div>
