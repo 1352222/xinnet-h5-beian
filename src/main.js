@@ -133,8 +133,7 @@ router.beforeEach((to, from, next) => {
         }
       })
     } else {
-      // next('/login')
-      next()
+      next('/login')
     }
   } else {
     next()
