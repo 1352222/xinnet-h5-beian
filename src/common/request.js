@@ -12,10 +12,14 @@ export default function request(params, failCb) {
     option.data = data || {}
   }
 
+  let timeout = 1000 * 45
+  if (params.timeout) {
+    timeout = params.timeout
+  }
   const service = axios.create({
     // baseURL: 'https://tiaoshi.xincache.cn/api/miniprogram'
     baseURL: '/api/miniprogram',
-    timeout: 1000 * 45
+    timeout
   })
   service.interceptors.request.use(function (config) {
     return config
