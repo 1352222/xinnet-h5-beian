@@ -23,7 +23,10 @@
         :cropmove="cropImage"
       />
         <!-- :style="'width:' + cropperWidth + 'px;height:' + cropperHeight + 'px;display:block;'" -->
-      <span class="image-cropper-hint">点击中间裁剪框可查看裁剪后的图片</span>
+      <span class="image-cropper-hint">
+        拖动裁剪框可对图片进行裁剪；<br>
+        请将证件方向调整为正向，并在证件完整的前提下尽可能的裁掉背景；
+      </span>
       <div class="image-cropper-bottoms">
         <!-- <button
           class="image-cropper-button"

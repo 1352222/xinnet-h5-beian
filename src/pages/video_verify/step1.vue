@@ -19,6 +19,9 @@
         <div class="text">
           5、拍摄时请保持衣冠端正，且背景必须为白色，不允许出现杂物。
         </div>
+        <div class="text">
+          6、请在环境明亮、光线均匀处拍摄视频，避免因光线昏暗或光线不均、反光等原因造成核验失败。
+        </div>
       </div>
       <div class="foot">
         <mt-button class="btn" @click="submit" type="primary"
