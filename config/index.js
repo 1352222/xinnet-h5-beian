@@ -12,18 +12,16 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/api': {
-        target: 'http://tiaoshi.xincache.cn/api',
+        target: 'http://tiaoshi.xincache.cn',
+        // target: 'http://172.22.132.118',
         // secure: false,
-        changOrigin: true,
-        pathRewrite: {
-          '^/api': ''
-        }
+        changOrigin: true
       },
       'serverPath': {target: 'http://tiaoshi.xincache.cn/group1/'}
     },
 
     // Various Dev Server settings
-    host: 'localhost', // can be overwritten by process.env.HOST
+    host: '172.22.143.124', // can be overwritten by process.env.HOST
     port: 8080, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     autoOpenBrowser: false,
     errorOverlay: true,

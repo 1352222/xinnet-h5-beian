@@ -186,14 +186,15 @@ export default {
       const self = this
       const camera = self.$refs.camera.files[0]
       console.log('压缩前大小：' + camera.size)
-      if (camera.size / 1024 > 1024 * 15) {
-        Toast({ message: '视频大小请小于15M', duration: 3000, className: 'noticeError' })
-        setTimeout(() => {
-          self.generateCode()
-          self.showMessageBox()
-        }, 2000)
-        return
-      }
+      // if (camera.size / 1024 > 1024 * 15) {
+      //   Toast({ message: '视频大小请小于15M', duration: 3000, className: 'noticeError' })
+      //   setTimeout(() => {
+      //     self.generateCode()
+      //     self.showMessageBox()
+      //   }, 2000)
+      //   return
+      // }
+
       // const reader = new FileReader()
       /* eslint-disable */
       // if (FFmpeg && FFmpeg.createFFmpeg) {
