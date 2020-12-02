@@ -251,7 +251,6 @@ export default {
     },
 
     submit() {
-      console.log(new Date().getTime())
       Indicator.open('请稍后..')
       let orderCode = this.globalData.orderCode
       console.log(orderCode)
@@ -434,20 +433,19 @@ export default {
 
 .body {
   background: #fff;
-  padding: 20px 0 40px;
+  padding: 20px 0;
 }
 
 .video-wrap {
-  width: 200px;
-  height: 200px;
-  background: #f4f8fe;
+  width: 120px;
+  height: 120px;
   border-radius: 2px;
-  margin: 20px auto;
+  margin: 10px auto;
 }
 
 .video {
-  width: 200px;
-  height: 200px;
+  width: 120px;
+  height: 120px;
   /* margin: 10px; */
 }
 
