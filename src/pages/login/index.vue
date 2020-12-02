@@ -54,12 +54,22 @@ export default {
       const globalData = this.globalData
       const self = this
       if (!phone) {
-        this.error = '请输入手机号码'
-        this.showError = true
+        // this.error = '请输入手机号码'
+        // this.showError = true
+        Toast({
+          message: '请输入手机号码',
+          duration: 3000,
+          className: 'noticeError'
+        })
         return false
       } else if (!utils.isPhone(phone)) {
-        this.error = '手机号码不正确'
-        this.showError = true
+        // this.error = '手机号码不正确'
+        // this.showError = true
+        Toast({
+          message: '手机号码不正确',
+          duration: 3000,
+          className: 'noticeError'
+        })
         return false
         // this.$router.push('/list')
       }
