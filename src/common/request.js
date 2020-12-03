@@ -17,7 +17,6 @@ export default function request(params, failCb) {
     timeout = params.timeout
   }
   const service = axios.create({
-    // baseURL: 'https://tiaoshi.xincache.cn/api/miniprogram'
     baseURL: '/api/miniprogram',
     timeout
   })
