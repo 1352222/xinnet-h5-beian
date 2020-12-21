@@ -274,23 +274,27 @@ export default {
         },
         timeout: 1000 * 60 * 60,
         success: (res) => {
-          Indicator.close()
-          const self = this
-          const { code, message, data } = res.data
-          if (res && res.status != 200) {
-            Toast({ message: '网络异常，请稍后重试', duration: 3000, className: 'noticeError' })
-            return
-          }
+          if (res.data.code === 'error') {
+            this.disabled = true
+          } else {
+            Indicator.close()
+            const self = this
+            const { code, message, data } = res.data
+            if (res && res.status != 200) {
+              Toast({ message: '网络异常，请稍后重试', duration: 3000, className: 'noticeError' })
+              return
+            }
 
-          const errorMsg = self.uploadFileTimeoutErrorMsg(message)
-          if (code != 'success') {
-            self.setErrorInfo(true, errorMsg)
-          } else if (data && !data.passed) {
-            self.setErrorInfo(true, errorMsg)
-          } else if (data && data.passed) {
-            self.setErrorInfo()
-            self.setData({ videoVerifyImage: data.base64FaceImage })
-            self.$router.push('/video_verify/step3')
+            const errorMsg = self.uploadFileTimeoutErrorMsg(message)
+            if (code != 'success') {
+              self.setErrorInfo(true, errorMsg)
+            } else if (data && !data.passed) {
+              self.setErrorInfo(true, errorMsg)
+            } else if (data && data.passed) {
+              self.setErrorInfo()
+              self.setData({ videoVerifyImage: data.base64FaceImage })
+              self.$router.push('/video_verify/step3')
+            }
           }
         },
         catch(error) {

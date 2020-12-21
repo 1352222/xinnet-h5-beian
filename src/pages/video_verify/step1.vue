@@ -8,7 +8,7 @@
           1、点击进行核验按钮后，请牢记屏幕上的核验码，点击确认按钮进入视频拍摄界面。
         </div>
         <div class="text">
-          2、点击开始拍摄按钮开始录制视频，录制时请用普通话大声朗读核验码，数字间建议略作停顿；点击结束按钮结束录制视频，请确保录制的视频时长在<span class="min">3~6秒</span>。
+          2、点击开始拍摄按钮开始录制视频，录制时请用普通话大声朗读核验码，数字间建议略作停顿；点击结束按钮结束录制视频，请确保录制的视频时长在<span class="min">4~6秒</span>。
         </div>
         <div class="text">
           3、必须保证环境安静，将人脸置于视频框中，请勿遮挡面部，且视频中不允许出现多张人脸。
@@ -51,9 +51,10 @@ export default {
 }
 </script>
 <style scoped>
-#video-step1 {
+/* #video-step1 {
+  background: #f00;
   height: 100%;
-}
+} */
 
 .body {
   background: #fff;

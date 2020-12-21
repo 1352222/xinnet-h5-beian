@@ -11,8 +11,9 @@
 				<img alt="right" src="~@/assets/right.png" />
 			</div>
 			<div class="title">核验成功</div>
-      <div class="desc">
-        您可返回PC端上传其他附件、查看备案信息、提交审核
+      <div class="desc" style="color:#f00;">
+        请您返回电脑端上传其他附件、查看备案信息、提交审核
+        <!-- 您可返回PC端上传其他附件、查看备案信息、提交审核 -->
       </div>
       <div class="handle">
         <button @click="back" class="weui-btn btn-submit" type="primary">

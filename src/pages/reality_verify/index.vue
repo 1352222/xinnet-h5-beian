@@ -116,7 +116,7 @@ export default {
           const ctx = canvas.getContext('2d')
           const img = new Image()
           img.onload = () => {
-            ctx.drawImage(img, 0, 0, img.width, img.height)
+            ctx.drawImage(img, 0, 0, 1250, 1800)
             const res = canvas.toDataURL('image/jpeg', 0.5)
             resolve(res)
           }
@@ -145,15 +145,29 @@ export default {
         orgState,
         websiteState,
         realityVerifyState,
-        screenState
+        screenState,
+        icp,
       } = this.globalData
       const self = this
+      
+      const arr = [], id = [], ids = []
+      icp.icpAttachmentOrders.forEach(row => {
+        if (row.filePurpose === '1' && (row.isWebsiteChecklist === '1' || row.isWebsiteChecklist === '2')) {
+          arr.push(row)
+          if (row.isWebsiteChecklist === '1') {
+            id.push(row.id)
+          } else if (row.isWebsiteChecklist === '2') {
+            ids.push(row.id)
+          }
+        }
+      })
       if (agree) {
         // 已经上传了核验单和承诺书不重复提交
-        if (realityVerifyState == 'right') {
+        if (realityVerifyState == 'right' && !arr.length) {
           self.$router.push('/result')
           return
         }
+        
 
         // 如果前面步骤全部完成跳提交数据转到成功页面
         // 否则跳转失败页面 => 个人
@@ -203,25 +217,89 @@ export default {
         }
 
         Indicator.open('请稍后...')
-        this.request({
-          url: '/saveAttachment',
-          method: 'POST',
-          data,
-          success(res) {
-            const { code } = res.data
-            Indicator.close()
-            if (code == 'success') {
-              self.setData({ realityVerifyState: 'right' })
-              self.$router.push('/result')
-            } else {
-              Toast({
-                message: '操作失败！',
-                duration: 3000,
-                className: 'noticeError'
-              })
+
+        if (arr.length) {
+          const param = `attachmentOrderIds=${id}&attachmentOrderIds=${ids}`
+          const that = this
+          this.request({
+            url: `/deleteAttachment?${param}`,
+            method: 'GET',
+            // arrdata,
+            success(res) {
+              const { code, message } = res.data
+              if (code == 'success') {
+                let globalDatas = self.globalData
+                globalDatas.images.orgCertificate = {}
+                self.setData(globalDatas)
+                that.request({
+                  url: '/saveAttachment',
+                  method: 'POST',
+                  data,
+                  success(res) {
+                    const { code } = res.data
+                    Indicator.close()
+                    if (code == 'success') {
+                      self.setData({ realityVerifyState: 'right' })
+                      self.$router.push('/result')
+                    } else {
+                      Toast({
+                        message: '操作失败！',
+                        duration: 3000,
+                        className: 'noticeError'
+                      })
+                    }
+                  }
+                })
+              } else {
+                Toast({
+                  message: message,
+                  duration: 3000,
+                  className: 'noticeError'
+                })
+              }
             }
-          }
-        })
+          })
+        } else {
+          this.request({
+            url: '/saveAttachment',
+            method: 'POST',
+            data,
+            success(res) {
+              const { code } = res.data
+              Indicator.close()
+              if (code == 'success') {
+                self.setData({ realityVerifyState: 'right' })
+                self.$router.push('/result')
+              } else {
+                Toast({
+                  message: '操作失败！',
+                  duration: 3000,
+                  className: 'noticeError'
+                })
+              }
+            }
+          })
+        }
+
+        // this.request({
+        //   url: '/saveAttachment',
+        //   method: 'POST',
+        //   data,
+        //   success(res) {
+        //     const { code } = res.data
+        //     Indicator.close()
+        //     if (code == 'success') {
+        //       self.setData({ realityVerifyState: 'right' })
+        //       self.$router.push('/result')
+        //     } else {
+        //       Toast({
+        //         message: '操作失败！',
+        //         duration: 3000,
+        //         className: 'noticeError'
+        //       })
+        //     }
+        //   }
+        // })
       }
     },
     ...mapMutations({

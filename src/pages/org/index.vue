@@ -23,10 +23,16 @@
         :cropmove="cropImage"
       />
         <!-- :style="'width:' + cropperWidth + 'px;height:' + cropperHeight + 'px;display:block;'" -->
-      <span class="image-cropper-hint">
+      <span v-if="id === 'org'" class="image-cropper-hint">
         拖动裁剪框可对图片进行裁剪；<br>
         请将证件方向调整为正向，并在证件完整的前提下尽可能的裁掉背景；
       </span>
+      <span v-else class="image-cropper-hint">
+        拖动裁剪框可对图片进行裁剪；<br>
+        请将证件照按照示意框的大小和方向进行裁剪；
+      </span>
+      <img v-if="id === 'front'" src="~@/assets/01.png" class="image-cropper-hints" />
+      <img v-if="id === 'side'" src="~@/assets/02.png" class="image-cropper-hints" />
       <div class="image-cropper-bottoms">
         <!-- <button
           class="image-cropper-button"
@@ -1505,6 +1511,17 @@ export default {
   text-align: center;
   color: white;
   z-index: 99992;
+}
+.image-cropper-hints {
+  position: absolute;
+  left: 0;
+  top: 224px;
+  width: 100%;
+  font-size: 16px;
+  text-align: center;
+  color: white;
+  z-index: 99992;
+  pointer-events: none;
 }
 
 .image-cropper-bottoms {

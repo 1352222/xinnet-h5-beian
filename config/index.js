@@ -12,9 +12,9 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/api': {
-        target: 'http://tiaoshi.xincache.cn',
+        target: 'https://tiaoshi.xincache.cn',
         // target: 'http://172.22.132.118',
-        // secure: false,
+        secure: false,
         changOrigin: true
       },
       'serverPath': {target: 'http://tiaoshi.xincache.cn/group1/'}

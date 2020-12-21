@@ -44,6 +44,9 @@ export default function request(params, failCb) {
         duration: 3000,
         className: 'noticeError'
       })
+      if (res.config.url === '/silentImageVerify') {
+        success(res)
+      }
     } else {
       success(res)
     }
