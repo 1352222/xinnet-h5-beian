@@ -379,7 +379,8 @@ export default {
       NewCheckIn: '',
       ChangeCheckIn: '',
       NewWebsite: '',
-      NoOrgNewWebsite: ''
+      NoOrgNewWebsite: '',
+      NoOrgNewCheckIn: ''
     }
   },
   mounted: function () {
@@ -520,6 +521,7 @@ export default {
       const NewWebsite = orderType == 'NEW_WEBSITE'
       const NoOrgNewWebsite = orderType == 'NO_ORG_NEW_WEBSITE'
       const ChangeOrg = orderType == 'CHANGE_ORG'
+      const NoOrgNewCheckIn= orderType == 'NO_ORG_NEW_CHECK_IN'
 
       // 变更主体 信息与PC端不一致时只能修改不能使用
       if (ChangeOrg) {
@@ -533,6 +535,7 @@ export default {
       this.NewWebsite = NewWebsite
       this.NoOrgNewWebsite = NoOrgNewWebsite
       this.ChangeOrg = ChangeOrg
+      this.NoOrgNewCheckIn = NoOrgNewCheckIn
       this.own = _own
       this.orgName = orgName
       this.orgCode = orgCode
@@ -909,7 +912,7 @@ export default {
           duration: 3000,
           className: 'noticeError'
         })
-        self.$router.push('/list')
+        // self.$router.push('/list')
         // wx.navigateBack()
         return
       }
@@ -948,9 +951,9 @@ export default {
     },
     // 完成
     submit() {
-      const { NewCheckIn, ChangeCheckIn, NewWebsite, NoOrgNewWebsite } = this
-      // 变更接入不用数据对比，不用校验工商数据
-      if (NewCheckIn || ChangeCheckIn || NewWebsite || NoOrgNewWebsite) {
+      const { NewCheckIn, ChangeCheckIn, NewWebsite, NoOrgNewWebsite, NoOrgNewCheckIn } = this
+      // 变更接入不用数据对比，不用校验工商数据 有主体新增接入 无主体新增网站
+      if (NewCheckIn || ChangeCheckIn || NewWebsite || NoOrgNewWebsite || NoOrgNewCheckIn) {
         this.submitData()
       } else {
         this.checkData().then(this.submitData)
@@ -1100,11 +1103,12 @@ export default {
       // const merge = this.$refs.merge
       const id = this.id
       const data = { orderCode: this.globalData.orderCode }
-      const { NewCheckIn, ChangeCheckIn, NewWebsite, NoOrgNewWebsite } = this
+      const { NewCheckIn, ChangeCheckIn, NewWebsite, NoOrgNewWebsite, NoOrgNewCheckIn } = this
       // 新增接入、无主体新增接入不做OCR
       // OCR识别数据回显
       if (id == 'org') {
-        if (!NewCheckIn && !ChangeCheckIn && !NewWebsite && !NoOrgNewWebsite) {
+        // 除有主体新增接入，变更接入，新增网站，无主体新增网站，无主体新增接入外走ocr接口
+        if (!NewCheckIn && !ChangeCheckIn && !NewWebsite && !NoOrgNewWebsite && !NoOrgNewCheckIn) {
           data.orgAttachment = {
             byteFile: url
           }
@@ -1157,7 +1161,8 @@ export default {
           self.setUploadSuccessData('org')
         }
       } else if (id == 'front' || id == 'side') {
-        if (!NewCheckIn && !ChangeCheckIn && !NewWebsite && !NoOrgNewWebsite) {
+        // 除有主体新增接入，变更接入，新增网站，无主体新增网站，无主体新增接入外走ocr接口
+        if (!NewCheckIn && !ChangeCheckIn && !NewWebsite && !NoOrgNewWebsite && !NoOrgNewCheckIn) {
           data.idCardFrontAttachment = {
             byteFile: url,
             side: id == 'side' ? 'back' : 'front'

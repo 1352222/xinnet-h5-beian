@@ -297,6 +297,7 @@ export default {
       ChangeCheckIn: false,
       NewWebsite: false,
       NoOrgNewWebsite: false,
+      NoOrgNewCheckIn: false,
       ChangeOrg: false,
       isPersonal: false
     }
@@ -343,6 +344,7 @@ export default {
       const NewWebsite = orderType === 'NEW_WEBSITE'
       const NoOrgNewWebsite = orderType === 'NO_ORG_NEW_WEBSITE'
       const ChangeOrg = orderType === 'CHANGE_ORG'
+      const NoOrgNewCheckIn= orderType === 'NO_ORG_NEW_CHECK_IN'
       const isPersonal = recordType == '5'
       this.NewCheckIn = NewCheckIn
       this.ChangeCheckIn = ChangeCheckIn
@@ -350,10 +352,16 @@ export default {
       this.NoOrgNewWebsite = NoOrgNewWebsite
       this.ChangeOrg = ChangeOrg
       this.isPersonal = isPersonal
+      this.NoOrgNewCheckIn = NoOrgNewCheckIn
       // this.setData({ NewCheckIn, ChangeCheckIn, NewWebsite, NoOrgNewWebsite, ChangeOrg, isPersonal })
 
-      // 个人有主体新增网站或变更主体 信息与PC端不一致时只能修改不能使用
-      if ((isPersonal && NewWebsite) || (isPersonal && ChangeOrg)) {
+      // 个人有主体新增网站或变更主体，无主体新增网站，有主体新增接入信息与PC端不一致时只能修改不能使用
+      // 无主体新增接入，变更接入 个人或企业都限制
+      if (
+        (isPersonal && NewWebsite) ||(isPersonal && ChangeOrg)
+         || (isPersonal && NoOrgNewWebsite) || ChangeCheckIn
+         || (isPersonal && NewCheckIn) || (isPersonal && NoOrgNewCheckIn)
+        ) {
         this.use = false
         // this.tipsButtons1 = [{ text: "修改" }]
         // this.setData({ tipsButtons1: [{text: '修改'}] })
@@ -684,48 +692,48 @@ export default {
       const ChangeCheckIn = this.ChangeCheckIn
       // 新增接入，变更接入，变更主体不做OCR
       // OCR识别数据回显
-      if (!NewCheckIn && !ChangeCheckIn) {
-        data.idCardFrontAttachment = {
-          byteFile: url,
-          side: id === 'side' ? 'back' : 'front'
-        }
-        Indicator.open('识别中...')
-        self.request({
-          url: `/ocrIdCard`,
-          method: 'POST',
-          // headers: { 'Content-Type': 'application/json' },
-          // dataType: 'json',
-          // data: JSON.stringify(data),
-          data,
-          success(res) {
-            Indicator.close()
-            const { code, data, message } = res.data
-            if (code === 'success' && id === 'front') {
-              // 每次OCR后更新修改操作表单
-              const websiteOwnPerson = data.ocrOrgOwnerName
-              const websiteOwnCode = data.ocrOrgOwnerCode
-              self.websiteOwn.person = data.ocrOrgOwnerName
-              self.websiteOwn.code = data.ocrOrgOwnerCode
-              self.websiteOwnPerson = websiteOwnPerson
-              self.websiteOwnCode = websiteOwnCode
-              self.writeimage(self.baseurl, self.bb)
-              self.setUploadSuccessData()
-              self.setErrorInfo()
-              self.allowUpdate = true
-            } else if (code === 'success' && id === 'side') {
-              self.writeimage(self.baseurl, self.bb)
-              self.setUploadSuccessData()
-              self.setErrorInfo()
-            } else {
-              self.setUploadFailData(self.idCardBackAttachment)
-              self.setErrorInfo(true, message)
-            }
-          }
-        }, () => self.setUploadFailData(self.id))
-      } else {
-        self.writeimage(self.baseurl, self.bb)
-        self.setUploadSuccessData()
+      // if (!NewCheckIn && !ChangeCheckIn) {
+      data.idCardFrontAttachment = {
+        byteFile: url,
+        side: id === 'side' ? 'back' : 'front'
       }
+      Indicator.open('识别中...')
+      self.request({
+        url: `/ocrIdCard`,
+        method: 'POST',
+        // headers: { 'Content-Type': 'application/json' },
+        // dataType: 'json',
+        // data: JSON.stringify(data),
+        data,
+        success(res) {
+          Indicator.close()
+          const { code, data, message } = res.data
+          if (code === 'success' && id === 'front') {
+            // 每次OCR后更新修改操作表单
+            const websiteOwnPerson = data.ocrOrgOwnerName
+            const websiteOwnCode = data.ocrOrgOwnerCode
+            self.websiteOwn.person = data.ocrOrgOwnerName
+            self.websiteOwn.code = data.ocrOrgOwnerCode
+            self.websiteOwnPerson = websiteOwnPerson
+            self.websiteOwnCode = websiteOwnCode
+            self.writeimage(self.baseurl, self.bb)
+            self.setUploadSuccessData()
+            self.setErrorInfo()
+            self.allowUpdate = true
+          } else if (code === 'success' && id === 'side') {
+            self.writeimage(self.baseurl, self.bb)
+            self.setUploadSuccessData()
+            self.setErrorInfo()
+          } else {
+            self.setUploadFailData(self.idCardBackAttachment)
+            self.setErrorInfo(true, message)
+          }
+        }
+      }, () => self.setUploadFailData(self.id))
+      // } else {
+      //   self.writeimage(self.baseurl, self.bb)
+      //   self.setUploadSuccessData()
+      // }
     },
     clearScreenAndVerifyImage() {
       const { screen, realityVerify, promiseBook } = this.globalData.images
@@ -1005,19 +1013,21 @@ export default {
       const NewCheckIn = this.NewCheckIn
       const ChangeCheckIn = this.ChangeCheckIn
       const NoOrgNewWebsite = this.NoOrgNewWebsite
-      if (NewCheckIn || ChangeCheckIn || NoOrgNewWebsite) {
-        this.submitData()
-      } else {
-        this.checkData().then(this.submitData)
-      }
+      const NoOrgNewCheckIn = this.NoOrgNewCheckIn
+      //与pc端做比对 有主体新增接入，变更接入，无主体新增网站，无主体新增接入
+      // if (NewCheckIn || ChangeCheckIn || NoOrgNewWebsite || NoOrgNewCheckIn) {
+      //   this.submitData()
+      // } else {
+      this.checkData().then(this.submitData)
+      // }
     },
     // 数据不一致
     tipsDialogButton1(action) {
-      const { NewCheckIn, ChangeCheckIn, NoOrgNewWebsite } = this
+      const { NewCheckIn, ChangeCheckIn, NoOrgNewWebsite, NoOrgNewCheckIn } = this
       // 使用：先保存数据然后工商校验，校验通过提交所有附件数据
       if (action === 'use') {
         this.tipsDialogShow1 = false
-        if (NewCheckIn || ChangeCheckIn || NoOrgNewWebsite) {
+        if (NewCheckIn || ChangeCheckIn || NoOrgNewWebsite || NoOrgNewCheckIn) {
           this.saveData().then(this.submitData)
         } else {
           this.saveData().then(this.checkData).then(this.submitData)
