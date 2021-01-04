@@ -115,7 +115,7 @@ router.beforeEach((to, from, next) => {
   const { orderType, orderCode } = getParams(window.location.search)
   const loginPage = to.path.indexOf('login') > -1
   if (!loginPage && !storeOrderCode) {
-    if (orderType === 'NEW_CHECK_IN' || orderType === 'CHANGE_CHECK_IN' || orderType === 'CHANGE_ORG' || orderType === 'NO_ORG_NEW_CHECK_IN') {
+    if (orderType === 'NEW_CHECK_IN' || orderType === 'CHANGE_ORG' || orderType === 'NO_ORG_NEW_CHECK_IN') {
       vm.request({
         url: `/checkPhone?orderCode=${orderCode}`,
         success(data) {

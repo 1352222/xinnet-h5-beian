@@ -44,7 +44,7 @@ export default {
     onload(query) {
       const { orderType } = this.getParams(window.location.search)
       // 备案类型为新增接入、变更接入和变更主体时，无网站信息，跳过输入手机号步骤
-      if (orderType === 'NEW_CHECK_IN' || orderType === 'CHANGE_CHECK_IN' || orderType === 'CHANGE_ORG' || orderType === 'NO_ORG_NEW_CHECK_IN') {
+      if (orderType === 'NEW_CHECK_IN' || orderType === 'CHANGE_ORG' || orderType === 'NO_ORG_NEW_CHECK_IN') {
         this.toListPage()
       } else {
         this.toLoginPage()
