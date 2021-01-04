@@ -85,7 +85,7 @@
           <div class="bgtop">
             <div class="weui-cell" style="padding: 0">
               <div>
-                <div class="clearfix">
+                <div ref="clearfix" class="clearfix">
                   <upload-file
                     class="box-left"
                     :type="compType"
@@ -303,6 +303,15 @@ export default {
     }
   },
   mounted() {
+    window.onresize = () => {
+      return(() => {
+        if (document.body.clientWidth <= 354 && this.$refs.clearfix.className == 'clearfix') {
+          this.$refs.clearfix.className = 'clearfixs'
+        } else if (document.body.clientWidth >= 354 && this.$refs.clearfix.className == 'clearfixs') {
+          this.$refs.clearfix.className = 'clearfix'
+        }
+      })()
+    }
     this.height = this.globalData.height * 2 + 100
     if (this.globalData.orderCode) {
       this.onLoad()
@@ -690,6 +699,7 @@ export default {
       const data = { orderCode: this.globalData.orderCode }
       const NewCheckIn = this.NewCheckIn
       const ChangeCheckIn = this.ChangeCheckIn
+      console.log(this.globalData, 'aa')
       // 新增接入，变更接入，变更主体不做OCR
       // OCR识别数据回显
       // if (!NewCheckIn && !ChangeCheckIn) {
@@ -1167,6 +1177,21 @@ export default {
   content: "";
   clear: both;
   display: block;
+}
+
+.clearfixs:after {
+  content: "";
+  clear: both;
+  display: block;
+}
+
+.clearfixs > div:first-child {
+  margin-bottom: 40px;
+}
+
+.clearfixs > div {
+  float: none;
+  text-align: center;
 }
 
 .box-left {

@@ -4,6 +4,7 @@
     <div class="container-page">
       <div class="con-msg">
         <!-- 企业或企业变更主体 -->
+        <!-- {{step}}  {{globalData.recordType}} -->
         <div v-if="step == 4 || step == 1 && globalData.recordType != 5" style="margin:0;" class="con-item" @click="toOrg">
           <div>
             <img src="~@/assets/icon01.jpg" class="imgs" />
@@ -77,7 +78,7 @@ export default {
   mounted () {
     this.setDocumentTitle('ICP备案身份核验')
     const phone = window.sessionStorage.getItem('phone')
-    const orderCode = window.sessionStorage.getItem('orderCode')
+    const orderCode = window.sessionStorage.getItem('orderCode') ? window.sessionStorage.getItem('orderCode') : this.getParams(window.location.search).orderCode
     const self = this
     if (orderCode) {
       self.setData({ loading: true })
@@ -119,6 +120,19 @@ export default {
     // this.$router.push('/login')
   },
   methods: {
+    getParams(url) {
+      const start = url.indexOf('?') + 1
+      const orderCodeUrl = url.slice(start)
+      const aOrderCodeUrl = orderCodeUrl.split('&')
+      const params = {}
+      for (let i = 0; i < aOrderCodeUrl.length; i++) {
+        const temp = aOrderCodeUrl[i].split('=')
+        const key = temp[0]
+        const val = temp[1]
+        params[key] = val
+      }
+      return params
+    },
     toOrg () {
       this.$router.push('/org')
     },

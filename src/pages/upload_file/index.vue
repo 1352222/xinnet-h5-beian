@@ -231,6 +231,7 @@ export default {
         event.target.value = ''
       }
       reader.readAsArrayBuffer(file)
+      return false
     },
     ...mapMutations({
       setData: 'SET_DATA'

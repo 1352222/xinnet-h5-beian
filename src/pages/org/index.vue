@@ -126,7 +126,7 @@
         <div class="bgtop">
           <div class="weui-cell" style="padding: 0;">
             <div>
-              <div id="front1" class="clearfix">
+              <div id="front1" ref="clearfix" class="clearfix">
                 <upload-file
                   class="box-left"
                   type="own"
@@ -384,6 +384,15 @@ export default {
     }
   },
   mounted: function () {
+    window.onresize = () => {
+      return(() => {
+        if (document.body.clientWidth <= 354 && this.$refs.clearfix.className == 'clearfix') {
+          this.$refs.clearfix.className = 'clearfixs'
+        } else if (document.body.clientWidth >= 354 && this.$refs.clearfix.className == 'clearfixs') {
+          this.$refs.clearfix.className = 'clearfix'
+        }
+      })()
+    }
     this.setDocumentTitle('主体证件信息')
     this.height = this.globalData.height * 2 + 100
     if (this.globalData.orderCode) {
@@ -1300,6 +1309,21 @@ export default {
   content: "";
   clear: both;
   display: block;
+}
+
+.clearfixs:after {
+  content: "";
+  clear: both;
+  display: block;
+}
+
+.clearfixs > div:first-child {
+  margin-bottom: 40px;
+}
+
+.clearfixs > div {
+  float: none;
+  text-align: center;
 }
 
 .box-left {
