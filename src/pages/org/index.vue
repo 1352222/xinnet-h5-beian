@@ -384,14 +384,10 @@ export default {
     }
   },
   mounted: function () {
-    window.onresize = () => {
-      return(() => {
-        if (document.body.clientWidth <= 354 && this.$refs.clearfix.className == 'clearfix') {
-          this.$refs.clearfix.className = 'clearfixs'
-        } else if (document.body.clientWidth >= 354 && this.$refs.clearfix.className == 'clearfixs') {
-          this.$refs.clearfix.className = 'clearfix'
-        }
-      })()
+    if (document.body.clientWidth <= 354 && this.$refs.clearfix.className == 'clearfix') {
+      this.$refs.clearfix.className = 'clearfixs'
+    } else if (document.body.clientWidth >= 354 && this.$refs.clearfix.className == 'clearfixs') {
+      this.$refs.clearfix.className = 'clearfix'
     }
     this.setDocumentTitle('主体证件信息')
     this.height = this.globalData.height * 2 + 100

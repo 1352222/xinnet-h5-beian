@@ -61,6 +61,7 @@
 <script>
 import { mapMutations, mapState } from 'vuex'
 import { Toast } from 'mint-ui'
+import $ from 'jquery'
 export default {
   name: 'List',
   data() {
@@ -76,9 +77,18 @@ export default {
     }
   },
   mounted () {
+    console.log(document.body.clientWidth, 'width')
+    if (document.body.clientWidth <= 354) {
+      $('img').css('margin', '0')
+      $('.con-item').css('font-size', '13px')
+    } else if (document.body.clientWidth >= 354) {
+      $('img').css('margin-right', '20')
+      $('.con-item').css('font-size', '15px')
+    }
     this.setDocumentTitle('ICP备案身份核验')
     const phone = window.sessionStorage.getItem('phone')
     const orderCode = window.sessionStorage.getItem('orderCode') ? window.sessionStorage.getItem('orderCode') : this.getParams(window.location.search).orderCode
+    const { orderType } = this.getParams(window.location.search)
     const self = this
     if (orderCode) {
       self.setData({ loading: true })
@@ -86,27 +96,55 @@ export default {
       if (!phone) {
         url = `/checkPhone?orderCode=${orderCode}`
       }
-      self.request({
-        url,
-        success(data) {
-          const res = data.data
-          if (res.code === 'success') {
-            self.getData(res.data, phone)
-          } else {
-            if (res.message === '备案信息已提交审核') {
-              self.$router.push('/login')
+      if (phone){
+        self.request({
+          url,
+          success(data) {
+            const res = data.data
+            if (res.code === 'success') {
+              self.getData(res.data, phone)
+            } else {
+              if (res.message === '备案信息已提交审核') {
+                self.$router.push('/login')
+              }
+              Toast({
+                message: res.message,
+                duration: 3000,
+                className: 'noticeError'
+              })
             }
-            Toast({
-              message: res.message,
-              duration: 3000,
-              className: 'noticeError'
-            })
+          },
+          error() {
+            self.setData({ loading: false })
           }
-        },
-        error() {
-          self.setData({ loading: false })
+        })
+      } else {
+        if (orderType === 'NEW_CHECK_IN' || orderType === 'CHANGE_CHECK_IN' || orderType === 'CHANGE_ORG' || orderType === 'NO_ORG_NEW_CHECK_IN'){
+          self.request({
+            url,
+            success(data) {
+              const res = data.data
+              if (res.code === 'success') {
+                self.getData(res.data, phone)
+              } else {
+                if (res.message === '备案信息已提交审核') {
+                  self.$router.push('/login')
+                }
+                Toast({
+                  message: res.message,
+                  duration: 3000,
+                  className: 'noticeError'
+                })
+              }
+            },
+            error() {
+              self.setData({ loading: false })
+            }
+          })
+        } else {
+          this.$router.push('/login')
         }
-      })
+      }
     }
     // if (!this.globalData.loading) {
     //   this.getData()
