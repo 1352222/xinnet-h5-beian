@@ -80,6 +80,10 @@ export default {
     }
   },
   mounted() {
+    if (document.body.clientWidth <= 364) {
+      $('.clearfix').css('justify-content', 'space-between')
+      $('.clearfix').css('display', 'flex')
+    }
     this.setDocumentTitle('拍摄核验视频')
     this.generateCode()
     this.showMessageBox()

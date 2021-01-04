@@ -305,8 +305,6 @@ export default {
   mounted() {
     if (document.body.clientWidth <= 354 && this.$refs.clearfix.className == 'clearfix') {
       this.$refs.clearfix.className = 'clearfixs'
-    } else if (document.body.clientWidth >= 354 && this.$refs.clearfix.className == 'clearfixs') {
-      this.$refs.clearfix.className = 'clearfix'
     }
     // window.onresize = () => {
     //   return(() => {

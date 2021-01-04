@@ -77,13 +77,9 @@ export default {
     }
   },
   mounted () {
-    console.log(document.body.clientWidth, 'width')
     if (document.body.clientWidth <= 354) {
-      $('img').css('margin', '0')
+      $('img').css('margin-right', '10px')
       $('.con-item').css('font-size', '13px')
-    } else if (document.body.clientWidth >= 354) {
-      $('img').css('margin-right', '20')
-      $('.con-item').css('font-size', '15px')
     }
     this.setDocumentTitle('ICP备案身份核验')
     const phone = window.sessionStorage.getItem('phone')
@@ -91,12 +87,12 @@ export default {
     const { orderType } = this.getParams(window.location.search)
     const self = this
     if (orderCode) {
-      self.setData({ loading: true })
-      let url = `/checkPhone?orderCode=${orderCode}&phone=${phone}`
-      if (!phone) {
-        url = `/checkPhone?orderCode=${orderCode}`
-      }
       if (phone){
+        self.setData({ loading: true })
+        let url = `/checkPhone?orderCode=${orderCode}&phone=${phone}`
+        if (!phone) {
+          url = `/checkPhone?orderCode=${orderCode}`
+        }
         self.request({
           url,
           success(data) {
@@ -120,6 +116,11 @@ export default {
         })
       } else {
         if (orderType === 'NEW_CHECK_IN' || orderType === 'CHANGE_CHECK_IN' || orderType === 'CHANGE_ORG' || orderType === 'NO_ORG_NEW_CHECK_IN'){
+          self.setData({ loading: true })
+          let url = `/checkPhone?orderCode=${orderCode}&phone=${phone}`
+          if (!phone) {
+            url = `/checkPhone?orderCode=${orderCode}`
+          }
           self.request({
             url,
             success(data) {
