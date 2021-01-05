@@ -7,15 +7,23 @@
 <script>
 import { mapMutations, mapState } from 'vuex'
 import { Toast } from 'mint-ui'
+import { getParams } from './common/util'
 // import $ from 'jquery'
 
 export default {
   name: 'App',
   created() {
-    const phone = window.sessionStorage.getItem('phone')
-    const orderCode = window.sessionStorage.getItem('orderCode')
-    const listPage = window.location.hash.indexOf('list') > -1
+    let phone = ''
     const self = this
+    const listPage = window.location.hash.indexOf('list') > -1
+    const { orderType, orderCode } = getParams(window.location.search)
+    // 不用登录输入手机号直接进入
+    if (orderType === 'NEW_CHECK_IN' || orderType === 'CHANGE_ORG' || orderType === 'NO_ORG_NEW_CHECK_IN') {
+      window.sessionStorage.clear()
+      window.sessionStorage.setItem('orderCode', orderCode)
+    } else {
+      phone = window.sessionStorage.getItem('phone')
+    }
     if (orderCode && !listPage) {
       self.setData({ loading: true })
       let url = `/checkPhone?orderCode=${orderCode}&phone=${phone}`
