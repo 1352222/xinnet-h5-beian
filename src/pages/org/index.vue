@@ -214,7 +214,7 @@
         </div>
 
         <div id="dialog" v-show="tipsDialogShow1">
-          <div class="border" style="height:25%;top:34%;">
+          <div class="border" style="height:30%;top:34%;">
             <div>
                 <p class="titleXStyle">提示</p>
             </div>
@@ -384,9 +384,7 @@ export default {
     }
   },
   mounted: function () {
-    if (document.body.clientWidth <= 354 && this.$refs.clearfix.className == 'clearfix') {
-      this.$refs.clearfix.className = 'clearfixs'
-    }
+    this.overSize()
     this.setDocumentTitle('主体证件信息')
     this.height = this.globalData.height * 2 + 100
     if (this.globalData.orderCode) {
@@ -401,6 +399,11 @@ export default {
     window.addEventListener('resize', this.onOrientationchange, false)
   },
   methods: {
+    overSize() {
+      if (document.body.clientWidth <= 354 && this.$refs.clearfix.className == 'clearfix') {
+        this.$refs.clearfix.className = 'clearfixs'
+      }
+    },
     onOrientationchange() {
       const { cropper } = this.globalData
       let width = document.documentElement.clientWidth
@@ -1155,6 +1158,7 @@ export default {
                 self.setUploadFailData(id)
                 self.setErrorInfo(true, message)
               }
+              this.overSize()
             }
           // }, () => {
           //   self.setUploadFailData(this.id)
@@ -1217,6 +1221,7 @@ export default {
                 self.setUploadFailData(id)
                 self.setErrorInfo(true, message)
               }
+              this.overSize()
             }
           // }, () => self.setUploadFailData(this.id)
           })

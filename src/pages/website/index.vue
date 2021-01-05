@@ -167,7 +167,7 @@
           </div>
         </div>
         <div id="dialog" v-show="tipsDialogShow1">
-          <div class="border" style="height:25%;top:34%;" >
+          <div class="border" style="height:30%;top:34%;" >
             <div>
                 <p class="titleXStyle">提示</p>
             </div>
@@ -303,9 +303,7 @@ export default {
     }
   },
   mounted() {
-    if (document.body.clientWidth <= 354 && this.$refs.clearfix.className == 'clearfix') {
-      this.$refs.clearfix.className = 'clearfixs'
-    }
+    this.overSize()
     // window.onresize = () => {
     //   return(() => {
     //     if (document.body.clientWidth <= 354 && this.$refs.clearfix.className == 'clearfix') {
@@ -328,6 +326,11 @@ export default {
     window.addEventListener('resize', this.onOrientationchange, false)
   },
   methods: {
+    overSize() {
+      if (document.body.clientWidth <= 354 && this.$refs.clearfix.className == 'clearfix') {
+        this.$refs.clearfix.className = 'clearfixs'
+      }
+    },
     onOrientationchange() {
       const { cropper } = this.globalData
       let width = document.documentElement.clientWidth
@@ -693,6 +696,7 @@ export default {
       }
     },
     chooseImage(url, img) {
+      this.overSize()
       const self = this
       // const front = $('#front')
       // const side = $('#side')
