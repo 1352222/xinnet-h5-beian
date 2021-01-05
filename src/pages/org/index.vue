@@ -102,7 +102,7 @@
             </div>
           </div>
         </div>
-        <div class="image-info" v-if="orgDone && (org.name || org.code)">
+        <div class="image-info" v-if="orgDone && (org.name || org.code) && (!NewCheckIn && !ChangeCheckIn && !NewWebsite && !NoOrgNewWebsite && !NoOrgNewCheckIn)">
           <div>
             <span class="label">主办单位名称：</span>
             <span class="value">{{org.name}}</span>
@@ -150,7 +150,7 @@
 
         <span class="tit">合成照</span>
         <merge-file ref="merge" id="merge" type="own" />
-        <div class="image-info" v-if="frontDone && (own.person || own.code)">
+        <div class="image-info" v-if="frontDone && (own.person || own.code) && (!NewCheckIn && !ChangeCheckIn && !NewWebsite && !NoOrgNewWebsite && !NoOrgNewCheckIn)">
           <div>
             <span class="label">主办单位负责人：</span>
             <span class="value">{{own.person}}</span>
