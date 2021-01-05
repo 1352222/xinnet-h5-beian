@@ -15,7 +15,12 @@ export default {
   created() {
     let phone = ''
     const self = this
+    // 页面刷新调用接口确保有数据
+    // list，login，home不需要调用接口
     const listPage = window.location.hash.indexOf('list') > -1
+    const loginPage = window.location.hash.indexOf('login') > -1
+    const homePage = window.location.hash == '#/'
+    console.log(window.location.hash)
     const { orderType, orderCode } = getParams(window.location.search)
     // 不用登录输入手机号直接进入
     if (orderType === 'NEW_CHECK_IN' || orderType === 'CHANGE_ORG' || orderType === 'NO_ORG_NEW_CHECK_IN') {
@@ -24,7 +29,7 @@ export default {
     } else {
       phone = window.sessionStorage.getItem('phone')
     }
-    if (orderCode && !listPage) {
+    if (orderCode && !listPage && !loginPage && !homePage) {
       self.setData({ loading: true })
       let url = `/checkPhone?orderCode=${orderCode}&phone=${phone}`
       if (!phone) {

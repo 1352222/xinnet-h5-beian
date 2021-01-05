@@ -6,6 +6,8 @@
 
 <script>
 import { mapMutations, mapState } from 'vuex'
+import { getParams } from '../../common/util'
+
 export default {
   name: 'Home',
   data() {
@@ -28,25 +30,17 @@ export default {
     // this.$router.push('/login')
   },
   methods: {
-    getParams(url) {
-      const start = url.indexOf('?') + 1
-      const orderCodeUrl = url.slice(start)
-      const aOrderCodeUrl = orderCodeUrl.split('&')
-      const params = {}
-      for (let i = 0; i < aOrderCodeUrl.length; i++) {
-        const temp = aOrderCodeUrl[i].split('=')
-        const key = temp[0]
-        const val = temp[1]
-        params[key] = val
-      }
-      return params
-    },
+    ...mapMutations({
+      setData: 'SET_DATA'
+    }),
     onload(query) {
       const { orderType } = this.getParams(window.location.search)
-      // 备案类型为新增接入、变更接入和变更主体时，无网站信息，跳过输入手机号步骤
+      // 备案类型为新增接入、变更主体，无主体新增网站跳过输入手机号步骤
       if (orderType === 'NEW_CHECK_IN' || orderType === 'CHANGE_ORG' || orderType === 'NO_ORG_NEW_CHECK_IN') {
+        this.setData({ businessType: 'noPhone' })
         this.toListPage()
       } else {
+        this.setData({ businessType: 'existPhone' })
         this.toLoginPage()
       }
     },

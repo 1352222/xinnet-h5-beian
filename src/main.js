@@ -110,6 +110,7 @@ function getParams(url) {
 
 Vue.prototype.getParams = getParams
 
+// 路由跳转调用接口确保有数据
 router.beforeEach((to, from, next) => {
   const storeOrderCode = window.sessionStorage.getItem('orderCode')
   const { orderType, orderCode } = getParams(window.location.search)

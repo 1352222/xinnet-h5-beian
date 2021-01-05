@@ -4,6 +4,9 @@ const home = {
   state: {
     number: 1,
     globalData: {
+      // 业务类型分两类：备案类型为新增接入、变更主体，无主体新增网站跳过输入手机号步骤
+      // existPhone, noPhone
+      businessType: '',
       loading: false,
       // 列表步骤
       step: 1,
