@@ -171,7 +171,7 @@
             <div>
                 <p class="titleXStyle">提示</p>
             </div>
-            <div class="tips">与PC端填写信息不一致，是否使用手机端信息</div>
+            <div class="tips" style="height: 50px;line-height: 20px;">与PC端填写信息不一致，是否使用手机端信息</div>
             <div class="button-align-bottom">
               <div class="horizontal-line-style"></div>
               <div class="button-align-bottom-style">
