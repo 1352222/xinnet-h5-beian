@@ -78,8 +78,10 @@ export default {
   },
   mounted () {
     if (document.body.clientWidth <= 354) {
-      $('img').css('margin-right', '10px')
-      $('.con-item').css('font-size', '13px')
+      setTimeout(() => {
+        $('img').css('margin-right', '10px')
+        $('.con-item').css('font-size', '13px')
+      }, 50)
     }
     this.setDocumentTitle('ICP备案身份核验')
     const phone = window.sessionStorage.getItem('phone')

@@ -317,7 +317,9 @@ export default {
           }, 100)
         } else {
           setTimeout(() => {
-            this.$refs.clearfix.className = 'clearfixs'
+            if (document.body.clientWidth <= 354) {
+              this.$refs.clearfix.className = 'clearfixs'
+            }
           }, 0.1)
         }
       }
@@ -348,7 +350,7 @@ export default {
   },
   methods: {
     overSize() {
-      if (document.body.clientWidth <= 354 && this.$refs.clearfix.className == 'clearfix') {
+      if (document.body.clientWidth <= 354) {
         this.$refs.clearfix.className = 'clearfixs'
       }
     },
