@@ -31,8 +31,8 @@
         拖动裁剪框可对图片进行裁剪；<br>
         请将证件照按照示意框的大小和方向进行裁剪；
       </span>
-      <img v-if="id === 'front'" src="~@/assets/01.png" class="image-cropper-hints" />
-      <img v-if="id === 'side'" src="~@/assets/02.png" class="image-cropper-hints" />
+      <img v-if="id === 'front'" id="fronts" src="~@/assets/01.png" class="image-cropper-hints" />
+      <img v-if="id === 'side'" id="sides" src="~@/assets/02.png" class="image-cropper-hints" />
       <div class="image-cropper-bottoms">
         <!-- <button
           class="image-cropper-button"
@@ -258,7 +258,7 @@ import uploadFile from '../upload_file'
 import mergeFile from '../merge_file'
 import { Indicator, Toast } from 'mint-ui'
 import getAttachmentParam from '../../common/getAttachmentParam'
-// import $ from 'jquery'
+import $ from 'jquery'
 
 export default {
   name: 'Orgs',
@@ -380,7 +380,32 @@ export default {
       ChangeCheckIn: '',
       NewWebsite: '',
       NoOrgNewWebsite: '',
-      NoOrgNewCheckIn: ''
+      NoOrgNewCheckIn: '',
+      frontHeight: 0,
+      sideHeight: 0,
+    }
+  },
+  watch: {
+    cropper: {
+      handler(newName, oldName) {
+        if(newName) {
+          setTimeout(() => {
+            if (this.id === 'front') {
+              this.frontHeight = $("#fronts").height()
+              const height = (document.documentElement.clientHeight - $("#fronts").height()) / 2
+              $("#fronts").css('top', height)
+            } else if (this.id === 'side') {
+              let heights = this.frontHeight ? this.frontHeight : $("#sides").height()
+              this.sideHeight = heights
+              if (heights == 0) {
+                heights = this.sideHeight
+              }
+              const height = (document.documentElement.clientHeight - heights) / 2
+              $("#sides").css('top', height)
+            }
+          }, 100)
+        }
+      }
     }
   },
   mounted: function () {

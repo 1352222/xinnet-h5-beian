@@ -24,9 +24,8 @@
         拖动裁剪框可对图片进行裁剪；<br>
         请将证件照按照示意框的大小和方向进行裁剪；
       </span>
-      {{id}}
-      <img v-if="id === 'front'" src="~@/assets/01.png" class="image-cropper-hints" />
-      <img v-if="id === 'side'" src="~@/assets/02.png" class="image-cropper-hints" />
+      <img v-if="id === 'side'" id="sides" src="~@/assets/02.png" class="image-cropper-hints" />
+      <img v-if="id === 'front'" id="fronts" src="~@/assets/01.png" class="image-cropper-hints" />
       <div class="image-cropper-bottoms">
         <!-- <button
           class="image-cropper-button"
@@ -182,6 +181,7 @@
             </div>
           </div>
         </div>
+        <img v-show="false" id="frontimg" src="~@/assets/01.png" class="image-cropper-hints" />
         <canvas
           class="canvas-hidden"
           ref="canvasimage"
@@ -199,7 +199,7 @@ import { Indicator, Toast } from 'mint-ui'
 import uploadFile from '../upload_file'
 import mergeFile from '../merge_file'
 import getAttachmentParam from '../../common/getAttachmentParam'
-// import $ from 'jquery'
+import $ from 'jquery'
 
 export default {
   name: 'Website',
@@ -300,6 +300,27 @@ export default {
       NoOrgNewCheckIn: false,
       ChangeOrg: false,
       isPersonal: false
+    }
+  },
+  watch: {
+    cropper: {
+      handler(newName, oldName) {
+        if(newName) {
+          setTimeout(() => {
+            if (this.id === 'front') {
+              const height = (document.documentElement.clientHeight - $("#fronts").height()) / 2
+              $("#fronts").css('top', height)
+            } else if (this.id === 'side') {
+              const height = (document.documentElement.clientHeight - $("#sides").height()) / 2
+              $("#sides").css('top', height)
+            }
+          }, 100)
+        } else {
+          setTimeout(() => {
+            this.$refs.clearfix.className = 'clearfixs'
+          }, 0.1)
+        }
+      }
     }
   },
   mounted() {
@@ -526,6 +547,11 @@ export default {
       croppers.croppernum = 0
       this.setData({cropper: croppers})
       this.cropperType = ''
+      // setTimeout(() => {
+      //   this.$refs.clearfix.className = 'clearfixs'
+      //   console.log(this.$refs.clearfix, 'nn')
+      // //   this.overSize()
+      // }, 0.0001)
     },
     cropImagedata(a, file, id, imageBase64) {
       this.srcs = a
@@ -696,7 +722,6 @@ export default {
       }
     },
     chooseImage(url, img) {
-      this.overSize()
       const self = this
       // const front = $('#front')
       // const side = $('#side')
