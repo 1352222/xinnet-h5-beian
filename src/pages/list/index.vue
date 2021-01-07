@@ -81,7 +81,7 @@ export default {
       setTimeout(() => {
         $('img').css('margin-right', '10px')
         $('.con-item').css('font-size', '13px')
-      }, 50)
+      }, 60)
     }
     this.setDocumentTitle('ICP备案身份核验')
     const phone = window.sessionStorage.getItem('phone')
@@ -117,7 +117,7 @@ export default {
           }
         })
       } else {
-        if (orderType === 'NEW_CHECK_IN' || orderType === 'CHANGE_CHECK_IN' || orderType === 'CHANGE_ORG' || orderType === 'NO_ORG_NEW_CHECK_IN'){
+        if (orderType === 'NEW_CHECK_IN' || orderType === 'CHANGE_ORG' || orderType === 'NO_ORG_NEW_CHECK_IN'){
           self.setData({ loading: true })
           let url = `/checkPhone?orderCode=${orderCode}&phone=${phone}`
           if (!phone) {

@@ -314,7 +314,7 @@ export default {
               const height = (document.documentElement.clientHeight - $("#sides").height()) / 2
               $("#sides").css('top', height)
             }
-          }, 100)
+          }, 350)
         } else {
           setTimeout(() => {
             if (document.body.clientWidth <= 354) {
@@ -360,7 +360,6 @@ export default {
       } else {
         if (cropper.cropperflag && cropper.croppernum === 1 && cropper.cropper === false) {
           this.cropper = true
-          console.log(this.cropper, '1')
           const croppers = this.globalData.cropper
           croppers.cropper = true
           this.setData({ cropper: croppers })
@@ -549,7 +548,6 @@ export default {
       let height = document.documentElement.clientHeight
       if (width < height) {
         this.cropper = true
-        console.log(this.cropper, '2')
       }
       this.fileName = file.name
       this.id = id
@@ -559,7 +557,6 @@ export default {
       const { src } = e.detail
       const { id } = e.currentTarget
       this.src = src
-      console.log(this.cropper, '3')
       this.cropper = true
       this.cropperType = id
       Indicator.close()
