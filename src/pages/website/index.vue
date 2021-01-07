@@ -21,7 +21,7 @@
       />
       <!-- :style="'width:' + cropperWidth + 'px;height:' + cropperHeight + 'px;display:block;'" -->
       <span class="image-cropper-hint">
-        拖动裁剪框可对图片进行裁剪；<br>
+        拖动裁剪框可对图片进行裁剪；<br>{{cropper}}
         请将证件照按照示意框的大小和方向进行裁剪；
       </span>
       <img v-if="id === 'side'" id="sides" src="~@/assets/02.png" class="image-cropper-hints" />
@@ -327,15 +327,6 @@ export default {
   },
   mounted() {
     this.overSize()
-    // window.onresize = () => {
-    //   return(() => {
-    //     if (document.body.clientWidth <= 354 && this.$refs.clearfix.className == 'clearfix') {
-    //       this.$refs.clearfix.className = 'clearfixs'
-    //     } else if (document.body.clientWidth >= 354 && this.$refs.clearfix.className == 'clearfixs') {
-    //       this.$refs.clearfix.className = 'clearfix'
-    //     }
-    //   })()
-    // }
     this.height = this.globalData.height * 2 + 100
     if (this.globalData.orderCode) {
       this.onLoad()
@@ -346,7 +337,7 @@ export default {
         }
       })
     }
-    window.addEventListener('resize', this.onOrientationchange, false)
+    window.addEventListener('orientationchange', this.onOrientationchange, false)
   },
   methods: {
     overSize() {
@@ -369,6 +360,7 @@ export default {
       } else {
         if (cropper.cropperflag && cropper.croppernum === 1 && cropper.cropper === false) {
           this.cropper = true
+          console.log(this.cropper, '1')
           const croppers = this.globalData.cropper
           croppers.cropper = true
           this.setData({ cropper: croppers })
@@ -549,11 +541,6 @@ export default {
       croppers.croppernum = 0
       this.setData({cropper: croppers})
       this.cropperType = ''
-      // setTimeout(() => {
-      //   this.$refs.clearfix.className = 'clearfixs'
-      //   console.log(this.$refs.clearfix, 'nn')
-      // //   this.overSize()
-      // }, 0.0001)
     },
     cropImagedata(a, file, id, imageBase64) {
       this.srcs = a
@@ -562,6 +549,7 @@ export default {
       let height = document.documentElement.clientHeight
       if (width < height) {
         this.cropper = true
+        console.log(this.cropper, '2')
       }
       this.fileName = file.name
       this.id = id
@@ -571,6 +559,7 @@ export default {
       const { src } = e.detail
       const { id } = e.currentTarget
       this.src = src
+      console.log(this.cropper, '3')
       this.cropper = true
       this.cropperType = id
       Indicator.close()
@@ -599,6 +588,7 @@ export default {
           })
         })
       }
+      return false
     },
     cropperload(e) {},
     end(e) {
@@ -660,6 +650,7 @@ export default {
     dialogButton() {
       this.saveLocalData()
       this.dialogShow = false
+      this.cropper = false
     },
     setUploadSuccessData() {
       // const self = this
