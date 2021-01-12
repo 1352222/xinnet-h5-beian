@@ -37,9 +37,10 @@
 </template>
 
 <script>
-import { Toast, Indicator, MessageBox } from 'mint-ui'
+import { Toast, Indicator } from 'mint-ui'
 import { mapState, mapMutations } from 'vuex'
 import $ from 'jquery'
+import { MessageBox } from '../MessageBox/index.js'
 import warnImage from '../../../static/image/warn.png'
 import videoImage from '../../../static/image/video.png'
 import 'mint-ui/lib/style.css'
@@ -99,7 +100,12 @@ export default {
     }),
 
     showMessageBox() {
-      MessageBox.alert(`<p style="font-size: 14px; color: #000;">请牢记如下核验码：<br><span style="font-size: 18px; font-weight: bold; color: #26a2ff;">${this.num}</span></p>`, '').then(() => {
+      const options = {
+        title: '',
+        message: `<p style="font-size: 14px; color: #000;">请牢记如下核验码，并在拍摄视频时大声朗读：<br><span style="font-size: 18px; font-weight: bold; color: #26a2ff;">${this.num}</span></p>`,
+        confirmButtonClass: 'confirm-button'
+      }
+      MessageBox(options).then(() => {
         this.callCamera()
       })
     },
@@ -533,4 +539,16 @@ export default {
 .mint-msgbox-confirm {
   font-size: 16px;
 }
+.confirm-button {
+  display: block;
+  flex: none;
+  width: 140px;
+  height: 34px;
+  line-height: 34px;
+  color: #fff;
+  background: #22a5e4;
+  margin: 3px auto auto;
+  border-radius: 4px;
+}
+
 </style>
