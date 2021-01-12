@@ -102,7 +102,7 @@ export default {
     showMessageBox() {
       const options = {
         title: '',
-        message: `<p style="font-size: 14px; color: #000;">请牢记如下核验码,并在拍摄视频时大声朗读<br><span style="font-size: 18px; font-weight: bold; color: #26a2ff;">${this.num}</span></p>`,
+        message: `<p style="font-size: 14px; color: #000;">请牢记如下核验码,并在拍摄视频时大声朗读<br><br><span style="font-size: 18px; font-weight: bold; color: #26a2ff;">${this.num}</span></p>`,
         confirmButtonClass: 'confirm-button'
       }
       MessageBox(options).then(() => {
