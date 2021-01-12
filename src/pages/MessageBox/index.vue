@@ -264,9 +264,9 @@
       },
 
       countdown() {
-        if (this.count > 1) {
-          this.count--
+        if (this.count > 0) {
           this.confirmButtonText = `确定（${this.count}s）`
+          this.count--
         } else {
           clearInterval(this.ticktock)
           this.confirmButtonText = CONFIRM_TEXT
@@ -323,7 +323,7 @@
         editorErrorMessage: null,
         callback: null,
         disabled: true,
-        count: 6
+        count: 5
       };
     }
   };
