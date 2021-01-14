@@ -89,7 +89,7 @@ export default {
     const { orderType } = this.getParams(window.location.search)
     const self = this
     if (orderCode) {
-      if (phone){
+      if (phone) {
         self.setData({ loading: true })
         let url = `/checkPhone?orderCode=${orderCode}&phone=${phone}`
         if (!phone) {
@@ -117,7 +117,7 @@ export default {
           }
         })
       } else {
-        if (orderType === 'NEW_CHECK_IN' || orderType === 'CHANGE_ORG' || orderType === 'NO_ORG_NEW_CHECK_IN'){
+        if (orderType === 'NEW_CHECK_IN' || orderType === 'CHANGE_ORG' || orderType === 'NO_ORG_NEW_CHECK_IN') {
           self.setData({ loading: true })
           let url = `/checkPhone?orderCode=${orderCode}&phone=${phone}`
           if (!phone) {

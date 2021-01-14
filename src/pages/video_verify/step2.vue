@@ -57,7 +57,7 @@ const deviceSystem = (() => {
   if (iphone != -1 || ipad != -1) {
     equipmentType = 'ios'
   }
-  console.log(equipmentType)
+  // console.log(equipmentType)
   return equipmentType
 })()
 
@@ -89,6 +89,9 @@ export default {
     this.generateCode()
     this.showMessageBox()
   },
+  destroyed() {
+    MessageBox.close()
+  },
   computed: {
     ...mapState({
       globalData: state => state.home.globalData
@@ -105,6 +108,7 @@ export default {
         message: `<p style="font-size: 14px; color: #000;">请牢记如下核验码,并在拍摄视频时大声朗读<br><br><span style="font-size: 18px; font-weight: bold; color: #26a2ff;">${this.num}</span></p>`,
         confirmButtonClass: 'confirm-button'
       }
+      MessageBox.executeCountdown()
       MessageBox(options).then(() => {
         this.callCamera()
       })

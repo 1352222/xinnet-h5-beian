@@ -305,14 +305,14 @@ export default {
   watch: {
     cropper: {
       handler(newName, oldName) {
-        if(newName) {
+        if (newName) {
           setTimeout(() => {
             if (this.id === 'front') {
-              const height = (document.documentElement.clientHeight - $("#fronts").height()) / 2
-              $("#fronts").css('top', height)
+              const height = (document.documentElement.clientHeight - $('#fronts').height()) / 2
+              $('#fronts').css('top', height)
             } else if (this.id === 'side') {
-              const height = (document.documentElement.clientHeight - $("#sides").height()) / 2
-              $("#sides").css('top', height)
+              const height = (document.documentElement.clientHeight - $('#sides').height()) / 2
+              $('#sides').css('top', height)
             }
           }, 350)
         } else {
@@ -373,7 +373,7 @@ export default {
       const NewWebsite = orderType === 'NEW_WEBSITE'
       const NoOrgNewWebsite = orderType === 'NO_ORG_NEW_WEBSITE'
       const ChangeOrg = orderType === 'CHANGE_ORG'
-      const NoOrgNewCheckIn= orderType === 'NO_ORG_NEW_CHECK_IN'
+      const NoOrgNewCheckIn = orderType === 'NO_ORG_NEW_CHECK_IN'
       const isPersonal = recordType == '5'
       this.NewCheckIn = NewCheckIn
       this.ChangeCheckIn = ChangeCheckIn
@@ -387,10 +387,10 @@ export default {
       // 个人有主体新增网站或变更主体，无主体新增网站，有主体新增接入信息与PC端不一致时只能修改不能使用
       // 无主体新增接入，变更接入 个人或企业都限制
       if (
-        (isPersonal && NewWebsite) ||(isPersonal && ChangeOrg)
-         || (isPersonal && NoOrgNewWebsite) || ChangeCheckIn
-         || (isPersonal && NewCheckIn) || (isPersonal && NoOrgNewCheckIn)
-        ) {
+        (isPersonal && NewWebsite) || (isPersonal && ChangeOrg) ||
+        (isPersonal && NoOrgNewWebsite) || ChangeCheckIn ||
+        (isPersonal && NewCheckIn) || (isPersonal && NoOrgNewCheckIn)
+      ) {
         this.use = false
         // this.tipsButtons1 = [{ text: "修改" }]
         // this.setData({ tipsButtons1: [{text: '修改'}] })
@@ -719,8 +719,8 @@ export default {
 
       const id = this.id
       const data = { orderCode: this.globalData.orderCode }
-      const NewCheckIn = this.NewCheckIn
-      const ChangeCheckIn = this.ChangeCheckIn
+      // const NewCheckIn = this.NewCheckIn
+      // const ChangeCheckIn = this.ChangeCheckIn
       // 新增接入，变更接入，变更主体不做OCR
       // OCR识别数据回显
       // if (!NewCheckIn && !ChangeCheckIn) {
@@ -1041,11 +1041,11 @@ export default {
     // 完成
     submit() {
       // const { NewCheckIn, ChangeCheckIn, NoOrgNewWebsite } = this.data
-      const NewCheckIn = this.NewCheckIn
-      const ChangeCheckIn = this.ChangeCheckIn
-      const NoOrgNewWebsite = this.NoOrgNewWebsite
-      const NoOrgNewCheckIn = this.NoOrgNewCheckIn
-      //与pc端做比对 有主体新增接入，变更接入，无主体新增网站，无主体新增接入
+      // const NewCheckIn = this.NewCheckIn
+      // const ChangeCheckIn = this.ChangeCheckIn
+      // const NoOrgNewWebsite = this.NoOrgNewWebsite
+      // const NoOrgNewCheckIn = this.NoOrgNewCheckIn
+      // 与pc端做比对 有主体新增接入，变更接入，无主体新增网站，无主体新增接入
       // if (NewCheckIn || ChangeCheckIn || NoOrgNewWebsite || NoOrgNewCheckIn) {
       //   this.submitData()
       // } else {

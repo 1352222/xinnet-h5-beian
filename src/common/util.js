@@ -19,7 +19,7 @@ const getParams = url => {
   const orderCodeUrl = url.slice(start)
   const aOrderCodeUrl = orderCodeUrl.split('&')
   const params = {}
-  for(let i=0; i<aOrderCodeUrl.length; i++) {
+  for (let i = 0; i < aOrderCodeUrl.length; i++) {
     const temp = aOrderCodeUrl[i].split('=')
     const key = temp[0]
     const val = temp[1]

@@ -243,9 +243,9 @@ export default {
           }
         }
 
-        const { orderType } = self.globalData
-        const NewCheckIn = orderType == 'NEW_CHECK_IN'
-        const ChangeCheckIn = orderType == 'CHANGE_CHECK_IN'
+        // const { orderType } = self.globalData
+        // const NewCheckIn = orderType == 'NEW_CHECK_IN'
+        // const ChangeCheckIn = orderType == 'CHANGE_CHECK_IN'
         // 无主体新增网站，无主体新增接入，有主体新增接入，变更接入取消判断，验证公安信息
         // if (NewCheckIn || ChangeCheckIn) {
         //   self.submitData(data)

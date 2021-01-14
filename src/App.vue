@@ -20,7 +20,7 @@ export default {
     const listPage = window.location.hash.indexOf('list') > -1
     const loginPage = window.location.hash.indexOf('login') > -1
     const homePage = window.location.hash == '#/'
-    console.log(window.location.hash)
+    // console.log(window.location.hash)
     const { orderType, orderCode } = getParams(window.location.search)
     // 不用登录输入手机号直接进入
     if (orderType === 'NEW_CHECK_IN' || orderType === 'CHANGE_ORG' || orderType === 'NO_ORG_NEW_CHECK_IN') {

@@ -263,6 +263,14 @@
         this.$refs.input.type = val;
       },
 
+      initCountdown() {
+        clearInterval(this.ticktock)
+        this.ticktock = null
+        this.disabled = true
+        this.count = 5
+        this.confirmButtonText = `确定（${this.count}s）`
+      },
+
       countdown() {
         if (this.count > 0) {
           this.confirmButtonText = `确定（${this.count}s）`
@@ -272,6 +280,10 @@
           this.confirmButtonText = CONFIRM_TEXT
           this.disabled = false
         }
+      },
+
+      executeCountdown() {
+        this.ticktock = setInterval(this.countdown, 1000)
       }
     },
 
@@ -299,7 +311,8 @@
     },
 
     created() {
-      this.ticktock = setInterval(this.countdown, 1000)
+      /* 第一次进入 */
+      this.executeCountdown()
     },
 
     data() {
@@ -322,6 +335,7 @@
         cancelButtonClass: '',
         editorErrorMessage: null,
         callback: null,
+        ticktock: null,
         disabled: true,
         count: 5
       };

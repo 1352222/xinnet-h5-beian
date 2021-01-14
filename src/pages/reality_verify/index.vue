@@ -146,11 +146,12 @@ export default {
         websiteState,
         realityVerifyState,
         screenState,
-        icp,
+        icp
       } = this.globalData
       const self = this
-      
-      const arr = [], id = [], ids = []
+      const arr = []
+      const id = []
+      const ids = []
       icp.icpAttachmentOrders.forEach(row => {
         if (row.filePurpose === '1' && (row.isWebsiteChecklist === '1' || row.isWebsiteChecklist === '2')) {
           arr.push(row)
@@ -167,7 +168,6 @@ export default {
           self.$router.push('/result')
           return
         }
-        
 
         // 如果前面步骤全部完成跳提交数据转到成功页面
         // 否则跳转失败页面 => 个人

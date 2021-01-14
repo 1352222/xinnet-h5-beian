@@ -382,26 +382,26 @@ export default {
       NoOrgNewWebsite: '',
       NoOrgNewCheckIn: '',
       frontHeight: 0,
-      sideHeight: 0,
+      sideHeight: 0
     }
   },
   watch: {
     cropper: {
       handler(newName, oldName) {
-        if(newName) {
+        if (newName) {
           setTimeout(() => {
             if (this.id === 'front') {
-              this.frontHeight = $("#fronts").height()
-              const height = (document.documentElement.clientHeight - $("#fronts").height()) / 2
-              $("#fronts").css('top', height)
+              this.frontHeight = $('#fronts').height()
+              const height = (document.documentElement.clientHeight - $('#fronts').height()) / 2
+              $('#fronts').css('top', height)
             } else if (this.id === 'side') {
-              let heights = this.frontHeight ? this.frontHeight : $("#sides").height()
+              let heights = this.frontHeight ? this.frontHeight : $('#sides').height()
               this.sideHeight = heights
               if (heights == 0) {
                 heights = this.sideHeight
               }
               const height = (document.documentElement.clientHeight - heights) / 2
-              $("#sides").css('top', height)
+              $('#sides').css('top', height)
             }
           }, 100)
         }
@@ -552,7 +552,7 @@ export default {
       const NewWebsite = orderType == 'NEW_WEBSITE'
       const NoOrgNewWebsite = orderType == 'NO_ORG_NEW_WEBSITE'
       const ChangeOrg = orderType == 'CHANGE_ORG'
-      const NoOrgNewCheckIn= orderType == 'NO_ORG_NEW_CHECK_IN'
+      const NoOrgNewCheckIn = orderType == 'NO_ORG_NEW_CHECK_IN'
 
       // 变更主体 信息与PC端不一致时只能修改不能使用
       if (ChangeOrg) {

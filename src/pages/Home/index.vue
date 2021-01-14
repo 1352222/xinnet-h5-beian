@@ -34,7 +34,7 @@ export default {
       setData: 'SET_DATA'
     }),
     onload(query) {
-      const { orderType } = this.getParams(window.location.search)
+      const { orderType } = getParams(window.location.search)
       // 备案类型为新增接入、变更主体，无主体新增网站跳过输入手机号步骤
       if (orderType === 'NEW_CHECK_IN' || orderType === 'CHANGE_ORG' || orderType === 'NO_ORG_NEW_CHECK_IN') {
         this.setData({ businessType: 'noPhone' })

@@ -203,9 +203,17 @@ MessageBox.prompt = function(message, title, options) {
 MessageBox.close = function() {
   if (!instance) return;
   instance.value = false;
+  // 关闭清理定时器
+  instance.initCountdown();
   msgQueue = [];
   currentMsg = null;
 };
+
+MessageBox.executeCountdown = function() {
+  // 实例创建后调用计时器
+  if (!instance) return;
+  instance.executeCountdown();
+}
 
 export default MessageBox;
 export { MessageBox };
