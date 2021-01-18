@@ -77,6 +77,7 @@ export default {
     onLoad() {
       const { videoVerifyImage, screenState, images, serverPath } = this.globalData
       const self = this
+      // 如果有核验照
       if (screenState === 'right') {
         const image = serverPath + images.screen.filePath
         self.screenState = screenState
@@ -113,15 +114,16 @@ export default {
         }
         img.src = bgtImage
 
-        const canvas2 = this.$refs.rawImageVideo
-        const ctx2 = canvas2.getContext('2d')
-        const image = new Image()
-        image.onload = () => {
-          ctx2.drawImage(image, 0, 0, 384, 384)
-          const res = canvas2.toDataURL('image/jpeg', 0.5)
-          this.rawImageBase64 = res
-        }
-        image.src = prefix + rawImage
+        // const canvas2 = this.$refs.rawImageVideo
+        // const ctx2 = canvas2.getContext('2d')
+        // const image = new Image()
+        // image.onload = () => {
+        //   ctx2.drawImage(image, 0, 0, 384, 384)
+        //   const res = canvas2.toDataURL('image/jpeg', 0.5)
+        //   this.rawImageBase64 = res
+        // }
+        // image.src = prefix + rawImage
+        this.rawImageBase64 = prefix + rawImage
       })
     },
 
